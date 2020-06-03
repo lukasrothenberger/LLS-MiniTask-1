@@ -1,0 +1,36 @@
+aag 30 7 0 1 23
+2
+4
+6
+8
+10
+12
+14
+60
+16 14 10
+18 10 7
+20 19 15
+22 21 17
+24 23 8
+26 8 6
+28 12 11
+30 28 14
+32 30 26
+34 9 6
+36 34 16
+38 13 6
+40 12 7
+42 40 15
+44 41 14
+46 39 9
+48 46 43
+50 48 45
+52 37 33
+54 52 25
+56 54 51
+58 5 3
+60 58 57
+c
+aiger-set/aig_2
+This file was written by ABC on Tue May 26 10:45:04 2020
+For information about AIGER format, refer to http://fmv.jku.at/aiger
