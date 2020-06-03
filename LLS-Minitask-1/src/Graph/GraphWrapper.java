@@ -43,7 +43,15 @@ public class GraphWrapper {
 		outputNodes.add(newNode);
 		nodesMap.put(id, newNode);
 		System.out.println("created OUT Node: "+newNode.toString());
+		if(id % 2 != 0) {
+			// output is inverted, create inverted edge from parent
+			addEdge(id-1, id, true);
+			System.out.println("\tcreated inverted edge from parent: "+(id-1));
+		}
 	}
+	
+	
+	
 	
 	
 	public void addEdge(long source, long dest, boolean inverted) {
@@ -51,7 +59,7 @@ public class GraphWrapper {
 		Node dest_node = nodesMap.get(dest);
 		InvertableEdge newEdge = new InvertableEdge(source, dest, inverted);
 		internal_graph.addEdge(source_node, dest_node, newEdge);
-		System.out.println("created EDGE: "+source+" --> "+ dest+ "   "+newEdge.toString());
+		System.out.println("created "+ newEdge.toString());
 	}
 	
 	

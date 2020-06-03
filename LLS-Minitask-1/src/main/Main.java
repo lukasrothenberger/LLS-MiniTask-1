@@ -8,13 +8,11 @@ public class Main {
 		// TODO Auto-generated method stub
 		GraphWrapper graph = new GraphWrapper();
 		graph.addInputNode(0);
-		graph.addInputNode(1);
-		graph.addEdge(0, 1, true);
+		graph.addInputNode(2);
+		graph.addOutputNode(4);
+		graph.addOutputNode(1);
 		System.out.println("####test graph print###");
 		graph.print();
-		System.out.println("###test edge####");
-		long target_id = graph.internal_graph.edgesOf(graph.getNode(0)).iterator().next().dest;
-		System.out.println("target id: "+target_id);
 		
 		
 	}
