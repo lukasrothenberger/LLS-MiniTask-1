@@ -15,6 +15,6 @@ public class Node {
 	
 	
 	public String toString(){
-		return "("+id+" : "+type.name()+")";
+		return type.name()+"_"+id;
 	}
 }

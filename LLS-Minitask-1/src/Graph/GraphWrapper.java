@@ -2,6 +2,7 @@ package Graph;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.function.Function;
 
 //import org.jinternal_grapht.*;
 //import org.jinternal_grapht.internal_graph.DefaultEdge;
@@ -17,6 +18,7 @@ public class GraphWrapper {
 	public HashMap<Long, Node> nodesMap;
 	public HashSet<Node> inputNodes;
 	public HashSet<Node> outputNodes;
+	
 	
 	public GraphWrapper() {
 		internal_graph = new SimpleGraph<>(InvertableEdge.class);
@@ -49,9 +51,6 @@ public class GraphWrapper {
 			System.out.println("\tcreated inverted edge from parent: "+(id-1));
 		}
 	}
-	
-	
-	
 	
 	
 	public void addEdge(long source, long dest, boolean inverted) {
@@ -91,4 +90,5 @@ public class GraphWrapper {
 
 		}
 	}
+	
 }
