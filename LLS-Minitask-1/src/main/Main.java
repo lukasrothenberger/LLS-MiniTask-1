@@ -38,7 +38,7 @@ public class Main {
 		graph.addAndGate(40, 38, 37);
 		
 		
-		System.out.println("###### DOT FILE - can be pasted into DOT viewer ######");
+		System.out.println("###### DOT FORMAT - can be pasted into DOT viewer ######");
 		DOTExporter de = new DOTExporter(new StringNameProvider<Node>(), null, null);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    OutputStreamWriter osw = new OutputStreamWriter(baos);
