@@ -15,6 +15,12 @@ public class Node {
 	
 	
 	public String toString(){
+		if(input) {
+			return "IN_"+type.name()+"_"+id;
+		}
+		if(output) {
+			return "OUT_"+type.name()+"_"+id;
+		}
 		return type.name()+"_"+id;
 	}
 }

@@ -9,6 +9,8 @@ import java.util.function.Function;
 //import org.jinternal_grapht.internal_graph.SimpleGraph;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
 public class GraphWrapper {
@@ -21,44 +23,54 @@ public class GraphWrapper {
 	
 	
 	public GraphWrapper() {
-		internal_graph = new SimpleGraph<>(InvertableEdge.class);
+		internal_graph = new SimpleDirectedGraph<>(InvertableEdge.class);
 		nodesMap = new HashMap<Long, Node>();
 		inputNodes = new HashSet<Node>();
 		outputNodes = new HashSet<Node>();
+		// insert constant 0
+		Node constantZero = new Node(0, NodeType.VAL);
+		internal_graph.addVertex(constantZero);
+		nodesMap.put((long) 0, constantZero);
 	}
 	
 	
 	public void addInputNode(long id) {
-		Node newNode = new Node(id, NodeType.VALUE);
+		Node newNode = new Node(id, NodeType.VAL);
 		newNode.input = true;
 		internal_graph.addVertex(newNode);
 		inputNodes.add(newNode);
 		nodesMap.put(id, newNode);
-		System.out.println("created IN Node: "+newNode.toString());
 	}
 	
 	
 	public void addOutputNode(long id) {
-		Node newNode = new Node(id, NodeType.VALUE);
+		Node newNode = new Node(id, NodeType.VAL);
 		newNode.output = true;
 		internal_graph.addVertex(newNode);
 		outputNodes.add(newNode);
 		nodesMap.put(id, newNode);
-		System.out.println("created OUT Node: "+newNode.toString());
 		if(id % 2 != 0) {
 			// output is inverted, create inverted edge from parent
-			addEdge(id-1, id, true);
-			System.out.println("\tcreated inverted edge from parent: "+(id-1));
+			addEdge(id, id-1, true);
 		}
 	}
 	
 	
 	public void addEdge(long source, long dest, boolean inverted) {
 		Node source_node = nodesMap.get(source);
+		if(dest % 2 != 0) {
+			// dest is an inverted node
+			if(! nodesMap.containsKey(dest)) {
+				//dest not yet in graph
+				Node newNode = new Node(dest, NodeType.INV);
+				internal_graph.addVertex(newNode);
+				nodesMap.put(dest, newNode);
+				addEdge(dest, dest-1, true);
+			}
+		}
 		Node dest_node = nodesMap.get(dest);
 		InvertableEdge newEdge = new InvertableEdge(source, dest, inverted);
 		internal_graph.addEdge(source_node, dest_node, newEdge);
-		System.out.println("created "+ newEdge.toString());
 	}
 	
 	
@@ -67,9 +79,18 @@ public class GraphWrapper {
 	}
 	
 	
-	public void addAndGate(long id, Node child1, Node child2) throws Exception {
-		//TODO implement addAndGate
-		throw new Exception("TODO");
+	public void addAndGate(long id, long child1, long child2) throws Exception {
+		if(! nodesMap.containsKey(id)) {
+			Node newNode = new Node(id, NodeType.AND);
+			internal_graph.addVertex(newNode);
+			nodesMap.put(id, newNode);
+		}
+		else {
+			nodesMap.get(id).type = NodeType.AND;
+		}
+		addEdge(id, child1, false);
+		addEdge(id, child2, false);
+		
 	}
 	
 	

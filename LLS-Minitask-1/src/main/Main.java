@@ -11,18 +11,34 @@ import Graph.Node;
 
 public class Main {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws Exception {
 		GraphWrapper graph = new GraphWrapper();
-		graph.addInputNode(0);
 		graph.addInputNode(2);
-		graph.addOutputNode(4);
+		graph.addInputNode(4);
+		graph.addInputNode(6);
+		graph.addInputNode(8);
+		graph.addInputNode(10);
+		graph.addInputNode(12);
+		graph.addOutputNode(40);
 		graph.addOutputNode(1);
-		System.out.println("####test graph print###");
-		graph.print();
+		
+		graph.addAndGate(14, 13, 6);
+		graph.addAndGate(16, 12, 9);
+		graph.addAndGate(18, 16, 7);
+		graph.addAndGate(20, 19, 15);
+		graph.addAndGate(22, 21, 11);
+		graph.addAndGate(24, 17, 6);
+		graph.addAndGate(26, 13, 8);
+		graph.addAndGate(28, 11, 7);
+		graph.addAndGate(30, 28, 27);
+		graph.addAndGate(32, 25, 19);
+		graph.addAndGate(34, 32, 31);
+		graph.addAndGate(36, 35, 23);
+		graph.addAndGate(38, 5, 3);
+		graph.addAndGate(40, 38, 37);
 		
 		
-		System.out.println("\n###### DOT FILE - can be pasted into DOT viewer ######");
+		System.out.println("###### DOT FILE - can be pasted into DOT viewer ######");
 		DOTExporter de = new DOTExporter(new StringNameProvider<Node>(), null, null);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    OutputStreamWriter osw = new OutputStreamWriter(baos);
