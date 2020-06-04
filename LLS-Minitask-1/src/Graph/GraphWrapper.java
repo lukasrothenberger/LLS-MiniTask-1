@@ -127,21 +127,7 @@ public class GraphWrapper {
 	
 	public String toBLIFFormat() throws Exception {
 		String blifString = "";
-		//define subcircuit INV
-		blifString += ".model inv\n";
-		blifString += ".inputs A\n";
-		blifString += ".outputs O\n";
-		blifString += ".names A O\n";
-		blifString += "0 1\n";
-		blifString += ".end\n\n";
-		//define subcircuit AND
-		blifString += ".model and2\n";
-		blifString += ".inputs A B\n";
-		blifString += ".outputs O\n";
-		blifString += ".names A B O\n";
-		blifString += "11 1\n";
-		blifString += ".end\n\n";
-		//append header
+		//append model header
 		blifString += ".model output\n";
 		//append inputs
 		blifString += ".inputs ";
@@ -171,10 +157,40 @@ public class GraphWrapper {
 			}
 			blifString += node.toBLIF(internalGraph, nodesMap);
 		}
-		//append end
-		blifString += ".end\n";
-		
-			
+		//append model end
+		blifString += ".end\n\n";
+		//append subcircuit definitions
+		blifString += getSubcircuitDefinitions();
+		return blifString;
+	}
+	
+	
+	private String getSubcircuitDefinitions() {
+		String blifString = "";
+		//define subcircuit INV
+		blifString += ".model inv\n";
+		blifString += ".inputs A\n";
+		blifString += ".outputs O\n";
+		blifString += ".names A O\n";
+		blifString += "0 1\n";
+		blifString += ".end\n\n";
+		//define subcircuit AND
+		blifString += ".model and2\n";
+		blifString += ".inputs A B\n";
+		blifString += ".outputs O\n";
+		blifString += ".names A B O\n";
+		blifString += "11 1\n";
+		blifString += ".end\n\n";
+		//define subcircuit MAJ
+		blifString += ".model maj3\n";
+		blifString += ".inputs A B C\n";
+		blifString += ".outputs O\n";
+		blifString += ".names A B C O\n";
+		blifString += "011 1\n";
+		blifString += "101 1\n";
+		blifString += "110 1\n";
+		blifString += "111 1\n";
+		blifString += ".end\n\n";
 		return blifString;
 	}
 	

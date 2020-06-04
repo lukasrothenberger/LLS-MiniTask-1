@@ -1,5 +1,5 @@
 package Graph;
 
 public enum NodeType {
-	AND, MAJ, INV, VAL, ZERO
+	AND, MAJ, INV, VAL
 }

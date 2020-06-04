@@ -86,7 +86,25 @@ public class Node {
 						return ".subckt and2 A="+child1.toBLIFIdentifier()+" B="+child2.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 					case MAJ:{
-						throw new Exception("UNIMPLEMENTED");
+						// .subckt maj3 A=v1 B=v2 C=v3 O=x
+						int count = 0;
+						Node child1 = null;
+						Node child2 = null;
+						Node child3 = null;
+						for(InvertableEdge e : internalGraph.edgesOf(this)) {
+							if(e.source != this.id)
+								continue;
+							if(count == 0)
+								child1 = nodesMap.get(e.dest);
+							if(count == 1)
+								child2 = nodesMap.get(e.dest);
+							if(count == 2)
+								child3 = nodesMap.get(e.dest);
+							if(count > 2)
+								throw new Exception("Incorrect number of children for MAJ node: "+ this.id);
+							count++;
+						}
+						return ".subckt maj3 A="+child1.toBLIFIdentifier()+" B="+child2.toBLIFIdentifier()+" C="+child3.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 					case INV:{
 						// .subckt inv A=x O=j
