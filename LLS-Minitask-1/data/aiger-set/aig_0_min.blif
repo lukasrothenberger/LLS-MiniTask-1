@@ -1,0 +1,34 @@
+.model /home/lukas/git/LLS-MiniTask-1/LLS-Minitask-1/data/aiger-set/binary/aig_0_min.aiger
+.inputs i2 i4 i6 i8 i10 i12 
+.outputs o0 
+.names i12 i6 a14
+01 1
+.names i12 i8 a16
+10 1
+.names a16 i6 a18
+10 1
+.names a18 a14 a20
+00 1
+.names a20 i10 a22
+00 1
+.names a16 i6 a24
+01 1
+.names i12 i8 a26
+01 1
+.names i10 i6 a28
+00 1
+.names a28 a26 a30
+10 1
+.names a24 a18 a32
+00 1
+.names a32 a30 a34
+10 1
+.names a34 a22 a36
+00 1
+.names i4 i2 a38
+00 1
+.names a38 a36 a40
+10 1
+.names a40 o0
+1 1
+.end

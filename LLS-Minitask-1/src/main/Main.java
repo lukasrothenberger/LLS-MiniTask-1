@@ -20,7 +20,6 @@ public class Main {
 		graph.addInputNode(10);
 		graph.addInputNode(12);
 		graph.addOutputNode(40);
-		graph.addOutputNode(1);
 		
 		graph.addAndGate(14, 13, 6);
 		graph.addAndGate(16, 12, 9);
@@ -40,6 +39,9 @@ public class Main {
 		
 		System.out.println("###### DOT FORMAT - can be pasted into DOT viewer ######");
 	    System.out.println(graph.toDOTFormat());
+		
+		System.out.println("##### BLIF FORMAT #####");
+		System.out.println(graph.toBLIFFormat());
 		
 	}
 
