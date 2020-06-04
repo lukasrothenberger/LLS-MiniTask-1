@@ -12,14 +12,21 @@ public class Node {
 	boolean input = false;
 	boolean output = false;
 	
-	
+	/**
+	 * Constructor for a Node in the Graph.
+	 * @param id
+	 * @param type
+	 * @param modifier
+	 */
 	public Node(long id, NodeType type, NodeModifier modifier) {
 		this.id = id;
 		this.type = type;
 		this.modifier = modifier;
 	}
 	
-	
+	/**
+	 * Textual representation of a node for printing.
+	 */
 	public String toString(){
 		if(input) {
 			return "IN_"+type.name()+"_"+id;
@@ -30,7 +37,11 @@ public class Node {
 		return type.name()+"_"+id;
 	}
 	
-	
+	/**
+	 * Translates node modifier and id into a value identifier in BLIF style (e.g. "i4", "o6" or "a8").
+	 * @return node identifier
+	 * @throws Exception
+	 */
 	public String toBLIFIdentifier() throws Exception {
 		//returns blif "id" of node, e.g. a42
 		switch(this.modifier) {
@@ -49,7 +60,15 @@ public class Node {
 		}
 	}
 	
-	
+	/**
+	 * Creates a BLIF representation for the node.
+	 * Returns a BLIF-Identifier (e.g. "i4"), if the node is a value node.
+	 * Returns a BLIF subcircuit call (e.g. .subckt and2 ...), if the node represents a Gate.
+	 * @param internalGraph
+	 * @param nodesMap
+	 * @return String representation of the node for use in BLIF file.
+	 * @throws Exception
+	 */
 	public String toBLIF(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
 		String result = "";
 		switch(this.modifier) {
