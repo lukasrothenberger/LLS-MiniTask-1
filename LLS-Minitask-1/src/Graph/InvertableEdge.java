@@ -16,7 +16,6 @@ public class InvertableEdge extends DefaultEdge {
 	
 	
 	public void invert() {
-		System.out.println("INVERTING: " + this.toString());
 		this.inverted = !this.inverted;
 	}
 	

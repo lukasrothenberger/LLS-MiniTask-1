@@ -39,11 +39,7 @@ public class Main {
 		
 		
 		System.out.println("###### DOT FORMAT - can be pasted into DOT viewer ######");
-		DOTExporter de = new DOTExporter(new StringNameProvider<Node>(), null, null);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    OutputStreamWriter osw = new OutputStreamWriter(baos);
-		de.export(osw, graph.internal_graph);
-	    System.out.println(baos.toString());
+	    System.out.println(graph.toDOTFormat());
 		
 	}
 
