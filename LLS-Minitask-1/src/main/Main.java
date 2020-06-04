@@ -13,12 +13,15 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		GraphWrapper graph = new GraphWrapper();
+		
+		// DEBUG (equivalent to aig_0_min.aag)
 		graph.addInputNode(2);
 		graph.addInputNode(4);
 		graph.addInputNode(6);
 		graph.addInputNode(8);
 		graph.addInputNode(10);
 		graph.addInputNode(12);
+
 		graph.addOutputNode(40);
 		
 		graph.addAndGate(14, 13, 6);

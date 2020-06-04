@@ -78,11 +78,6 @@ public class GraphWrapper {
 	}
 	
 	
-	public Node getNode(long id) {
-		return nodesMap.get(id);
-	}
-	
-	
 	public void addAndGate(long id, long child1, long child2) throws Exception {
 		if(! nodesMap.containsKey(id)) {
 			Node newNode = new Node(id, NodeType.AND, NodeModifier.INTERMEDIATE);
@@ -94,6 +89,26 @@ public class GraphWrapper {
 		}
 		addEdge(id, child1, false);
 		addEdge(id, child2, false);	
+	}
+	
+	
+	public void addMajGate(long id, long child1, long child2, long child3) throws Exception {
+		if(! nodesMap.containsKey(id)) {
+			Node newNode = new Node(id, NodeType.MAJ, NodeModifier.INTERMEDIATE);
+			internalGraph.addVertex(newNode);
+			nodesMap.put(id, newNode);
+		}
+		else {
+			nodesMap.get(id).type = NodeType.MAJ;
+		}
+		addEdge(id, child1, false);
+		addEdge(id, child2, false);	
+		addEdge(id, child3, false);	
+	}
+	
+	
+	public Node getNode(long id) {
+		return nodesMap.get(id);
 	}
 	
 	
