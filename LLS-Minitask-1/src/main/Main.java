@@ -39,7 +39,6 @@ public class Main {
 		graph.addAndGate(38, 5, 3);
 		graph.addAndGate(40, 38, 37);
 		
-		
 		System.out.println("###### DOT FORMAT - can be pasted into DOT viewer ######");
 	    System.out.println(graph.toDOTFormat());
 		

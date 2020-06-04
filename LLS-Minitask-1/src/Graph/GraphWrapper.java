@@ -4,7 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.function.Function;
 
 //import org.jinternalGrapht.*;
 //import org.jinternalGrapht.internalGraph.DefaultEdge;
@@ -18,14 +17,16 @@ import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleGraph;
 
 public class GraphWrapper {
-	// Wrapper class for JGraphT
+	// Wrapper class for internal jgrapht-graph
 	
 	public Graph<Node, InvertableEdge> internalGraph;
 	public HashMap<Long, Node> nodesMap;
 	public HashSet<Node> inputNodes;
 	public HashSet<Node> outputNodes;
 	
-	
+	/**
+	 * Constructor for Wrapper Object for internal jgrapht-graph
+	 */
 	public GraphWrapper() {
 		internalGraph = new SimpleDirectedGraph<>(InvertableEdge.class);
 		nodesMap = new HashMap<Long, Node>();
@@ -37,7 +38,10 @@ public class GraphWrapper {
 		nodesMap.put((long) 0, constantZero);
 	}
 	
-	
+	/**
+	 * Add input value with given id to the graph.
+	 * @param id of the value as defined in .aag file
+	 */
 	public void addInputNode(long id) {
 		Node newNode = new Node(id, NodeType.VAL, NodeModifier.INPUT);
 		newNode.input = true;
@@ -46,7 +50,10 @@ public class GraphWrapper {
 		nodesMap.put(id, newNode);
 	}
 	
-	
+	/**
+	 * Add output value with given id to the graph.
+	 * @param id of the value as defined in .aag file
+	 */
 	public void addOutputNode(long id) {
 		Node newNode = new Node(id, NodeType.VAL, NodeModifier.OUTPUT);
 		newNode.output = true;
@@ -59,8 +66,14 @@ public class GraphWrapper {
 		}
 	}
 	
-	
-	public void addEdge(long source, long dest, boolean inverted) {
+	/**
+	 * Add an edge from node with id source to node with id dest.
+	 * If parameter inverted == true, the edge represents a connection "containing" an inverter
+	 * @param source
+	 * @param dest
+	 * @param inverted
+	 */
+	private void addEdge(long source, long dest, boolean inverted) {
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -77,7 +90,13 @@ public class GraphWrapper {
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
 	}
 	
-	
+	/**
+	 * Add a node representing an AND2 Gate to the Graph.
+	 * @param id
+	 * @param child1
+	 * @param child2
+	 * @throws Exception
+	 */
 	public void addAndGate(long id, long child1, long child2) throws Exception {
 		if(! nodesMap.containsKey(id)) {
 			Node newNode = new Node(id, NodeType.AND, NodeModifier.INTERMEDIATE);
@@ -91,7 +110,14 @@ public class GraphWrapper {
 		addEdge(id, child2, false);	
 	}
 	
-	
+	/**
+	 * Add a node representing a MAJ3 Gate to the graph.
+	 * @param id
+	 * @param child1
+	 * @param child2
+	 * @param child3
+	 * @throws Exception
+	 */
 	public void addMajGate(long id, long child1, long child2, long child3) throws Exception {
 		if(! nodesMap.containsKey(id)) {
 			Node newNode = new Node(id, NodeType.MAJ, NodeModifier.INTERMEDIATE);
@@ -106,7 +132,11 @@ public class GraphWrapper {
 		addEdge(id, child3, false);	
 	}
 	
-	
+	/**
+	 * Returns the Node object with the given id by querying nodesMap.
+	 * @param id
+	 * @return
+	 */
 	public Node getNode(long id) {
 		return nodesMap.get(id);
 	}
@@ -117,7 +147,9 @@ public class GraphWrapper {
 		throw new Exception("TODO");
 	}
 	
-	
+	/**
+	 * Print a textual representation of the graph to the console.
+	 */
 	public void print() {
 		System.out.println("VERTICES:");
 		for(Node node : internalGraph.vertexSet()) {
@@ -130,7 +162,12 @@ public class GraphWrapper {
 		}
 	}
 	
-	
+	/**
+	 * Create and return a textual representation of the graph in DOT format for visualization.
+	 * A nice and easy tool for visualization can be found here:
+	 * http://magjac.com/graphviz-visual-editor/
+	 * @return DOT representation as String
+	 */
 	public String toDOTFormat() {
 		DOTExporter de = new DOTExporter(new StringNameProvider<Node>(), null, null);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -139,7 +176,11 @@ public class GraphWrapper {
 		return baos.toString();
 	}
 	
-	
+	/**
+	 * Create and return a BLIF representation of the graph.
+	 * @return BLIF representation as String
+	 * @throws Exception
+	 */
 	public String toBLIFFormat() throws Exception {
 		String blifString = "";
 		//append model header
@@ -179,7 +220,11 @@ public class GraphWrapper {
 		return blifString;
 	}
 	
-	
+	/**
+	 * Create and return a String containing the definitions for BLIF subcircuits
+	 * used by the toBLIFFormat()-Method.
+	 * @return String containing the used subcircuits.
+	 */
 	private String getSubcircuitDefinitions() {
 		String blifString = "";
 		//define subcircuit INV
