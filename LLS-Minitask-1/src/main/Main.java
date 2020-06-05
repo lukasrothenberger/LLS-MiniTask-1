@@ -26,6 +26,7 @@ public class Main {
 		
 		asdf
 		fdsa
+		blub
 		
 		graph.addAndGate(14, 13, 6);
 		graph.addAndGate(16, 12, 9);
