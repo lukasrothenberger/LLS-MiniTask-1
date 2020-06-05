@@ -24,10 +24,6 @@ public class Main {
 
 		graph.addOutputNode(40);
 		
-		asdf
-		fdsa
-		blub
-		
 		graph.addAndGate(14, 13, 6);
 		graph.addAndGate(16, 12, 9);
 		graph.addAndGate(18, 16, 7);
