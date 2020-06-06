@@ -14,8 +14,6 @@ import java.util.HashSet;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.SimpleDirectedGraph;
-import org.jgrapht.graph.SimpleDirectedWeightedGraph;
-import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 
 public class GraphWrapper {
@@ -263,10 +261,10 @@ public class GraphWrapper {
 	
 	/**
 	 * prints the internal graph to DOT File and as PNG image.
-	 * @param filename should not contain a file ending (example: "firstOutputGraph")
+	 * @param filename should not contain a file ending (example: "unmodifiedGraph")
 	 */
-	public void printToDOTandPNG(String filename) {
-		// DOT visualization test
+	public void exportToDOTandPNG(String filename) {
+		System.out.println("Exporting to DOT Format and PNG Image...");
 		File dotOutputFile = new File("output/"+filename+".dot");
 		if(dotOutputFile.exists())
 			dotOutputFile.delete();
@@ -278,9 +276,32 @@ public class GraphWrapper {
 			fw.close();
 			String[] c = {"dot", "-Tpng", "output/"+filename+".dot", "-o", "output/"+filename+".png"};
 			Process p = Runtime.getRuntime().exec(c);
-			System.out.println("Printing Done.");
+			System.out.println("\tDone.");
 		}
 		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	/**
+	 * exports the internal graph to BLIF format.
+	 * @param filename should not contain a file ending (example: "unmodifiedGraph")
+	 */
+	public void exportToBLIF(String filename) {
+		System.out.println("Exporting to BLIF Format..."); 
+		File blifOutputFile = new File("output/"+filename+".blif");
+		if(blifOutputFile.exists())
+			blifOutputFile.delete();
+		try {
+			blifOutputFile.createNewFile();
+			FileWriter fw = new FileWriter(blifOutputFile);
+			fw.write(this.toBLIFFormat());
+			fw.flush();
+			fw.close();
+			System.out.println("\tDone.");
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
