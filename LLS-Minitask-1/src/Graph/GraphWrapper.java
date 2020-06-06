@@ -1,6 +1,9 @@
 package Graph;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,11 +13,10 @@ import java.util.HashSet;
 //import org.jinternalGrapht.internalGraph.SimpleGraph;
 
 import org.jgrapht.Graph;
-import org.jgrapht.ext.DOTExporter;
-import org.jgrapht.ext.StringNameProvider;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.graph.SimpleDirectedWeightedGraph;
 import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.nio.dot.DOTExporter;
 
 public class GraphWrapper {
 	// Wrapper class for internal jgrapht-graph
@@ -53,8 +55,9 @@ public class GraphWrapper {
 	/**
 	 * Add output value with given id to the graph.
 	 * @param id of the value as defined in .aag file
+	 * @throws Exception 
 	 */
-	public void addOutputNode(long id) {
+	public void addOutputNode(long id) throws Exception {
 		Node newNode = new Node(id, NodeType.VAL, NodeModifier.OUTPUT);
 		newNode.output = true;
 		internalGraph.addVertex(newNode);
@@ -72,8 +75,9 @@ public class GraphWrapper {
 	 * @param source
 	 * @param dest
 	 * @param inverted
+	 * @throws Exception 
 	 */
-	private void addEdge(long source, long dest, boolean inverted) {
+	private void addEdge(long source, long dest, boolean inverted) throws Exception {
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -169,10 +173,12 @@ public class GraphWrapper {
 	 * @return DOT representation as String
 	 */
 	public String toDOTFormat() {
-		DOTExporter de = new DOTExporter(new StringNameProvider<Node>(), null, null);
+		DOTExporter<Node, InvertableEdge> de = new DOTExporter<Node, InvertableEdge>(); //(new StringNameProvider<Node>(), null, null);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    OutputStreamWriter osw = new OutputStreamWriter(baos);
-		de.export(osw, internalGraph);
+	    de.setVertexIdProvider((node) -> {return node.toString();});
+	    de.setVertexAttributeProvider((node)->{return node.getDOTAttributes();});
+		de.exportGraph(internalGraph, osw);
 		return baos.toString();
 	}
 	
@@ -252,6 +258,31 @@ public class GraphWrapper {
 		blifString += "111 1\n";
 		blifString += ".end\n\n";
 		return blifString;
+	}
+	
+	
+	/**
+	 * prints the internal graph to DOT File and as PNG image.
+	 * @param filename should not contain a file ending (example: "firstOutputGraph")
+	 */
+	public void printToDOTandPNG(String filename) {
+		// DOT visualization test
+		File dotOutputFile = new File("output/"+filename+".dot");
+		if(dotOutputFile.exists())
+			dotOutputFile.delete();
+		try {
+			dotOutputFile.createNewFile();
+			FileWriter fw = new FileWriter(dotOutputFile);
+			fw.write(this.toDOTFormat());
+			fw.flush();
+			fw.close();
+			String[] c = {"dot", "-Tpng", "output/"+filename+".dot", "-o", "output/"+filename+".png"};
+			Process p = Runtime.getRuntime().exec(c);
+			System.out.println("Printing Done.");
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

@@ -2,8 +2,11 @@ package Graph;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.jgrapht.Graph;
+import org.jgrapht.nio.Attribute;
+import org.jgrapht.nio.AttributeType;
 
 public class Node {
 	long id;
@@ -145,5 +148,50 @@ public class Node {
 			}
 		}
 		throw new Exception("Something went wrong.");
+	}
+
+	
+	/**
+	 * used in getDOTAttributes only
+	 */
+	private class DOTAttribute implements Attribute{
+		String value;
+		private DOTAttribute(String value) {
+			super();
+			this.value = value;
+		}
+		@Override
+		public AttributeType getType() {
+			return AttributeType.STRING;
+		}
+		@Override
+		public String getValue() {
+			return this.value;
+		}
+		
+	}
+	
+	/**
+	 * get node attributes for DOT representation (e.g. node color, shape etc)
+	 * @return
+	 */
+	public Map<String, Attribute> getDOTAttributes() {	
+		Map<String, Attribute> DOTAttributesMap = new HashMap<String, Attribute>();
+		if(this.type == NodeType.INV) {
+			DOTAttributesMap.put("fillcolor", new DOTAttribute("lightgrey"));
+		}
+		else {
+			if(this.modifier == NodeModifier.INPUT) {
+				DOTAttributesMap.put("fillcolor", new DOTAttribute("green"));
+			}
+			else if(this.modifier == NodeModifier.OUTPUT) {
+				DOTAttributesMap.put("fillcolor", new DOTAttribute("orange"));
+			}
+			else {
+				DOTAttributesMap.put("fillcolor", new DOTAttribute("white"));
+			}
+		}
+		DOTAttributesMap.put("style", new DOTAttribute("filled"));
+		return DOTAttributesMap;
 	}
 }
