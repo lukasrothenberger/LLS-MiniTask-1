@@ -220,16 +220,16 @@ public class GraphWrapper {
 		//append model end
 		blifString += ".end\n\n";
 		//append subcircuit definitions
-		blifString += getSubcircuitDefinitions();
+		blifString += getBasicAndSubcircuitDefinitions();
 		return blifString;
 	}
 	
 	/**
-	 * Create and return a String containing the definitions for BLIF subcircuits
+	 * Create and return a String containing the definitions for BLIF subcircuits and constants
 	 * used by the toBLIFFormat()-Method.
 	 * @return String containing the used subcircuits.
 	 */
-	private String getSubcircuitDefinitions() {
+	private String getBasicAndSubcircuitDefinitions() {
 		String blifString = "";
 		//define subcircuit INV
 		blifString += ".model inv\n";
@@ -255,6 +255,9 @@ public class GraphWrapper {
 		blifString += "110 1\n";
 		blifString += "111 1\n";
 		blifString += ".end\n\n";
+		//define constant 0
+		blifString += ".names a0";
+		blifString += "\n\n";
 		return blifString;
 	}
 	
