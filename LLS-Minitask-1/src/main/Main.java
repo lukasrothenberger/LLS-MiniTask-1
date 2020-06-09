@@ -1,5 +1,8 @@
 package main;
 
+import Parser.Input_Parser;
+import Parser.ReadFile;
+
 import java.io.File;
 
 import Graph.GraphWrapper;
@@ -7,6 +10,8 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
+		
+		Input_Parser.Invoke_Parser();
 		GraphWrapper graph = new GraphWrapper();
 		
 		// DEBUG (equivalent to aig_0_min.aag)

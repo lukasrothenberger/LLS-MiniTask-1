@@ -48,6 +48,7 @@ public class GraphWrapper {
 		internalGraph.addVertex(newNode);
 		inputNodes.add(newNode);
 		nodesMap.put(id, newNode);
+		System.out.println("Hi Lukas");
 	}
 	
 	/**
