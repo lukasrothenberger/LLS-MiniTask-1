@@ -143,10 +143,21 @@ public class GraphWrapper {
 		return nodesMap.get(id);
 	}
 	
-	
+	/**
+	 * Iterates over each node in the graph.
+	 * If a node is of type And, it is converted into a node of type MAJ by changing the type value
+	 * and adding constant zero as a new input.
+	 * @throws Exception
+	 */
 	public void convertAIGtoMAJnodes() throws Exception {
-		//TODO implement convertAIGtoMAJnodes
-		throw new Exception("TODO");
+		System.out.println("Converting AND to MAJ nodes...");
+		for (Node node : internalGraph.vertexSet()) {
+			if(node.type == NodeType.AND) {
+				node.type = NodeType.MAJ;
+				addEdge(node.id, 0, false);
+			}
+		}
+		System.out.println("\tDone.");
 	}
 	
 	/**
