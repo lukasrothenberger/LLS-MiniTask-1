@@ -1,5 +1,7 @@
 package main;
 
+import java.io.File;
+
 import Graph.GraphWrapper;
 
 public class Main {
@@ -43,6 +45,11 @@ public class Main {
 		graph.exportToDOTandPNG("majGraph");
 		graph.exportToBLIF("majGraph");
 
+		//#### Perform Equivalence checks:
+		//input file <-> created unmodified Graph
+		ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/aig_0_min.blif"), new File("output/unmodifiedGraph.blif"));
+		//created unmodified Graph <-> MAJ Graph
+		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 	}
 	
 }
