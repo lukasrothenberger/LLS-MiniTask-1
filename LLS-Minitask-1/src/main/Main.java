@@ -37,6 +37,11 @@ public class Main {
 		
 		//#### Export Graph to DOT Format and create PNG image. ####
 		graph.exportToDOTandPNG("unmodifiedGraph");
+		
+		//#### Test conversion to MAJ ####
+		graph.convertAIGtoMAJnodes();
+		graph.exportToDOTandPNG("majGraph");
+		graph.exportToBLIF("majGraph");
 
 	}
 	
