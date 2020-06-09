@@ -41,6 +41,7 @@ public class Main {
 		//#### Test conversion to MAJ ####
 		graph.convertAIGtoMAJnodes();
 		graph.exportToDOTandPNG("majGraph");
+		graph.exportToBLIF("majGraph");
 
 	}
 	

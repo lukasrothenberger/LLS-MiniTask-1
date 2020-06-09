@@ -219,6 +219,8 @@ public class GraphWrapper {
 		blifString += "\n";
 		//write buffer to map output nodes to their last gates
 		blifString += buffer;
+		//define constant 0
+		blifString += ".names a0\n";
 		//append gates
 		for(Node node : internalGraph.vertexSet()) {
 			if(node.modifier != NodeModifier.INTERMEDIATE || node.id == 0) {
@@ -266,9 +268,6 @@ public class GraphWrapper {
 		blifString += "110 1\n";
 		blifString += "111 1\n";
 		blifString += ".end\n\n";
-		//define constant 0
-		blifString += ".names a0";
-		blifString += "\n\n";
 		return blifString;
 	}
 	
