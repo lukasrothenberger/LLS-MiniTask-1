@@ -9,10 +9,7 @@ import Graph.GraphWrapper;
 public class Input_Parser {
 
 	@SuppressWarnings("null")
-	public static void Invoke_Parser()throws Exception {
-
-		String file_name = "C:\\Users\\Pallavi GR\\git\\LLS-MiniTask-1\\LLS-Minitask-1\\data\\aiger-set\\ascii\\aig_0_min.aag";
-		
+	public static GraphWrapper Invoke_Parser(String file_name)throws Exception {
 		FileReader fr = new FileReader(file_name);
 		BufferedReader br = new BufferedReader(fr);
 		Scanner s = new Scanner(br);
@@ -30,44 +27,42 @@ public class Input_Parser {
 				int and_gate = Integer.parseInt(split[5]);
 				int counter = 0;
 				GraphWrapper graph = new GraphWrapper();
-				//System.out.println(input);
 				latch = input + latch;
 				output = latch + output;
 				and_gate = output + and_gate;
 				while (s.hasNextLine()) {
-				//list.add(s.nextLine());
 					if(counter < input) 
-					{   System.out.println(input);
+					{
 						long ip = Long.parseLong(s.nextLine());
 						graph.addInputNode(ip);
 					}
-					if(counter >= latch && counter < output) {
-						System.out.println(output);
+					else if(counter >= latch && counter < output) {
 						long op = Long.parseLong(s.nextLine());
 						graph.addOutputNode(op);
 					}
-					if(counter >= output && counter < and_gate) {
-						System.out.println(and_gate);
+					else if(counter >= output && counter < and_gate) {
 						String[] splt = s.nextLine().split(" ");
 						long id = Long.parseLong(splt[0]);
 						long c1 = Long.parseLong(splt[1]);
 						long c2 = Long.parseLong(splt[2]);
 						graph.addAndGate(id, c1, c2);
-						}
+					}
+					else {
+						s.nextLine();
+					}
+					
 					counter++;						
 				}
-				graph.exportToDOTandPNG("test");
-				System.out.println(graph.toDOTFormat());
+				return graph;
 				//System.out.println(graph.toBLIFFormat());
-				String a = list.get(0);
-				System.out.println(a);   //// gives the first line as string
+				//System.out.println(a);   //// gives the first line as string
 				//char[] ch = a.toCharArray();  ///convert to char array
 				//int l = ch.length;
 				//String[] split = a.split(" ");				
-				System.out.println(input);
-				for(int i=0;i<split.length;i++){    
-					System.out.println(" At index " +i+" is: " + split[i]);
-					}
+		//		System.out.println(input);
+		//		for(int i=0;i<split.length;i++){    
+		//			System.out.println(" At index " +i+" is: " + split[i]);
+		//			}
 			//	String[] yourArray = sb.toString().split(" ");---not used
 				//read the next line or so--- not sure!!!
 			/*	strLine = br.readLine();
@@ -77,7 +72,7 @@ public class Input_Parser {
                 if (strLine==null)
                 break;*/
             
-			System.out.println(Arrays.toString(list.toArray()));
+/*			System.out.println(Arrays.toString(list.toArray()));
 			s.close();
 			
 			
@@ -95,6 +90,8 @@ public class Input_Parser {
 			}
 			
 		}
+*/
+}
 }
 		
 
