@@ -1,0 +1,114 @@
+.model /home/lukas/git/LLS-MiniTask-1/LLS-Minitask-1/data/aiger-set/binary/aig_5_min.aiger
+.inputs i2 i4 i6 i8 i10 i12 i14 i16 
+.outputs o0 
+.names i10 i6 a18
+00 1
+.names i16 i12 a20
+10 1
+.names a20 a18 a22
+11 1
+.names i12 i6 a24
+10 1
+.names i12 i6 a26
+01 1
+.names a26 a24 a28
+00 1
+.names i16 i10 a30
+11 1
+.names i16 i10 a32
+00 1
+.names a32 a30 a34
+00 1
+.names a34 a28 a36
+10 1
+.names a36 a22 a38
+00 1
+.names a38 i14 a40
+01 1
+.names i16 i10 a42
+10 1
+.names a42 i6 a44
+01 1
+.names i14 i12 a46
+00 1
+.names a34 i6 a48
+10 1
+.names a46 a44 a50
+10 1
+.names a50 a48 a52
+10 1
+.names a52 a40 a54
+00 1
+.names a54 i8 a56
+01 1
+.names i16 i14 a58
+11 1
+.names i16 i14 a60
+00 1
+.names a60 a58 a62
+00 1
+.names a62 i12 a64
+11 1
+.names a20 a18 a66
+01 1
+.names a66 a64 a68
+10 1
+.names i14 i12 a70
+11 1
+.names a70 i6 a72
+00 1
+.names a70 i6 a74
+11 1
+.names a46 i10 a76
+01 1
+.names a76 a62 a78
+11 1
+.names a74 a72 a80
+00 1
+.names a80 a78 a82
+11 1
+.names a82 a68 a84
+00 1
+.names a84 i8 a86
+00 1
+.names i12 i8 a88
+01 1
+.names i14 i8 a90
+10 1
+.names i14 i8 a92
+01 1
+.names a92 a90 a94
+00 1
+.names a94 i12 a96
+11 1
+.names i10 i6 a98
+01 1
+.names a98 a88 a100
+10 1
+.names a100 a96 a102
+10 1
+.names a94 i6 a104
+11 1
+.names a28 i14 a106
+01 1
+.names a28 i14 a108
+10 1
+.names a104 i10 a110
+01 1
+.names a108 a106 a112
+00 1
+.names a112 a110 a114
+11 1
+.names a114 a102 a116
+00 1
+.names a116 a86 a118
+10 1
+.names a118 a56 a120
+10 1
+.names i4 i2 a122
+00 1
+.names a122 a120 a124
+10 1
+.names a124 o0
+1 1
+.end

@@ -1,0 +1,198 @@
+.model /home/lukas/git/LLS-MiniTask-1/LLS-Minitask-1/data/aiger-set/binary/aig_7_min.aiger
+.inputs i2 i4 i6 i8 i10 i12 i14 i16 i18 
+.outputs o0 
+.names i18 i14 a20
+10 1
+.names i10 i6 a22
+01 1
+.names a20 i12 a24
+10 1
+.names a24 a22 a26
+11 1
+.names i18 i14 a28
+11 1
+.names i18 i14 a30
+00 1
+.names a30 a28 a32
+00 1
+.names i12 i10 a34
+00 1
+.names a34 a32 a36
+10 1
+.names i14 i12 a38
+00 1
+.names i14 i12 a40
+11 1
+.names a40 a38 a42
+00 1
+.names i18 i10 a44
+00 1
+.names a44 a32 a46
+01 1
+.names a46 a42 a48
+11 1
+.names a48 a36 a50
+00 1
+.names a50 i6 a52
+00 1
+.names a26 i16 a54
+01 1
+.names a54 a52 a56
+10 1
+.names i14 i10 a58
+00 1
+.names i18 i12 a60
+11 1
+.names i18 i12 a62
+00 1
+.names a62 a60 a64
+00 1
+.names a64 a58 a66
+00 1
+.names a34 i14 a68
+01 1
+.names a68 a64 a70
+01 1
+.names a66 i6 a72
+01 1
+.names a72 a70 a74
+10 1
+.names i14 i12 a76
+10 1
+.names i18 i14 a78
+01 1
+.names a78 i10 a80
+01 1
+.names a44 i6 a82
+00 1
+.names a80 a76 a84
+00 1
+.names a84 a82 a86
+11 1
+.names a86 i16 a88
+00 1
+.names a88 a74 a90
+10 1
+.names a90 i8 a92
+01 1
+.names a92 a56 a94
+10 1
+.names a44 a20 a96
+00 1
+.names a22 i12 a98
+01 1
+.names a98 a82 a100
+10 1
+.names a100 a96 a102
+10 1
+.names i12 i10 a104
+01 1
+.names a104 i6 a106
+11 1
+.names a106 a32 a108
+10 1
+.names a108 a102 a110
+00 1
+.names a110 i16 a112
+00 1
+.names i16 i6 a114
+11 1
+.names a114 a44 a116
+11 1
+.names i10 i6 a118
+10 1
+.names i18 i16 a120
+10 1
+.names a120 a118 a122
+11 1
+.names a122 a116 a124
+00 1
+.names a124 a42 a126
+00 1
+.names a30 i6 a128
+10 1
+.names a128 a28 a130
+00 1
+.names a104 i16 a132
+11 1
+.names a132 a130 a134
+10 1
+.names a134 a126 a136
+00 1
+.names a136 a112 a138
+10 1
+.names a138 i8 a140
+00 1
+.names i16 i6 a142
+10 1
+.names a142 i14 a144
+00 1
+.names a144 i12 a146
+01 1
+.names a114 i14 a148
+01 1
+.names a144 i12 a150
+10 1
+.names a148 i10 a152
+01 1
+.names a152 a146 a154
+10 1
+.names a154 a150 a156
+10 1
+.names i16 i10 a158
+10 1
+.names a38 i6 a160
+01 1
+.names a160 a158 a162
+11 1
+.names a162 a156 a164
+00 1
+.names a164 i8 a166
+01 1
+.names i14 i10 a168
+01 1
+.names i12 i6 a170
+11 1
+.names a170 a158 a172
+10 1
+.names a172 a168 a174
+10 1
+.names a58 i12 a176
+10 1
+.names a176 a142 a178
+11 1
+.names a178 a174 a180
+00 1
+.names a180 i8 a182
+00 1
+.names a118 i14 a184
+01 1
+.names i16 i12 a186
+11 1
+.names i16 i12 a188
+00 1
+.names a188 a186 a190
+00 1
+.names a22 i8 a192
+10 1
+.names a192 i14 a194
+00 1
+.names a190 a184 a196
+00 1
+.names a196 a194 a198
+10 1
+.names a198 a182 a200
+00 1
+.names a200 a166 a202
+10 1
+.names a202 a94 a204
+10 1
+.names a204 a140 a206
+10 1
+.names i4 i2 a208
+00 1
+.names a208 a206 a210
+10 1
+.names a210 o0
+1 1
+.end
