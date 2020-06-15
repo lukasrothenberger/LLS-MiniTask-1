@@ -193,4 +193,33 @@ public class Node {
 		DOTAttributesMap.put("style", new DOTAttribute("filled"));
 		return DOTAttributesMap;
 	}
+
+	
+	private int[] getCounts(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+		// counts[0] == val_count
+		// counts[1] == maj_count
+		// counts[2] == inv_count
+		int counts[] = {0,0,0};
+		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+			if(ie.dest == this.id)
+				continue;
+			Node child = nodesMap.get(ie.dest);
+			if(child.type == NodeType.VAL)
+				counts[0]++;
+			if(child.type == NodeType.MAJ)
+				counts[1]++;
+			if(child.type == NodeType.INV)
+				counts[2]++;
+		}
+		return counts;
+	}
+	
+	
+	public boolean associativityPossible(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+		int[] counts = getCounts(internalGraph, nodesMap);
+		if(counts[0] == 2 && counts[1] == 1) {
+			return true;
+		}
+		return false;
+	}
 }

@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 		
-		String input_file = "data/aiger-set/ascii/aig_9_min.aag";
+		String input_file = "data/aiger-set/ascii/aig_0_min.aag";
 		// Platform independent file path achieved by using File.separator
 		input_file = input_file.replaceAll("/", File.separator);
 		
@@ -34,7 +34,7 @@ public class Main {
 		//created unmodified Graph <-> MAJ Graph
 		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 		
-		ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_9_min.blif"));
+		ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 		ABC.Statistics.getStatistics(new File("output/majGraph.blif"));
 	}
 	

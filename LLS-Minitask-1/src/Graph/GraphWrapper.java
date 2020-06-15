@@ -23,6 +23,7 @@ public class GraphWrapper {
 	public HashMap<Long, Node> nodesMap;
 	public HashSet<Node> inputNodes;
 	public HashSet<Node> outputNodes;
+	public GraphModifier graphModifier;
 	
 	/**
 	 * Constructor for Wrapper Object for internal jgrapht-graph
@@ -36,7 +37,10 @@ public class GraphWrapper {
 		Node constantZero = new Node(0, NodeType.VAL, NodeModifier.INTERMEDIATE);
 		internalGraph.addVertex(constantZero);
 		nodesMap.put((long) 0, constantZero);
+		
+		this.graphModifier = new GraphModifier(this);
 	}
+	
 	
 	/**
 	 * Add input value with given id to the graph.
