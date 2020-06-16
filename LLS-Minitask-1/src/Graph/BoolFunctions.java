@@ -81,9 +81,9 @@ public class BoolFunctions {
 								bf.addEdge(innerNode.id, innerInput.dest);
 							}
 							else if(successfull == 1) {
+								bf.deleteEdge(node.id, innerInput.dest);
 								bf.addEdge(node.id, outerInput.dest);
 								bf.addEdge(innerNode.id, innerInput.dest);
-								bf.deleteEdge(node.id, innerInput.dest);
 							}
 							else {
 								throw e;

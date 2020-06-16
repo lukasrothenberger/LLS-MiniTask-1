@@ -36,6 +36,8 @@ public class Main {
 		ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_0_min.blif"), new File("output/unmodifiedGraph.blif"));
 		//created unmodified Graph <-> MAJ Graph
 		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
+		//MAJ Graph <-> majGraph-assoc
+		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 		
 		ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 		ABC.Statistics.getStatistics(new File("output/majGraph.blif"));
