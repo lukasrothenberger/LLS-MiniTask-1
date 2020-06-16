@@ -6,7 +6,7 @@ public class GraphModifier {
 		this.gw = gw;
 	}
 	
-	public void iterationExample() {
+	public void iteration() {
 		for(long nodeID : gw.nodesMap.keySet()) {
 			Node node = gw.nodesMap.get(nodeID);
 			if(node.associativityPossible(gw.internalGraph, gw.nodesMap)) {

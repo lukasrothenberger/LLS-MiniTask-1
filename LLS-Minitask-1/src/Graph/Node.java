@@ -208,9 +208,9 @@ public class Node {
 			Node child = nodesMap.get(ie.dest);
 			if(child.type == NodeType.VAL)
 				counts[0]++;
-			if(child.type == NodeType.MAJ)
+			else if(child.type == NodeType.MAJ)
 				counts[1]++;
-			if(child.type == NodeType.INV)
+			else if(child.type == NodeType.INV)
 				counts[2]++;
 		}
 		return counts;
