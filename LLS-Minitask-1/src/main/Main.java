@@ -30,7 +30,7 @@ public class Main {
 
 		//#### Perform Equivalence checks:
 		//input file <-> created unmodified Graph
-		ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_9_min.blif"), new File("output/unmodifiedGraph.blif"));
+		ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_0_min.blif"), new File("output/unmodifiedGraph.blif"));
 		//created unmodified Graph <-> MAJ Graph
 		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 		

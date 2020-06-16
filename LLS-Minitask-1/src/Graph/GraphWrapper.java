@@ -19,7 +19,7 @@ import org.jgrapht.nio.dot.DOTExporter;
 public class GraphWrapper {
 	// Wrapper class for internal jgrapht-graph
 	
-	public Graph<Node, InvertableEdge> internalGraph;
+	public Graph<Node, Edge> internalGraph;
 	public HashMap<Long, Node> nodesMap;
 	public HashSet<Node> inputNodes;
 	public HashSet<Node> outputNodes;
@@ -29,7 +29,7 @@ public class GraphWrapper {
 	 * Constructor for Wrapper Object for internal jgrapht-graph
 	 */
 	public GraphWrapper() {
-		internalGraph = new SimpleDirectedGraph<>(InvertableEdge.class);
+		internalGraph = new SimpleDirectedGraph<>(Edge.class);
 		nodesMap = new HashMap<Long, Node>();
 		inputNodes = new HashSet<Node>();
 		outputNodes = new HashSet<Node>();
@@ -66,8 +66,8 @@ public class GraphWrapper {
 		outputNodes.add(newNode);
 		nodesMap.put(id, newNode);
 		if(id % 2 != 0) {
-			// output is inverted, create inverted edge from parent
-			addEdge(id, id-1, true);
+			// output is inverted, create edge from parent
+			addEdge(id, id-1);
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class GraphWrapper {
 	 * @param inverted
 	 * @throws Exception 
 	 */
-	private void addEdge(long source, long dest, boolean inverted) throws Exception {
+	private void addEdge(long source, long dest) throws Exception {
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -88,11 +88,11 @@ public class GraphWrapper {
 				Node newNode = new Node(dest, NodeType.INV, NodeModifier.INTERMEDIATE);
 				internalGraph.addVertex(newNode);
 				nodesMap.put(dest, newNode);
-				addEdge(dest, dest-1, true);
+				addEdge(dest, dest-1);
 			}
 		}
 		Node destNode = nodesMap.get(dest);
-		InvertableEdge newEdge = new InvertableEdge(source, dest, inverted);
+		Edge newEdge = new Edge(source, dest);
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
 	}
 	
@@ -112,8 +112,8 @@ public class GraphWrapper {
 		else {
 			nodesMap.get(id).type = NodeType.AND;
 		}
-		addEdge(id, child1, false);
-		addEdge(id, child2, false);	
+		addEdge(id, child1);
+		addEdge(id, child2);	
 	}
 	
 	/**
@@ -133,9 +133,9 @@ public class GraphWrapper {
 		else {
 			nodesMap.get(id).type = NodeType.MAJ;
 		}
-		addEdge(id, child1, false);
-		addEdge(id, child2, false);	
-		addEdge(id, child3, false);	
+		addEdge(id, child1);
+		addEdge(id, child2);	
+		addEdge(id, child3);	
 	}
 	
 	/**
@@ -158,7 +158,7 @@ public class GraphWrapper {
 		for (Node node : internalGraph.vertexSet()) {
 			if(node.type == NodeType.AND) {
 				node.type = NodeType.MAJ;
-				addEdge(node.id, 0, false);
+				addEdge(node.id, 0);
 			}
 		}
 		System.out.println("\tDone.");
@@ -173,7 +173,7 @@ public class GraphWrapper {
 			System.out.println(node.toString());
 		}
 		System.out.println("EDGES:");
-		for(InvertableEdge edge : internalGraph.edgeSet()) {
+		for(Edge edge : internalGraph.edgeSet()) {
 			System.out.println(edge.toString());
 
 		}
@@ -186,7 +186,7 @@ public class GraphWrapper {
 	 * @return DOT representation as String
 	 */
 	public String toDOTFormat() {
-		DOTExporter<Node, InvertableEdge> de = new DOTExporter<Node, InvertableEdge>(); //(new StringNameProvider<Node>(), null, null);
+		DOTExporter<Node, Edge> de = new DOTExporter<Node, Edge>(); //(new StringNameProvider<Node>(), null, null);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    OutputStreamWriter osw = new OutputStreamWriter(baos);
 	    de.setVertexIdProvider((node) -> {return node.toString();});

@@ -73,7 +73,7 @@ public class Node {
 	 * @return String representation of the node for use in BLIF file.
 	 * @throws Exception
 	 */
-	public String toBLIF(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
+	public String toBLIF(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
 		String result = "";
 		switch(this.modifier) {
 			case INPUT:{
@@ -95,7 +95,7 @@ public class Node {
 						int count = 0;
 						Node child1 = null;
 						Node child2 = null;
-						for(InvertableEdge e : internalGraph.edgesOf(this)) {
+						for(Edge e : internalGraph.edgesOf(this)) {
 							if(e.source != this.id)
 								continue;
 							if(count == 0)
@@ -114,7 +114,7 @@ public class Node {
 						Node child1 = null;
 						Node child2 = null;
 						Node child3 = null;
-						for(InvertableEdge e : internalGraph.edgesOf(this)) {
+						for(Edge e : internalGraph.edgesOf(this)) {
 							if(e.source != this.id)
 								continue;
 							if(count == 0)
@@ -133,7 +133,7 @@ public class Node {
 						// .subckt inv A=x O=j
 						int count = 0;
 						Node child1 = null;
-						for(InvertableEdge e : internalGraph.edgesOf(this)) {
+						for(Edge e : internalGraph.edgesOf(this)) {
 							if(e.source != this.id)
 								continue;
 							if(count == 0)
@@ -197,12 +197,12 @@ public class Node {
 	}
 
 	
-	private int[] getCounts(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	private int[] getCounts(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		// counts[0] == val_count
 		// counts[1] == maj_count
 		// counts[2] == inv_count
 		int counts[] = {0,0,0};
-		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+		for(Edge ie : internalGraph.edgesOf(this)) {
 			if(ie.dest == this.id)
 				continue;
 			Node child = nodesMap.get(ie.dest);
@@ -217,7 +217,7 @@ public class Node {
 	}
 	
 	
-	public boolean associativityPossible(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public boolean associativityPossible(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		int[] counts = getCounts(internalGraph, nodesMap);
 		if(counts[0] == 2 && counts[1] == 1) {
 			return true;
@@ -231,9 +231,9 @@ public class Node {
 	 * @param nodesMap
 	 * @return
 	 */
-	public Node[] getChildrenNodes(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public Node[] getChildrenNodes(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		List<Node> resultList = new LinkedList<Node>();
-		for(InvertableEdge ie : this.getOutgoingEdges(internalGraph, nodesMap)) {
+		for(Edge ie : this.getOutgoingEdges(internalGraph, nodesMap)) {
 			resultList.add(nodesMap.get(ie.dest));
 		}
 		//convert List of arbitrary size to array
@@ -249,9 +249,9 @@ public class Node {
 	 * @param nodesMap
 	 * @return
 	 */
-	public InvertableEdge[] getIncomingEdges(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
-		List<InvertableEdge> resultList = new LinkedList<InvertableEdge>();
-		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+	public Edge[] getIncomingEdges(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		List<Edge> resultList = new LinkedList<Edge>();
+		for(Edge ie : internalGraph.edgesOf(this)) {
 			if(ie.dest == this.id) {
 				// incoming edge
 				resultList.add(ie);
@@ -262,7 +262,7 @@ public class Node {
 			}
 		}
 		//convert list of arbitrary length to array
-		InvertableEdge[] resultArray = new InvertableEdge[resultList.size()];
+		Edge[] resultArray = new Edge[resultList.size()];
 		resultArray = resultList.toArray(resultArray);
 		return resultArray;
 	}
@@ -274,9 +274,9 @@ public class Node {
 	 * @param nodesMap
 	 * @return
 	 */
-	public InvertableEdge[] getOutgoingEdges(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
-		List<InvertableEdge> resultList = new LinkedList<InvertableEdge>();
-		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+	public Edge[] getOutgoingEdges(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		List<Edge> resultList = new LinkedList<Edge>();
+		for(Edge ie : internalGraph.edgesOf(this)) {
 			if(ie.dest == this.id) {
 				// incoming edge
 				continue;
@@ -287,7 +287,7 @@ public class Node {
 			}
 		}
 		//convert list of arbitrary length to array
-		InvertableEdge[] resultArray = new InvertableEdge[resultList.size()];
+		Edge[] resultArray = new Edge[resultList.size()];
 		resultArray = resultList.toArray(resultArray);
 		return resultArray;
 	}
