@@ -1,6 +1,8 @@
 package Graph;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.jgrapht.Graph;
@@ -221,5 +223,72 @@ public class Node {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Create and return an array filled with the connected input nodes of a gate represented by the respective node object.
+	 * @param internalGraph
+	 * @param nodesMap
+	 * @return
+	 */
+	public Node[] getChildrenNodes(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+		List<Node> resultList = new LinkedList<Node>();
+		for(InvertableEdge ie : this.getOutgoingEdges(internalGraph, nodesMap)) {
+			resultList.add(nodesMap.get(ie.dest));
+		}
+		//convert List of arbitrary size to array
+		Node[] resultArray = new Node[resultList.size()];
+		resultArray = resultList.toArray(resultArray);
+		return resultArray;
+	}
+	
+	/**
+	 * Creates and returns an array of incoming InvertableEdges for the node.
+	 * Incoming edges are those that connect the current node as an input to another node.
+	 * @param internalGraph
+	 * @param nodesMap
+	 * @return
+	 */
+	public InvertableEdge[] getIncomingEdges(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+		List<InvertableEdge> resultList = new LinkedList<InvertableEdge>();
+		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+			if(ie.dest == this.id) {
+				// incoming edge
+				resultList.add(ie);
+			}
+			else {
+				//outgoing edge
+				continue;
+			}
+		}
+		//convert list of arbitrary length to array
+		InvertableEdge[] resultArray = new InvertableEdge[resultList.size()];
+		resultArray = resultList.toArray(resultArray);
+		return resultArray;
+	}
+	
+	/**
+	 * Creates and returns an array of outgoing InvertableEdges for the node.
+	 * Outgoing edges are those connecting the current node to it's inputs.
+	 * @param internalGraph
+	 * @param nodesMap
+	 * @return
+	 */
+	public InvertableEdge[] getOutgoingEdges(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+		List<InvertableEdge> resultList = new LinkedList<InvertableEdge>();
+		for(InvertableEdge ie : internalGraph.edgesOf(this)) {
+			if(ie.dest == this.id) {
+				// incoming edge
+				continue;
+			}
+			else {
+				//outgoing edge
+				resultList.add(ie);
+			}
+		}
+		//convert list of arbitrary length to array
+		InvertableEdge[] resultArray = new InvertableEdge[resultList.size()];
+		resultArray = resultList.toArray(resultArray);
+		return resultArray;
 	}
 }
