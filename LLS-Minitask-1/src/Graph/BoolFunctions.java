@@ -1,5 +1,6 @@
 package Graph;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,19 +53,39 @@ public class BoolFunctions {
 				for(int i = 0; i < outgoingEdges.length; i++) {
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
 						int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
+						//TODO
+						//outerOffset = 1;
 						Edge outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
 						int innerOffset = (int) (Math.random() * 3) % 3;
-						// select random outgoing edge from inner node
-						Edge[] innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
-						Edge innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
+						//TODO
+						//innerOffset = 1;
+						Edge[] innerInputEdges = null;
+						Edge innerInput = null;
+						for(innerOffset = 0; innerOffset < 3; innerOffset++) {
+							// select random outgoing edge from inner node to maj node
+							innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
+							innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
+							if(nodesMap.get(innerInput.dest).type == NodeType.MAJ)
+								break;
+						}
+						if(innerInput == null)
+							continue;
 						// swap selected inner with outer edge
-						long buffer = outerInput.dest;
+						
+						bf.exportToBLIF("intermediate-1");
+						bf.exportToDOTandPNG("intermediate-1");
+						
+						System.out.println("node.id: "+node.id);
+						System.out.println("outerInput.dest: "+ outerInput.dest);
+						System.out.println("innerInput.dest: "+ innerInput.dest);
 						
 						// delete edge from node to outerInput
 						bf.deleteEdge(node.id, outerInput.dest);
 						// delete edge from innerNode to innerInput
 						bf.deleteEdge(innerNode.id, innerInput.dest);
+						
+						bf.exportToDOTandPNG("intermediate-1-post-delete");
 						
 						int successfull = 0;
 						try {
@@ -73,9 +94,15 @@ public class BoolFunctions {
 							successfull++;
 							// create edge from innerNode to outerInput
 							bf.addEdge(innerNode.id, outerInput.dest);
+							bf.exportToDOTandPNG("intermediate-1-post-add1");
 							successfull++;
+							bf.exportToBLIF("intermediate-3");
+							bf.exportToDOTandPNG("intermediate-3");
+							ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-3.blif"));
+							
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 							if(successfull == 0) {
 								bf.addEdge(node.id, outerInput.dest);
 								bf.addEdge(innerNode.id, innerInput.dest);
@@ -89,6 +116,12 @@ public class BoolFunctions {
 								throw e;
 							}
 						}
+						
+						bf.exportToBLIF("intermediate-2");
+						bf.exportToDOTandPNG("intermediate-2");
+						
+						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
+						
 						break;
 					}
 				}

@@ -223,7 +223,7 @@ public class Node {
 	
 	public boolean associativityPossible(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		int[] counts = getCounts(internalGraph, nodesMap);
-		if(counts[1] >= 1) {
+		if(counts[1]+counts[0]+counts[2] == 3 && counts[1] > 0) {
 			return true;
 		}
 		return false;

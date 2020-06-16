@@ -13,8 +13,9 @@ public class EquivalenceCheck {
 	 * Prints the results to the console and returns them as a String.
 	 * @param blifOne File Object representing the first BLIF file.
 	 * @param blifTwo File Object representing the second BLIF file.
+	 * @throws Exception 
 	 */
-	public static void performEquivalenceCheck(File blifOne, File blifTwo) {
+	public static void performEquivalenceCheck(File blifOne, File blifTwo) throws Exception {
 		System.out.println("Executing equivalence check for:");
 		System.out.println("\t"+blifOne.getAbsolutePath());
 		System.out.println("\t"+blifTwo.getAbsolutePath()+"");
@@ -39,17 +40,23 @@ public class EquivalenceCheck {
 		
 		for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
 			String[] c = {abcExecutablePath, "-f", "temp/tmp_compare_script"};
+			boolean containsSuccessMessage = false;
 			try {
 				System.out.println("Output of equivalence check:");
 				Process p = Runtime.getRuntime().exec(c);
 				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line;
 				while ((line = input.readLine()) != null) {
+					if(line.contains("Networks are equivalent"))
+						containsSuccessMessage = true;
 				  System.out.println(line);
 				}
 				input.close();
 			} catch (IOException e) {
 				continue;
+			}
+			if(! containsSuccessMessage) {
+				throw new Exception("Networks not equivalent!");
 			}
 			System.out.println("\tDone.");
 			return;
