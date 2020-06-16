@@ -117,15 +117,19 @@ public class Node {
 						for(Edge e : internalGraph.edgesOf(this)) {
 							if(e.source != this.id)
 								continue;
-							if(count == 0)
-								child1 = nodesMap.get(e.dest);
-							if(count == 1)
-								child2 = nodesMap.get(e.dest);
-							if(count == 2)
-								child3 = nodesMap.get(e.dest);
-							if(count > 2)
-								throw new Exception("Incorrect number of children for MAJ node: "+ this.id);
-							count++;
+							int tmpWeight = e.weight;
+							while(tmpWeight > 0) {
+								if(count == 0)
+									child1 = nodesMap.get(e.dest);
+								if(count == 1)
+									child2 = nodesMap.get(e.dest);
+								if(count == 2)
+									child3 = nodesMap.get(e.dest);
+								if(count > 2)
+									throw new Exception("Incorrect number of children for MAJ node: "+ this.id);
+								count++;
+								tmpWeight--;
+							}
 						}
 						return ".subckt maj3 A="+child1.toBLIFIdentifier()+" B="+child2.toBLIFIdentifier()+" C="+child3.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}

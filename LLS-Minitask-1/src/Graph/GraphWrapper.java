@@ -27,7 +27,6 @@ public class GraphWrapper {
 	public HashSet<Node> outputNodes;
 	public GraphModifier graphModifier;
 	public BoolFunctions boolFunctions;
-	long edgeCounter = 0;
 	
 	/**
 	 * Constructor for Wrapper Object for internal jgrapht-graph
@@ -83,7 +82,12 @@ public class GraphWrapper {
 	 * @throws Exception 
 	 */
 	public void addEdge(long source, long dest) throws Exception {
-		//TODO fix weighted edge
+		//check if edge from source to dest already exists
+		if(internalGraph.containsEdge(nodesMap.get(source), nodesMap.get(dest))) {
+			//increase weight
+			internalGraph.getEdge(nodesMap.get(source), nodesMap.get(dest)).weight++;
+			return;
+		}
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -96,10 +100,8 @@ public class GraphWrapper {
 			}
 		}
 		Node destNode = nodesMap.get(dest);
-		Edge newEdge = new Edge(edgeCounter, source, dest);
+		Edge newEdge = new Edge(source, dest);
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
-		
-		this.edgeCounter++;
 	}
 	
 	/**
@@ -108,7 +110,12 @@ public class GraphWrapper {
 	 * @param dest
 	 */
 	public void deleteEdge(long source, long dest) {
+		
 		for(Edge e : internalGraph.getAllEdges(nodesMap.get(source), nodesMap.get(dest))){
+			if(e.weight > 1) {
+				e.weight--;
+				return;
+			}
 			internalGraph.removeEdge(e);
 			return;
 		}
@@ -211,6 +218,7 @@ public class GraphWrapper {
 	    OutputStreamWriter osw = new OutputStreamWriter(baos);
 	    de.setVertexIdProvider((node) -> {return node.toString();});
 	    de.setVertexAttributeProvider((node)->{return node.getDOTAttributes();});
+	    de.setEdgeAttributeProvider((edge)->{return edge.getDOTAttributes();});
 		de.exportGraph(internalGraph, osw);
 		return baos.toString();
 	}
