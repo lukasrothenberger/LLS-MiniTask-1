@@ -13,6 +13,8 @@ import java.util.HashSet;
 //import org.jinternalGrapht.internalGraph.SimpleGraph;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 
@@ -24,12 +26,14 @@ public class GraphWrapper {
 	public HashSet<Node> inputNodes;
 	public HashSet<Node> outputNodes;
 	public GraphModifier graphModifier;
+	public BoolFunctions boolFunctions;
+	long edgeCounter = 0;
 	
 	/**
 	 * Constructor for Wrapper Object for internal jgrapht-graph
 	 */
 	public GraphWrapper() {
-		internalGraph = new SimpleDirectedGraph<>(Edge.class);
+		internalGraph = new DirectedAcyclicGraph<>(Edge.class);
 		nodesMap = new HashMap<Long, Node>();
 		inputNodes = new HashSet<Node>();
 		outputNodes = new HashSet<Node>();
@@ -39,6 +43,7 @@ public class GraphWrapper {
 		nodesMap.put((long) 0, constantZero);
 		
 		this.graphModifier = new GraphModifier(this);
+		this.boolFunctions = new BoolFunctions(this);
 	}
 	
 	
@@ -78,6 +83,7 @@ public class GraphWrapper {
 	 * @throws Exception 
 	 */
 	public void addEdge(long source, long dest) throws Exception {
+		//TODO fix weighted edge
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -90,8 +96,10 @@ public class GraphWrapper {
 			}
 		}
 		Node destNode = nodesMap.get(dest);
-		Edge newEdge = new Edge(source, dest);
+		Edge newEdge = new Edge(edgeCounter, source, dest);
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
+		
+		this.edgeCounter++;
 	}
 	
 	/**
@@ -100,7 +108,11 @@ public class GraphWrapper {
 	 * @param dest
 	 */
 	public void deleteEdge(long source, long dest) {
-		internalGraph.removeEdge(nodesMap.get(source), nodesMap.get(dest));
+		for(Edge e : internalGraph.getAllEdges(nodesMap.get(source), nodesMap.get(dest))){
+			internalGraph.removeEdge(e);
+			return;
+		}
+		
 	}
 	
 	

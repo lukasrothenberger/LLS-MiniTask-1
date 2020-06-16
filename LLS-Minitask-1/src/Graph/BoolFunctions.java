@@ -6,21 +6,11 @@ import java.util.List;
 
 import org.jgrapht.Graph;
 
-class BoolFunctions {
+public class BoolFunctions {
 	private GraphWrapper bf;
-	long id;
-	NodeType type;
-	NodeModifier modifier;
-	boolean input = false;
-	boolean output = false;
-	private Node node;
 
-	public BoolFunctions() {
+	public BoolFunctions(GraphWrapper bf) {
 		this.bf = bf;
-		this.id = id;
-		this.type = type;
-		this.modifier = modifier;
-		this.node = node;
 	}
 
 	public long Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
@@ -29,13 +19,13 @@ class BoolFunctions {
 		//loop at all nodes
 		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
 		Node node = bf.nodesMap.get(NodeType.VAL);
-		Edge[]  = node.getOutgoingEdges(internalGraph, nodesMap);
+		Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 		//IncomingEdges = node.getIncomingEdges(internalGraph, nodesMap);
 		//Edge[] resultArray = new Edge[IncomingEdges.length];
 		
 		for(long nodeID : bf.nodesMap.keySet()) {
 			
-			//InvertableEdge ie = bf.internalGraph.getEdge(arg0, arg1);
+			//Edge ie = bf.internalGraph.getEdge(arg0, arg1);
 		}
 		return a;
 	}
@@ -52,7 +42,69 @@ class BoolFunctions {
 		return a;
 	}
 	
-	public long Associativity(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
+		//loop at all nodes
+		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
+		for(long nodeID : bf.nodesMap.keySet()) {
+			System.out.println("OUTER LOOP");
+			Node node = nodesMap.get(nodeID);
+			if(node.associativityPossible(internalGraph, nodesMap)) {
+				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+				for(int i = 0; i < outgoingEdges.length; i++) {
+					System.out.println("INNER LOOP");
+					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
+						System.out.println("MAJ NODE FOUND");
+						int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
+						Edge outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
+						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
+						System.out.println("selecting innerOffset");
+						int innerOffset = (int) (Math.random() * 3) % 3;
+						// select random outgoing edge from inner node
+						Edge[] innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
+						Edge innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
+						// swap selected inner with outer edge
+						System.out.println("Node ID: "+ node.id);
+						System.out.println("Swapping : "+outerInput.dest + " <-> "+ innerInput.dest);
+						long buffer = outerInput.dest;
+						
+						// delete edge from node to outerInput
+						bf.deleteEdge(node.id, outerInput.dest);
+						// delete edge from innerNode to innerInput
+						bf.deleteEdge(innerNode.id, innerInput.dest);
+						
+						int successfull = 0;
+						try {
+							// create edge from node to innerInput
+							bf.addEdge(node.id, innerInput.dest);
+							successfull++;
+							// create edge from innerNode to outerInput
+							bf.addEdge(innerNode.id, outerInput.dest);
+							successfull++;
+						}
+						catch (Exception e) {
+							if(successfull == 0) {
+								bf.addEdge(node.id, outerInput.dest);
+								bf.addEdge(innerNode.id, innerInput.dest);
+							}
+							else if(successfull == 1) {
+								bf.addEdge(node.id, outerInput.dest);
+								bf.addEdge(innerNode.id, innerInput.dest);
+								bf.deleteEdge(node.id, innerInput.dest);
+							}
+							else {
+								throw e;
+							}
+						}
+						
+						System.out.println("break");
+						break;
+					}
+				}
+			}
+		}
+	}
+	
+	public long Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -64,7 +116,7 @@ class BoolFunctions {
 		return a;
 	}
 	
-	public long Distributivity(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public long InvertProp(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -76,7 +128,7 @@ class BoolFunctions {
 		return a;
 	}
 	
-	public long InvertProp(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public long Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -88,7 +140,7 @@ class BoolFunctions {
 		return a;
 	}
 	
-	public long Relevance(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public long ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -100,19 +152,7 @@ class BoolFunctions {
 		return a;
 	}
 	
-	public long ComplementaryAssociativity(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
-		
-		long a = 0,b = 0,c = 0;
-		//loop at all nodes
-		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
-		for(long nodeID : bf.nodesMap.keySet()) {
-			@SuppressWarnings("unlikely-arg-type")
-			Node node = bf.nodesMap.get(NodeType.VAL);
-		}
-		return a;
-	}
-	
-	public long Substitution(Graph<Node, InvertableEdge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public long Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes

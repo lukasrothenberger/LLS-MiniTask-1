@@ -27,6 +27,9 @@ public class Main {
 		graph.convertAIGtoMAJnodes();
 		graph.exportToDOTandPNG("majGraph");
 		graph.exportToBLIF("majGraph");
+		graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
+		graph.exportToDOTandPNG("majGraph-assoc");
+		graph.exportToBLIF("majGraph-assoc");
 
 		//#### Perform Equivalence checks:
 		//input file <-> created unmodified Graph
@@ -50,6 +53,10 @@ public class Main {
 		fig2a.addMajGate(10, 12, 4, 14);
 		
 		fig2a.exportToDOTandPNG("fig2a");
+		
+		fig2a.boolFunctions.Associativity(fig2a.internalGraph, fig2a.nodesMap);
+		
+		fig2a.exportToDOTandPNG("fig2a-assoc");
 		
 	}
 	
