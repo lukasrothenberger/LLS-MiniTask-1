@@ -46,25 +46,19 @@ public class BoolFunctions {
 		//loop at all nodes
 		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
 		for(long nodeID : bf.nodesMap.keySet()) {
-			System.out.println("OUTER LOOP");
 			Node node = nodesMap.get(nodeID);
 			if(node.associativityPossible(internalGraph, nodesMap)) {
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 				for(int i = 0; i < outgoingEdges.length; i++) {
-					System.out.println("INNER LOOP");
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						System.out.println("MAJ NODE FOUND");
 						int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
 						Edge outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
-						System.out.println("selecting innerOffset");
 						int innerOffset = (int) (Math.random() * 3) % 3;
 						// select random outgoing edge from inner node
 						Edge[] innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 						Edge innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
 						// swap selected inner with outer edge
-						System.out.println("Node ID: "+ node.id);
-						System.out.println("Swapping : "+outerInput.dest + " <-> "+ innerInput.dest);
 						long buffer = outerInput.dest;
 						
 						// delete edge from node to outerInput
@@ -95,8 +89,6 @@ public class BoolFunctions {
 								throw e;
 							}
 						}
-						
-						System.out.println("break");
 						break;
 					}
 				}
