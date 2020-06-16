@@ -73,13 +73,11 @@ public class GraphWrapper {
 	
 	/**
 	 * Add an edge from node with id source to node with id dest.
-	 * If parameter inverted == true, the edge represents a connection "containing" an inverter
 	 * @param source
 	 * @param dest
-	 * @param inverted
 	 * @throws Exception 
 	 */
-	private void addEdge(long source, long dest) throws Exception {
+	public void addEdge(long source, long dest) throws Exception {
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -95,6 +93,16 @@ public class GraphWrapper {
 		Edge newEdge = new Edge(source, dest);
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
 	}
+	
+	/**
+	 * Delete an edge from node with id source to node with id dest.
+	 * @param source
+	 * @param dest
+	 */
+	public void deleteEdge(long source, long dest) {
+		internalGraph.removeEdge(nodesMap.get(source), nodesMap.get(dest));
+	}
+	
 	
 	/**
 	 * Add a node representing an AND2 Gate to the Graph.
