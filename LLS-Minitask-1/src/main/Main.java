@@ -36,6 +36,21 @@ public class Main {
 		
 		ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 		ABC.Statistics.getStatistics(new File("output/majGraph.blif"));
+		
+		
+		//### Fig.2.a example Graph
+		GraphWrapper fig2a = new GraphWrapper();
+		fig2a.addInputNode(2); //w
+		fig2a.addInputNode(4); //x
+		fig2a.addInputNode(6); //y
+		fig2a.addInputNode(8); //z
+		fig2a.addOutputNode(10); //h
+		fig2a.addMajGate(14, 8, 4, 6);
+		fig2a.addMajGate(12, 2, 4, 9);
+		fig2a.addMajGate(10, 12, 4, 14);
+		
+		fig2a.exportToDOTandPNG("fig2a");
+		
 	}
 	
 }
