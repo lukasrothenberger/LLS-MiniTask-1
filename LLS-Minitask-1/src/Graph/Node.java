@@ -201,7 +201,7 @@ public class Node {
 	}
 
 	
-	private int[] getCounts(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public int[] getCounts(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		// counts[0] == val_count
 		// counts[1] == maj_count
 		// counts[2] == inv_count

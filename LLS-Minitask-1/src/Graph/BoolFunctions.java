@@ -13,38 +13,86 @@ public class BoolFunctions {
 		this.bf = bf;
 	}
 
-	public long Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
-		
-		long a = 0,b = 0,c = 0;
-		//loop at all nodes
-		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
-		Node node = bf.nodesMap.get(NodeType.VAL);
-		Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-		//IncomingEdges = node.getIncomingEdges(internalGraph, nodesMap);
-		//Edge[] resultArray = new Edge[IncomingEdges.length];
-		
+	public void Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		@SuppressWarnings("unlikely-arg-type")
+		Node node = bf.nodesMap.get(NodeType.VAL);		
 		for(long nodeID : bf.nodesMap.keySet()) {
+			Node ID = nodesMap.get(nodeID);
+			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			int[] counts = node.getCounts(internalGraph, nodesMap);
+			if(counts[0]>=2) {
+			Edge temp;
 			
-			//Edge ie = bf.internalGraph.getEdge(arg0, arg1);
-		}
-		return a;
+			int outerOffset =  Math.random() < 0.5 ? 1 : 2;
+			
+			if(outerOffset > 0 & outerOffset <3) {
+			temp = outgoingEdges[outerOffset] ;
+		    outgoingEdges[outerOffset] = outgoingEdges[0];
+		    outgoingEdges[0] = temp;	
+			}
+			else {
+				Edge temp1;	
+				temp1 = outgoingEdges[1] ;
+			    outgoingEdges[1] = outgoingEdges[2];
+			    outgoingEdges[2] = temp1;				
+			}
+			// should we add new edges after removing the old ones????
+			}
+		}	
 	}
 	
-	public long Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
-		
-		long a = 0,b = 0,c = 0;
-		//loop at all nodes
-		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
-		for(long nodeID : bf.nodesMap.keySet()) {
+	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		Edge majValue;
+		int counter = 0;
 			@SuppressWarnings("unlikely-arg-type")
-			Node node = bf.nodesMap.get(NodeType.VAL);
-		}
-		return a;
+			Node node = bf.nodesMap.get(NodeType.VAL);		
+			for(long nodeID : bf.nodesMap.keySet()) {
+				Node ID = nodesMap.get(nodeID);
+				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+				Edge[] incomingEdge = node.getIncomingEdges(internalGraph, nodesMap);
+				for(int i = 1; i < outgoingEdges.length; i++) {
+					int Offset =  Math.random() < 0.5 ? 1 : 2;
+					Edge Input = outgoingEdges[(i+Offset) % outgoingEdges.length];
+					if(outgoingEdges[Offset] == outgoingEdges[Offset-1]) {
+						counter++;
+						}
+					else if(outgoingEdges[Offset] == outgoingEdges[0])
+						counter++;
+					else
+						continue;
+					if (counter >=1)
+						majValue = outgoingEdges[Offset];
+				
+				incomingEdge = majValue;	//check this!	
+				bf.deleteEdge(node.id, Input.dest);
+				int successfull = 0;
+				try {
+					// create edge from node to next node and remove node
+					bf.addEdge(node.id, Input.dest);
+					successfull++;
+					//add logic to remove MAJ node
+					}
+				catch (Exception e) {
+					if(successfull == 0) {
+						bf.addEdge(node.id, Input.dest);
+						//add logic to remove MAJ node
+						}
+					else if(successfull == 1) {
+						bf.addEdge(node.id,Input.dest);
+						bf.deleteEdge(node.id,Input.dest);
+						//add logic to remove MAJ node
+						}
+					else {
+						throw e;
+						}
+					}
+				break;
+				}
+			}
+		
 	}
 	
 	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
-		//loop at all nodes
-		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);
 			if(node.associativityPossible(internalGraph, nodesMap)) {
@@ -96,7 +144,27 @@ public class BoolFunctions {
 		}
 	}
 	
-	public long Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public void Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		Node node = bf.nodesMap.get(NodeType.VAL);		
+		for(long nodeID : bf.nodesMap.keySet()) {
+			Node ID = nodesMap.get(nodeID);
+			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			for(int i = 0; i < outgoingEdges.length; i++) {
+				System.out.println("INNER LOOP");
+				if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
+					System.out.println("MAJ NODE FOUND");
+					Node innerNode = nodesMap.get(outgoingEdges[i].dest);
+					System.out.println("selecting inner edges");
+					//int innerOffset = (int) (Math.random() * 3) % 3;
+					// select random outgoing edge from inner node
+					Edge[] innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
+					//Edge innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
+		}
+		}
+	
+		 
+	
+	public void InvertProp(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -105,10 +173,10 @@ public class BoolFunctions {
 			@SuppressWarnings("unlikely-arg-type")
 			Node node = bf.nodesMap.get(NodeType.VAL);
 		}
-		return a;
+		 
 	}
 	
-	public long InvertProp(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -117,10 +185,10 @@ public class BoolFunctions {
 			@SuppressWarnings("unlikely-arg-type")
 			Node node = bf.nodesMap.get(NodeType.VAL);
 		}
-		return a;
+		 
 	}
 	
-	public long Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -129,10 +197,10 @@ public class BoolFunctions {
 			@SuppressWarnings("unlikely-arg-type")
 			Node node = bf.nodesMap.get(NodeType.VAL);
 		}
-		return a;
+		 
 	}
 	
-	public long ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		
 		long a = 0,b = 0,c = 0;
 		//loop at all nodes
@@ -141,19 +209,7 @@ public class BoolFunctions {
 			@SuppressWarnings("unlikely-arg-type")
 			Node node = bf.nodesMap.get(NodeType.VAL);
 		}
-		return a;
-	}
-	
-	public long Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
-		
-		long a = 0,b = 0,c = 0;
-		//loop at all nodes
-		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
-		for(long nodeID : bf.nodesMap.keySet()) {
-			@SuppressWarnings("unlikely-arg-type")
-			Node node = bf.nodesMap.get(NodeType.VAL);
-		}
-		return a;
+		 
 	}
 	
 	
