@@ -26,8 +26,7 @@ public class Main {
 			graph.convertAIGtoMAJnodes();
 			graph.exportToDOTandPNG("majGraph");
 			graph.exportToBLIF("majGraph");
-			for(int x = 0; x < 5; x++)
-				graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
+			graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
 	
@@ -44,8 +43,7 @@ public class Main {
 	
 			
 			//### Fig.2.a example Graph
-/*		for(int i = 0; i < 10; i++) {
-			GraphWrapper fig2a = new GraphWrapper();
+/*			GraphWrapper fig2a = new GraphWrapper();
 			fig2a.addInputNode(2); //w
 			fig2a.addInputNode(4); //x
 			fig2a.addInputNode(6); //y
@@ -63,8 +61,8 @@ public class Main {
 			fig2a.exportToDOTandPNG("fig2a-assoc");
 			fig2a.exportToBLIF("fig2a-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a.blif"), new File("output/fig2a-assoc.blif"));
-		}
+	
 	*/	
-	}
+		}
 	
 }

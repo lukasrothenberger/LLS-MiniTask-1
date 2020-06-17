@@ -13,7 +13,7 @@ public class BoolFunctions {
 	public BoolFunctions(GraphWrapper bf) {
 		this.bf = bf;
 	}
-
+/*
 	public void Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		@SuppressWarnings("unlikely-arg-type")
 		Node node = bf.nodesMap.get(NodeType.VAL);		
@@ -92,7 +92,7 @@ public class BoolFunctions {
 			}
 		
 	}
-	
+*/	
 	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);
@@ -100,53 +100,93 @@ public class BoolFunctions {
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 				for(int i = 0; i < outgoingEdges.length; i++) {
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
-						//TODO
-						//outerOffset = 1;
-						Edge outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
+						//check if overlap exists in node.children and innerNode.children
+						long overlappingInputNode = -1;
+						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
+							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
+								if(child.id == innerChild.id) {
+									if(child.id != 0)  // don't allow constant zero as shared input
+										overlappingInputNode = child.id;
+									if(overlappingInputNode != 0)
+										break;
+								}
+							}
+							if(overlappingInputNode != -1 && overlappingInputNode != 0) {
+								break;
+							}
+							
+						}
+						if(overlappingInputNode == -1) {
+							//no overlapping input between inner and outer node found, continue
+							System.out.println("NO OVERLAP FOUND, SKIPPING");
+							continue;
+						}
+						//overlap found for input with id overlappingInputNode, exclude this node from swapping			
+						
 						int innerOffset = (int) (Math.random() * 3) % 3;
-						//TODO
-						//innerOffset = 1;
 						Edge[] innerInputEdges = null;
 						Edge innerInput = null;
-						for(innerOffset = 0; innerOffset < 3; innerOffset++) {
+						for(innerOffset = 0; innerOffset < 3; innerOffset++) {		// TODO randomize?
 							// select random outgoing edge from inner node to maj node
 							innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 							innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
-							if(nodesMap.get(innerInput.dest).type == NodeType.MAJ)
+							
+							//if(nodesMap.get(innerInput.dest).type == NodeType.MAJ)
+							if(innerInput.dest != overlappingInputNode)
 								break;
 						}
 						if(innerInput == null)
 							continue;
-						// swap selected inner with outer edge
+						//select outer input node
+						Edge[] outerInputEdges = null;
+						Edge outerInput = null;
+						for(int outerOffset = 0; outerOffset < 3; outerOffset++) {
+							//outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
+							outerInputEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+							outerInput = outerInputEdges[outerOffset % outerInputEdges.length];
+							
+							if(outerInput.dest != overlappingInputNode && outerInput.dest != innerNode.id && outerInput != null)
+								break;
+						}
+						if(outerInput == null)
+							continue;
+						System.out.println("FOUND INNER AND OUTER INPUT!");
 						
+						//int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
+						//TODO select outerInput in a way that outerInput and innerInput are not equivalent and not equal to the shared value
+						
+						// swap selected inner with outer edge
 						bf.exportToBLIF("intermediate-1");
 						bf.exportToDOTandPNG("intermediate-1");
 						
 						System.out.println("node.id: "+node.id);
 						System.out.println("outerInput.dest: "+ outerInput.dest);
 						System.out.println("innerInput.dest: "+ innerInput.dest);
+						System.out.println("shared Input: "+overlappingInputNode);
 						
 						// delete edge from node to outerInput
 						bf.deleteEdge(node.id, outerInput.dest);
 						// delete edge from innerNode to innerInput
 						bf.deleteEdge(innerNode.id, innerInput.dest);
 						
-						bf.exportToDOTandPNG("intermediate-1-post-delete");
+			//			bf.exportToDOTandPNG("intermediate-1-post-delete");
 						
 						int successfull = 0;
 						try {
+					//		bf.redirectEdge(node.id, outerInput.dest, innerInput.dest);
+					//		bf.redirectEdge(innerNode.id, innerInput.dest, outerInput.dest);
+							
 							// create edge from node to innerInput
 							bf.addEdge(node.id, innerInput.dest);
 							successfull++;
 							// create edge from innerNode to outerInput
 							bf.addEdge(innerNode.id, outerInput.dest);
-							bf.exportToDOTandPNG("intermediate-1-post-add1");
+				//			bf.exportToDOTandPNG("intermediate-1-post-add1");
 							successfull++;
-							bf.exportToBLIF("intermediate-3");
-							bf.exportToDOTandPNG("intermediate-3");
-							ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-3.blif"));
+				//			bf.exportToBLIF("intermediate-3");
+				//			bf.exportToDOTandPNG("intermediate-3");
+				//			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-3.blif"));
 							
 						}
 						catch (Exception e) {
@@ -163,6 +203,7 @@ public class BoolFunctions {
 							else {
 								throw e;
 							}
+							
 						}
 						
 						bf.exportToBLIF("intermediate-2");
@@ -176,7 +217,7 @@ public class BoolFunctions {
 			}
 		}
 	}
-	
+/*	
 	public void Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		Node node = bf.nodesMap.get(NodeType.VAL);		
 		for(long nodeID : bf.nodesMap.keySet()) {
@@ -245,6 +286,6 @@ public class BoolFunctions {
 		 
 	}
 	
-	
+	*/
 	
 }

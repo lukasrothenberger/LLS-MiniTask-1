@@ -75,6 +75,11 @@ public class GraphWrapper {
 		}
 	}
 	
+	public void redirectEdge(long source, long oldTarget, long newTarget) throws Exception {
+		this.deleteEdge(source, oldTarget);
+		this.addEdge(source, newTarget);
+	}
+	
 	/**
 	 * Add an edge from node with id source to node with id dest.
 	 * @param source
@@ -85,9 +90,9 @@ public class GraphWrapper {
 		//check if edge from source to dest already exists
 		if(internalGraph.containsEdge(nodesMap.get(source), nodesMap.get(dest))) {
 			//increase weight
-			//internalGraph.getEdge(nodesMap.get(source), nodesMap.get(dest)).weight++;
-			//return;
-			throw new Exception("test - don't allow double edges");
+			internalGraph.getEdge(nodesMap.get(source), nodesMap.get(dest)).weight++;
+			return;
+			//throw new Exception("test - don't allow double edges");
 		}
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
