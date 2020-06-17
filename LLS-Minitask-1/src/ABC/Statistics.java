@@ -18,7 +18,7 @@ public class Statistics {
 		System.out.println("\t"+blifOne.getAbsolutePath()+"\n");
 		
 		//build abc Script
-		File tmp_statistics_script = new File("temp/tmp_statistics_script");
+		File tmp_statistics_script = new File("temp/tmp_statistics_script".replaceAll("/", File.separator));
 		if(tmp_statistics_script.exists())
 			tmp_statistics_script.delete();
 		try {
@@ -36,7 +36,7 @@ public class Statistics {
 		}
 		
 		for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
-			String[] c = {abcExecutablePath, "-f", "temp/tmp_statistics_script"};
+			String[] c = {abcExecutablePath, "-f", "temp/tmp_statistics_script".replaceAll("/", File.separator)};
 			try {
 				System.out.println("ABC Statistics for "+blifOne.getAbsolutePath()+ ":");
 				Process p = Runtime.getRuntime().exec(c);

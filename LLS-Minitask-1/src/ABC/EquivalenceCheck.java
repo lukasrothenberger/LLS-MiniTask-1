@@ -21,7 +21,7 @@ public class EquivalenceCheck {
 		System.out.println("\t"+blifTwo.getAbsolutePath()+"");
 		
 		//build abc Script
-		File tmp_eq_check_script = new File("temp/tmp_compare_script");
+		File tmp_eq_check_script = new File("temp/tmp_compare_script".replaceAll("/", File.separator));
 		if(tmp_eq_check_script.exists())
 			tmp_eq_check_script.delete();
 		try {
@@ -39,7 +39,7 @@ public class EquivalenceCheck {
 		}
 		
 		for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
-			String[] c = {abcExecutablePath, "-f", "temp/tmp_compare_script"};
+			String[] c = {abcExecutablePath, "-f", "temp/tmp_compare_script".replaceAll("/", File.separator)};
 			boolean containsSuccessMessage = false;
 			try {
 				System.out.println("Output of equivalence check:");
