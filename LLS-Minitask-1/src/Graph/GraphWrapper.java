@@ -315,11 +315,11 @@ public class GraphWrapper {
 	 * @param filename should not contain a file ending (example: "unmodifiedGraph")
 	 */
 	public void exportToDOTandPNG(String filename) {
+		try {
 		System.out.println("Exporting to DOT Format and PNG Image...");
 		File dotOutputFile = new File("output/"+filename+".dot");
 		if(dotOutputFile.exists())
 			dotOutputFile.delete();
-		try {
 			dotOutputFile.createNewFile();
 			FileWriter fw = new FileWriter(dotOutputFile);
 			fw.write(this.toDOTFormat());
@@ -329,8 +329,8 @@ public class GraphWrapper {
 			Process p = Runtime.getRuntime().exec(c);
 			System.out.println("\tDone.");
 		}
-		catch (IOException e) {
-			e.printStackTrace();
+		catch (Exception e) {
+			System.out.println("Export to DOT and PNG FAILED.\n\tgraphviz installed?");
 		}
 	}
 	
