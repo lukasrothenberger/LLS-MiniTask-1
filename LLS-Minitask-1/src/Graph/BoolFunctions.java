@@ -15,35 +15,8 @@ public class BoolFunctions {
 	public BoolFunctions(GraphWrapper bf) {
 		this.bf = bf;
 	}
-/*	CAN BE OMITTED
-	public void Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
-		@SuppressWarnings("unlikely-arg-type")
-		Node node = bf.nodesMap.get(NodeType.VAL);		
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node ID = nodesMap.get(nodeID);
-			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-			int[] counts = node.getCounts(internalGraph, nodesMap);
-			if(counts[0]>=2) {
-			Edge temp;
-			
-			int outerOffset =  Math.random() < 0.5 ? 1 : 2;
-			
-			if(outerOffset > 0 & outerOffset <3) {
-			temp = outgoingEdges[outerOffset] ;
-		    outgoingEdges[outerOffset] = outgoingEdges[0];
-		    outgoingEdges[0] = temp;	
-			}
-			else {
-				Edge temp1;	
-				temp1 = outgoingEdges[1] ;
-			    outgoingEdges[1] = outgoingEdges[2];
-			    outgoingEdges[2] = temp1;				
-			}
-			// should we add new edges after removing the old ones????
-			}
-		}	
-	}
-*/	
+	
+	
 	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = bf.nodesMap.get(nodeID);
