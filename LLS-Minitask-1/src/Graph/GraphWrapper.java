@@ -326,10 +326,12 @@ public class GraphWrapper {
 			fw.flush();
 			fw.close();
 			String[] c = {"dot", "-Tpng", "output/"+filename+".dot", "-o", "output/"+filename+".png"};
+			//String[] c = {"dot", "-?"};
 			Process p = Runtime.getRuntime().exec(c);
 			System.out.println("\tDone.");
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Export to DOT and PNG FAILED.\n\tgraphviz installed?");
 		}
 	}

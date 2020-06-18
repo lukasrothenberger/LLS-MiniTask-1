@@ -247,41 +247,42 @@ public class BoolFunctions {
 					// add two new MAJ gates with outer and inner inputs and delete the old one
 					bf.deleteEdge(innerNode.id, innerEdges[0].dest); //deleting inputs at 0 and 1 of inner MAJ Gate.
 					bf.deleteEdge(innerNode.id, innerEdges[1].dest);
-					bf.deleteEdge(node.id, outerEdges[0].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
-					bf.deleteEdge(node.id, outerEdges[1].dest);
+					bf.deleteEdge(node.id, outerEdges[(i+1) % 3].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
+					bf.deleteEdge(node.id, outerEdges[(i+2) % 3].dest);
 					try {
 						System.out.println("node.id: "+ node.id);
 						System.out.println("innerNode.id: "+ innerNode.id);
-						bf.addEdge(innerNode.id, outerEdges[0].dest);//outer inputs to the existing MAJ gate
-						bf.addEdge(innerNode.id, outerEdges[1].dest);	
+						bf.addEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//outer inputs to the existing MAJ gate
+						bf.addEdge(innerNode.id, outerEdges[(i+2) % 3].dest);	
 						success++;
-						bf.addEdge(innerEdges[0].dest, outerEdges[i].source); // adding inner input 0 to outer MAJ gate
+						bf.addEdge(outerEdges[i].source, innerEdges[0].dest); // adding inner input 0 to outer MAJ gate
 						//bf.addEdge(innerEdges[0].dest, ID.id);
 						success++;
 						long NewID = innerNode.id + 1;
-						bf.addMajGate(NewID, outerEdges[0].dest, outerEdges[1].dest, innerEdges[1].dest);//Addition of new MAJ gate
+						bf.addMajGate(NewID, outerEdges[(i+1) % 3].dest, outerEdges[(i+2) % 3].dest, innerEdges[1].dest);//Addition of new MAJ gate
 						success++;
+						break;
 						} catch (Exception e) { // reversing the changes!!!!
 						e.printStackTrace();
 						if(success == 0) {
-							bf.addEdge(node.id, outerEdges[0].dest); //adding back outer edges
-							bf.addEdge(node.id, outerEdges[1].dest);
-							bf.addEdge(innerNode.id, innerEdges[1].dest);
-							bf.addEdge(innerNode.id, innerEdges[0].dest);
+							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest); //adding back outer edges
+							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
+							bf.addEdge(innerNode.id, innerEdges[(i+2) % 3].dest);
+							bf.addEdge(innerNode.id, innerEdges[(i+1) % 3].dest);
 							}
 						else if(success == 1) {
-							bf.addEdge(node.id, outerEdges[0].dest);
-							bf.addEdge(node.id, outerEdges[1].dest);
-							bf.deleteEdge(innerNode.id, outerEdges[0].dest);//deleting new outer to inner connection
-							bf.deleteEdge(innerNode.id, outerEdges[1].dest);
-							bf.addEdge(innerNode.id,innerEdges[0].dest);//adding inner edge back
+							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
+							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
+							bf.deleteEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//deleting new outer to inner connection
+							bf.deleteEdge(innerNode.id, outerEdges[(i+2) % 3].dest);
+							bf.addEdge(innerNode.id,innerEdges[(i+1) % 3].dest);//adding inner edge back
 							}
 							else if(success == 2) {
 							bf.deleteEdge(innerEdges[0].dest, node.id);//deleting the new inner to outer connection
-							bf.addEdge(innerNode.id, innerEdges[1].dest);			//adding inner edge	back
-							bf.addEdge(innerNode.id, innerEdges[0].dest);
-							bf.addEdge(node.id, outerEdges[0].dest);
-							bf.addEdge(node.id, outerEdges[1].dest);
+							bf.addEdge(innerNode.id, innerEdges[(i+2) % 3].dest);			//adding inner edge	back
+							bf.addEdge(innerNode.id, innerEdges[(i+1) % 3].dest);
+							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
+							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
 							}
 						else if(success == 3) {
 							System.out.println("Distributivity performed. Do Equivalance check!!!!");
