@@ -28,6 +28,7 @@ public class Main {
 			graph.exportToDOTandPNG("majGraph");
 			graph.exportToBLIF("majGraph");
 			graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
+			graph.boolFunctions.Distributivity(graph.internalGraph, graph.nodesMap);
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
 	

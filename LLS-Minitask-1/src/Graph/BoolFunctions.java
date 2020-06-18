@@ -221,15 +221,17 @@ public class BoolFunctions {
 			}
 		}
 	}
-	/*
+	
 	
 	public void Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		@SuppressWarnings("unlikely-arg-type")
-		Node node = bf.nodesMap.get(NodeType.VAL);//ideally should work for any node!!!!
+		//@SuppressWarnings("unlikely-arg-type")
+		//Node node = bf.nodesMap.get(NodeType.VAL);//ideally should work for any node!!!!
 		for(long nodeID : bf.nodesMap.keySet()) {
-			Node ID = nodesMap.get(nodeID);		
+			Node node = nodesMap.get(nodeID);	
 			int[] counts =  node.getCounts(internalGraph, nodesMap);
+			System.out.println("counts: "+ counts[0]+ " "+ counts[1] + " "+counts[2]);
 			if (counts[0] >= 2) {
+				System.out.println("CONDITION TRUE");
 			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 			for(int i = 0; i < outerEdges.length; i++) {
 				System.out.println("INNER LOOP");
@@ -242,8 +244,8 @@ public class BoolFunctions {
 					// add two new MAJ gates with outer and inner inputs and delete the old one
 					bf.deleteEdge(innerNode.id, innerEdges[0].dest); //deleting inputs at 0 and 1 of inner MAJ Gate.
 					bf.deleteEdge(innerNode.id, innerEdges[1].dest);
-					bf.deleteEdge(ID.id, outerEdges[0].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
-					bf.deleteEdge(ID.id, outerEdges[1].dest);
+					bf.deleteEdge(node.id, outerEdges[0].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
+					bf.deleteEdge(node.id, outerEdges[1].dest);
 					try {
 						bf.addEdge(innerNode.id, outerEdges[0].dest);//outer inputs to the existing MAJ gate
 						bf.addEdge(innerNode.id, outerEdges[1].dest);	
@@ -257,17 +259,24 @@ public class BoolFunctions {
 						} catch (Exception e) { // reversing the changes!!!!
 						e.printStackTrace();
 						if(success == 0) {
-							bf.addEdge(ID.id, outerEdges[0].dest); //adding back outer edges
-							bf.addEdge(ID.id, outerEdges[1].dest);
+							bf.addEdge(node.id, outerEdges[0].dest); //adding back outer edges
+							bf.addEdge(node.id, outerEdges[1].dest);
+							bf.addEdge(innerNode.id, innerEdges[1].dest);
+							bf.addEdge(innerNode.id, innerEdges[0].dest);
 							}
 						else if(success == 1) {
+							bf.addEdge(node.id, outerEdges[0].dest);
+							bf.addEdge(node.id, outerEdges[1].dest);
 							bf.deleteEdge(innerNode.id, outerEdges[0].dest);//deleting new outer to inner connection
 							bf.deleteEdge(innerNode.id, outerEdges[1].dest);
 							bf.addEdge(innerNode.id,innerEdges[0].dest);//adding inner edge back
 							}
 							else if(success == 2) {
-							bf.deleteEdge(innerEdges[0].dest, ID.id);//deleting the new inner to outer connection
-							bf.addEdge(innerNode.id, innerEdges[1].dest);			//adding inner edge	back		
+							bf.deleteEdge(innerEdges[0].dest, node.id);//deleting the new inner to outer connection
+							bf.addEdge(innerNode.id, innerEdges[1].dest);			//adding inner edge	back
+							bf.addEdge(innerNode.id, innerEdges[0].dest);
+							bf.addEdge(node.id, outerEdges[0].dest);
+							bf.addEdge(node.id, outerEdges[1].dest);
 							}
 						else if(success == 3) {
 							System.out.println("Distributivity performed. Do Equivalance check!!!!");
@@ -277,10 +286,10 @@ public class BoolFunctions {
 				}
 			}
 			else
-				break;
+				continue;
 		}
 	}
-	*/
+	
 	/*
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
 			for(long nodeID : bf.nodesMap.keySet()) {
