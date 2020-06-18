@@ -33,15 +33,11 @@ public class Main {
 	
 			//#### Perform Equivalence checks:
 			//input file <-> created unmodified Graph
-//<<<<<<< Updated upstream
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_1_min.blif".replaceAll("/", File.separator)), new File("output/unmodifiedGraph.blif".replaceAll("/", File.separator)));
-//=======
-			//ABC.EquivalenceCheck.performEquivalenceCheck(new File("data//aiger-set//blif//aig_1_min.blif"), new File("output//unmodifiedGraph.blif"));
-//>>>>>>> Stashed changes
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_1_min.blif"), new File("output/unmodifiedGraph.blif"));
 			//created unmodified Graph <-> MAJ Graph
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif".replaceAll("/", File.separator)), new File("output/unmodifiedGraph.blif".replaceAll("/", File.separator)));
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 			//MAJ Graph <-> majGraph-assoc
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif".replaceAll("/", File.separator)), new File("output/majGraph-assoc.blif".replaceAll("/", File.separator)));
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 			//ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	

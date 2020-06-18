@@ -213,7 +213,7 @@ public class BoolFunctions {
 						bf.exportToBLIF("intermediate-2");
 						bf.exportToDOTandPNG("intermediate-2");
 						
-						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif".replaceAll("/", File.separator)), new File("output/intermediate-2.blif".replaceAll("/", File.separator)));
+						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
 						
 						break;
 					}
