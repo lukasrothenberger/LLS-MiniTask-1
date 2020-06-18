@@ -15,7 +15,7 @@ public class BoolFunctions {
 	public BoolFunctions(GraphWrapper bf) {
 		this.bf = bf;
 	}
-/*
+/*	CAN BE OMITTED
 	public void Commutativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
 		@SuppressWarnings("unlikely-arg-type")
 		Node node = bf.nodesMap.get(NodeType.VAL);		
@@ -44,59 +44,46 @@ public class BoolFunctions {
 		}	
 	}
 */	
-/*	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		Edge majValue;
-		int counter = 0;
-			@SuppressWarnings("unlikely-arg-type")
-			Node node = bf.nodesMap.get(NodeType.VAL);		
-			for(long nodeID : bf.nodesMap.keySet()) {
-			//	Node ID = nodesMap.get(nodeID);
-				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				Edge[] incomingEdge = node.getIncomingEdges(internalGraph, nodesMap);
-				for(int i = 1; i < outgoingEdges.length; i++) {
-					int Offset =  Math.random() < 0.5 ? 1 : 2;
-					if(outgoingEdges[Offset] == outgoingEdges[Offset-1]) {
-						counter++;
-						}
-					else if(outgoingEdges[Offset] == outgoingEdges[0])
-						counter++;
-					else
-						continue;
-					if (counter == 1)
-						majValue = outgoingEdges[Offset];
-						
-				
-				//incomingEdge = majValue;	//check this!!!!!!!!!!!!!!!!!!!!!!1	
-				int success = 0;
-				try {
-					// create edge from node to next node and remove node
-					bf.addEdge(node.id, incomingEdge[i].source);
-					bf.deleteEdge(node.id,outgoingEdges[0].dest);
-					bf.deleteEdge(node.id,outgoingEdges[1].dest);
-					bf.deleteEdge(node.id,outgoingEdges[2].dest);
-					graphModifier.convertMAJtoVALnodes();
-					}
-				catch (Exception e) {
-					if(success == 0) {
-						bf.addEdge(node.id, outgoingEdges[0].dest);
-						bf.addEdge(node.id, outgoingEdges[1].dest);
-						bf.addEdge(node.id, outgoingEdges[2].dest);
-						bf.deleteEdge(node.id, incomingEdge[i].source);
-						graphModifier.convertVALtoMAJnodes();
-						}
-					else if (success > 1){
-						System.out.println("Check Equivalence");
-					}
-					else {
-						throw e;
-						}
-					}
-				break;
+	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		for(long nodeID : bf.nodesMap.keySet()) {
+			Node node = bf.nodesMap.get(nodeID);
+			if(node.type != NodeType.MAJ)
+				continue;
+			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			Edge[] incomingEdges = node.getIncomingEdges(internalGraph, nodesMap);
+			// much easier implementation possible (check pairwise equivalence
+			long replaceByValue = -1;
+			if(outgoingEdges.length == 2) {
+				replaceByValue = (outgoingEdges[0].weight == 2) ? outgoingEdges[0].dest : outgoingEdges[1].dest; 
+			}
+			else {
+				if(outgoingEdges[0].dest == outgoingEdges[1].dest) {
+					replaceByValue = outgoingEdges[0].dest;
+				}
+				else if(outgoingEdges[0].dest == outgoingEdges[2].dest) {
+					replaceByValue = outgoingEdges[2].dest;
+				}
+				else if(outgoingEdges[1].dest == outgoingEdges[2].dest) {
+					replaceByValue = outgoingEdges[1].dest;
 				}
 			}
-		
+			
+			if(replaceByValue == -1) {
+				//no majority operation possible
+				continue;
+			}
+			else {
+				//majority operation is possible
+				//delete current node
+				bf.removeNode(node.id);
+				for(Edge e : incomingEdges) {
+					bf.addEdge(e.source, replaceByValue);
+				}
+			}
+		}
 	}
-	*/
+	
+	
 	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);
