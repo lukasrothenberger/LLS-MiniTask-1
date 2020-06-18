@@ -371,9 +371,6 @@ public class GraphWrapper {
 
 
 	public void removeNode(long id) {
-		// TODO Auto-generated method stub
-		System.out.println("Removing Node: "+id);
-		System.out.println("\tTODO: implement GraphWrapper.removeNode");
 		Node node = nodesMap.get(id);
 		for(Edge e : node.getIncomingEdges(internalGraph, nodesMap)) {
 			internalGraph.removeEdge(e);
@@ -382,6 +379,12 @@ public class GraphWrapper {
 			internalGraph.removeEdge(e);
 		}
 		internalGraph.removeVertex(node);
+	}
+
+
+	public void replaceInSubtree(long root, long victim, long replacement) {
+		// TODO Auto-generated method stub
+		System.out.println("GraphWrapper.ReplaceInSubtree not yet implemented!");
 	}
 	
 }

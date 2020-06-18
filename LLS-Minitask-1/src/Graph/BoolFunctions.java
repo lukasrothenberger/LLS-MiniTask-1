@@ -307,27 +307,30 @@ public class BoolFunctions {
 		}
 	}
 	
-	/*
+	
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
-			for(long nodeID : bf.nodesMap.keySet()) {
-				Node node = bf.nodesMap.get(nodeID);
-				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				for(int i = 1; i < outgoingEdges.length; i++) {
-					int Offset =  Math.random() < 0.5 ? 1 : 2;
-					if(outgoingEdges[Offset] == outgoingEdges[Offset-1] && outgoingEdges[Offset] != outgoingEdges[0]) {
-						//change value of the edge to chosen value
-						Edge temp = outgoingEdges[Offset-1];
-						System.out.println(temp);
-						outgoingEdges[Offset-1] = outgoingEdges[Offset];
-						temp = outgoingEdges[Offset];
-						System.out.println(temp);
-						} 
-					else
-						continue;					
+		for(long nodeID : bf.nodesMap.keySet()) {
+			Node node = bf.nodesMap.get(nodeID);
+			if(node.type != NodeType.MAJ)
+				continue;
+			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			int Offset = (int) Math.random()*3;
+			if(outgoingEdges[Offset].dest != outgoingEdges[(Offset+1)%3].dest && outgoingEdges[Offset].dest != outgoingEdges[(Offset+2)%3].dest) {
+				//check if replacement is already inverted
+				if(outgoingEdges[(Offset+1%3)].dest % 2 == 0) {
+					//replacement is not an inverted value
+					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%3].dest, outgoingEdges[(Offset+1)%3].dest + 1);
 				}
+				else {
+					//replacement is an inverted value
+					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%3].dest, outgoingEdges[(Offset+1)%3].dest - 1);
+				}		
+				System.out.println("RELEVANCE OPERATION");
+			} 
+			else
+				continue;					
 		}
 	}
-	*/
 	
 
 	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {

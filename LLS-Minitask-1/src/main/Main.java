@@ -62,7 +62,8 @@ public class Main {
 			fig2a.exportToBLIF("fig2a-mod");
 			
 			//fig2a.boolFunctions.Associativity(fig2a.internalGraph, fig2a.nodesMap);
-			fig2a.boolFunctions.ComplementaryAssociativity(fig2a.internalGraph, fig2a.nodesMap);
+			//fig2a.boolFunctions.ComplementaryAssociativity(fig2a.internalGraph, fig2a.nodesMap);
+			fig2a.boolFunctions.Relevance(fig2a.internalGraph, fig2a.nodesMap);
 			
 			fig2a.exportToDOTandPNG("fig2a-mod-assoc");
 			fig2a.exportToBLIF("fig2a-mod-assoc");
