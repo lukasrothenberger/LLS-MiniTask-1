@@ -12,7 +12,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 			String input_file = "data/aiger-set/ascii/aig_1_min.aag";
 			// Platform independent file path achieved by using File.separator
-			input_file = input_file.replaceAll("/", File.separator);
+			//input_file = input_file.replaceAll("/", File.separator);
+			input_file = input_file.replaceAll("//", File.separator);
 		
 			GraphWrapper graph = Input_Parser.Invoke_Parser(input_file);
 			
@@ -32,7 +33,11 @@ public class Main {
 	
 			//#### Perform Equivalence checks:
 			//input file <-> created unmodified Graph
+//<<<<<<< Updated upstream
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_1_min.blif".replaceAll("/", File.separator)), new File("output/unmodifiedGraph.blif".replaceAll("/", File.separator)));
+//=======
+			//ABC.EquivalenceCheck.performEquivalenceCheck(new File("data//aiger-set//blif//aig_1_min.blif"), new File("output//unmodifiedGraph.blif"));
+//>>>>>>> Stashed changes
 			//created unmodified Graph <-> MAJ Graph
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif".replaceAll("/", File.separator)), new File("output/unmodifiedGraph.blif".replaceAll("/", File.separator)));
 			//MAJ Graph <-> majGraph-assoc

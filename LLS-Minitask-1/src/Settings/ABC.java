@@ -10,7 +10,8 @@ public class ABC {
 	 */
 	public static List<String> getABCExecutables(){
 		List<String> paths = new LinkedList<String>();
-		paths.add("/home/lukas/Programme/abc/build/abc");
+		//paths.add("/home/lukas/Programme/abc/build/abc");
+		paths.add("C:/Program Files/ABC/abc10216");
 		return paths;
 	};
 
