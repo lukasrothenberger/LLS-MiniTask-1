@@ -228,9 +228,11 @@ public class BoolFunctions {
 		//Node node = bf.nodesMap.get(NodeType.VAL);//ideally should work for any node!!!!
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);	
+			if(node.type != NodeType.MAJ)
+				continue;
 			int[] counts =  node.getCounts(internalGraph, nodesMap);
 			System.out.println("counts: "+ counts[0]+ " "+ counts[1] + " "+counts[2]);
-			if (counts[0] >= 2) {
+			if (counts[0]+counts[2] >= 2) {
 				System.out.println("CONDITION TRUE");
 			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 			for(int i = 0; i < outerEdges.length; i++) {
@@ -238,7 +240,8 @@ public class BoolFunctions {
 				if(nodesMap.get(outerEdges[i].dest).type == NodeType.MAJ) {
 					System.out.println("MAJ NODE FOUND");
 					//get the ID and Edges of the MAJ node					
-					Node innerNode = nodesMap.get(outerEdges[i].dest);System.out.println("Selecting inner edges");
+					Node innerNode = nodesMap.get(outerEdges[i].dest);
+					System.out.println("Selecting inner edges");
 					Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 					int success = 0;
 					// add two new MAJ gates with outer and inner inputs and delete the old one
@@ -247,6 +250,8 @@ public class BoolFunctions {
 					bf.deleteEdge(node.id, outerEdges[0].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
 					bf.deleteEdge(node.id, outerEdges[1].dest);
 					try {
+						System.out.println("node.id: "+ node.id);
+						System.out.println("innerNode.id: "+ innerNode.id);
 						bf.addEdge(innerNode.id, outerEdges[0].dest);//outer inputs to the existing MAJ gate
 						bf.addEdge(innerNode.id, outerEdges[1].dest);	
 						success++;
