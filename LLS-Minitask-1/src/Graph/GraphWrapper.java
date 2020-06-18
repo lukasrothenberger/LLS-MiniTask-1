@@ -46,6 +46,16 @@ public class GraphWrapper {
 	}
 	
 	
+	public long getNextFreeId() {
+		long maxId = 0;
+		for(long id : nodesMap.keySet()) {
+			if(id > maxId)
+				maxId = id;
+		}
+		return maxId+2;
+	}
+	
+	
 	/**
 	 * Add input value with given id to the graph.
 	 * @param id of the value as defined in .aag file
@@ -90,9 +100,9 @@ public class GraphWrapper {
 		//check if edge from source to dest already exists
 		if(internalGraph.containsEdge(nodesMap.get(source), nodesMap.get(dest))) {
 			//increase weight
-			internalGraph.getEdge(nodesMap.get(source), nodesMap.get(dest)).weight++;
-			return;
-			//throw new Exception("test - don't allow double edges");
+			//internalGraph.getEdge(nodesMap.get(source), nodesMap.get(dest)).weight++;
+			//return;
+			throw new Exception("test - don't allow double edges");
 		}
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
@@ -357,6 +367,21 @@ public class GraphWrapper {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+
+	public void removeNode(long id) {
+		// TODO Auto-generated method stub
+		System.out.println("Removing Node: "+id);
+		System.out.println("\tTODO: implement GraphWrapper.removeNode");
+		Node node = nodesMap.get(id);
+		for(Edge e : node.getIncomingEdges(internalGraph, nodesMap)) {
+			internalGraph.removeEdge(e);
+		}
+		for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
+			internalGraph.removeEdge(e);
+		}
+		internalGraph.removeVertex(node);
 	}
 	
 }

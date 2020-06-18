@@ -223,76 +223,87 @@ public class BoolFunctions {
 	}
 	
 	
-	public void Distributivity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		//@SuppressWarnings("unlikely-arg-type")
-		//Node node = bf.nodesMap.get(NodeType.VAL);//ideally should work for any node!!!!
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = nodesMap.get(nodeID);	
-			if(node.type != NodeType.MAJ)
-				continue;
-			int[] counts =  node.getCounts(internalGraph, nodesMap);
-			System.out.println("counts: "+ counts[0]+ " "+ counts[1] + " "+counts[2]);
-			if (counts[0]+counts[2] >= 2) {
-				System.out.println("CONDITION TRUE");
-			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-			for(int i = 0; i < outerEdges.length; i++) {
-				System.out.println("INNER LOOP");
-				if(nodesMap.get(outerEdges[i].dest).type == NodeType.MAJ) {
-					System.out.println("MAJ NODE FOUND");
-					//get the ID and Edges of the MAJ node					
-					Node innerNode = nodesMap.get(outerEdges[i].dest);
-					System.out.println("Selecting inner edges");
-					Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
-					int success = 0;
-					// add two new MAJ gates with outer and inner inputs and delete the old one
-					bf.deleteEdge(innerNode.id, innerEdges[0].dest); //deleting inputs at 0 and 1 of inner MAJ Gate.
-					bf.deleteEdge(innerNode.id, innerEdges[1].dest);
-					bf.deleteEdge(node.id, outerEdges[(i+1) % 3].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
-					bf.deleteEdge(node.id, outerEdges[(i+2) % 3].dest);
-					try {
-						System.out.println("node.id: "+ node.id);
-						System.out.println("innerNode.id: "+ innerNode.id);
-						bf.addEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//outer inputs to the existing MAJ gate
-						bf.addEdge(innerNode.id, outerEdges[(i+2) % 3].dest);	
-						success++;
-						bf.addEdge(outerEdges[i].source, innerEdges[0].dest); // adding inner input 0 to outer MAJ gate
-						//bf.addEdge(innerEdges[0].dest, ID.id);
-						success++;
-						long NewID = innerNode.id + 1;
-						bf.addMajGate(NewID, outerEdges[(i+1) % 3].dest, outerEdges[(i+2) % 3].dest, innerEdges[1].dest);//Addition of new MAJ gate
-						success++;
+	public void DistributivityLR(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		//TODO bugged
+		
+		boolean modificationFound = true;
+		while(modificationFound) {
+			bf.exportToDOTandPNG("distributivity");
+			Thread.sleep(5);
+			modificationFound = false;
+			for(long nodeID : bf.nodesMap.keySet()) {
+				Node node = nodesMap.get(nodeID);	
+				if(node.type != NodeType.MAJ)
+					continue;
+				int[] counts =  node.getCounts(internalGraph, nodesMap);
+				System.out.println("counts: "+ counts[0]+ " "+ counts[1] + " "+counts[2]);
+				if (counts[0]+counts[2] >= 2) {
+					System.out.println("CONDITION TRUE");
+				Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+				for(int i = 0; i < outerEdges.length; i++) {
+					System.out.println("INNER LOOP");
+					if(nodesMap.get(outerEdges[i].dest).type == NodeType.MAJ) {
+						System.out.println("MAJ NODE FOUND");
+						//get the ID and Edges of the MAJ node					
+						Node innerNode = nodesMap.get(outerEdges[i].dest);
+						System.out.println("Selecting inner edges");
+						Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
+						int success = 0;
+						// add two new MAJ gates with outer and inner inputs and delete the old one
+						bf.deleteEdge(innerNode.id, innerEdges[0].dest); //deleting inputs at 0 and 1 of inner MAJ Gate.
+						bf.deleteEdge(innerNode.id, innerEdges[1].dest);
+						bf.deleteEdge(node.id, outerEdges[(i+1) % 3].dest);			//deleting inputs at 0 and 1 of outer MAJ Gate.
+						bf.deleteEdge(node.id, outerEdges[(i+2) % 3].dest);
+						try {
+							System.out.println("node.id: "+ node.id);
+							System.out.println("innerNode.id: "+ innerNode.id);
+							bf.addEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//outer inputs to the existing MAJ gate
+							bf.addEdge(innerNode.id, outerEdges[(i+2) % 3].dest);	
+							success++;
+							bf.addEdge(outerEdges[i].source, innerEdges[0].dest); // adding inner input 0 to outer MAJ gate
+							//bf.addEdge(innerEdges[0].dest, ID.id);
+							success++;
+							long NewID = bf.getNextFreeId();
+							bf.addMajGate(NewID, outerEdges[(i+1) % 3].dest, outerEdges[(i+2) % 3].dest, innerEdges[1].dest);//Addition of new MAJ gate
+							bf.addEdge(outerEdges[i].source, NewID);
+							modificationFound = true;
+							success++;
+							return;
+							//break;
+							} catch (Exception e) { // reversing the changes!!!!
+							e.printStackTrace();
+							if(success == 0) {
+								bf.addEdge(node.id, outerEdges[(i+1) % 3].dest); //adding back outer edges
+								bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
+								bf.addEdge(innerNode.id, innerEdges[1].dest);
+								bf.addEdge(innerNode.id, innerEdges[0].dest);
+								}
+							else if(success == 1) {
+								bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
+								bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
+								bf.deleteEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//deleting new outer to inner connection
+								bf.deleteEdge(innerNode.id, outerEdges[(i+2) % 3].dest);
+								bf.addEdge(innerNode.id,innerEdges[0].dest);//adding inner edge back
+								}
+								else if(success == 2) {
+								bf.deleteEdge(innerEdges[0].dest, node.id);//deleting the new inner to outer connection
+								bf.addEdge(innerNode.id, innerEdges[1].dest);			//adding inner edge	back
+								bf.addEdge(innerNode.id, innerEdges[1].dest);
+								bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
+								bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
+								}
+							else if(success == 3) {
+								System.out.println("Distributivity successful");
+							}
+							}
+						}	
+					}
+					if(modificationFound == true)
 						break;
-						} catch (Exception e) { // reversing the changes!!!!
-						e.printStackTrace();
-						if(success == 0) {
-							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest); //adding back outer edges
-							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
-							bf.addEdge(innerNode.id, innerEdges[(i+2) % 3].dest);
-							bf.addEdge(innerNode.id, innerEdges[(i+1) % 3].dest);
-							}
-						else if(success == 1) {
-							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
-							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
-							bf.deleteEdge(innerNode.id, outerEdges[(i+1) % 3].dest);//deleting new outer to inner connection
-							bf.deleteEdge(innerNode.id, outerEdges[(i+2) % 3].dest);
-							bf.addEdge(innerNode.id,innerEdges[(i+1) % 3].dest);//adding inner edge back
-							}
-							else if(success == 2) {
-							bf.deleteEdge(innerEdges[0].dest, node.id);//deleting the new inner to outer connection
-							bf.addEdge(innerNode.id, innerEdges[(i+2) % 3].dest);			//adding inner edge	back
-							bf.addEdge(innerNode.id, innerEdges[(i+1) % 3].dest);
-							bf.addEdge(node.id, outerEdges[(i+1) % 3].dest);
-							bf.addEdge(node.id, outerEdges[(i+2) % 3].dest);
-							}
-						else if(success == 3) {
-							System.out.println("Distributivity performed. Do Equivalance check!!!!");
-							}
-						}
-					}	
 				}
+				else
+					continue;
 			}
-			else
-				continue;
 		}
 	}
 	
@@ -318,31 +329,77 @@ public class BoolFunctions {
 	}
 	*/
 	
-/*
-	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+
+	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		//TODO not working for inverter on outer node
+		
 		int count = 0;
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);
+			if(node.type != NodeType.MAJ)
+				continue;
 		//	if(node.associativityPossible(internalGraph, nodesMap)) {
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 				for(int i = 0; i < outgoingEdges.length; i++) {
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
+						System.out.println("FOUND MAJ");
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
 						Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 						//check if overlap exists in node.children and innerNode.children
 						long overlappingInputNode = -1;
 						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
+							System.out.println("1");
 							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
-								if(child.type == NodeType.INV) {
+								System.out.println("2");
+								if(innerChild.type == NodeType.INV ) {
+									System.out.println("INV NODE FOUND");
+									System.out.println("node: "+node.id);
+									System.out.println("innerNode: "+innerNode.id);
+									System.out.println("child: "+ child.id);
+									System.out.println("innerChild: "+ innerChild.id);
 								//get id which is not inverted
-									for(Node Invchild : node.getChildrenNodes(internalGraph, nodesMap)) {								
-									 if(Invchild.id == innerChild.id){
-										if(child.id == innerChild.id){
+									for(Node Invchild : innerChild.getChildrenNodes(internalGraph, nodesMap)) {
+										System.out.println("InvChild: "+ Invchild.id);
+						//			 if(Invchild.id == innerChild.id){
+						//				 System.out.println("INNER 1");
+						//				if(child.id == innerChild.id){
+						//					System.out.println("INNER 2");
+									 for(int x = 0; x < 3; x++) {
+										 if(x==i)
+											 continue;
+										 if(outgoingEdges[x].dest == Invchild.id && Invchild.id != 0) {
+											 System.out.println("x: "+ x+ "   -> "+outgoingEdges[x].dest);
+											 //shared inverted value between inner and outer node
+											overlappingInputNode = Invchild.id;
+											for(int j = 0; j < 3; j++) {
+												if(innerEdges[j].dest == innerChild.id) {
+													for(int y = 0; y < 3; y++) {
+														if(y == i) //exclude path to MAJ node
+															continue;
+														if(outgoingEdges[y].dest == overlappingInputNode)
+															continue;
+														// outgoingEdges[y] points to remaining value
+														bf.redirectEdge(innerEdges[j].source, innerEdges[j].dest, outgoingEdges[y].dest);
+														bf.removeNode(innerChild.id);
+												  		System.out.println("COMP ASSOC DONE");
+													}
+												}
+											}
+										 }
+									 }
 									  if(child.id != 0)  // don't allow constant ZERO as shared input
 										overlappingInputNode = child.id;
-									  	 innerEdges[i] = outgoingEdges[0] ;
-									  	 count++;
-									if(overlappingInputNode != 0)
+						/*			  	for(int x = 0; x < 3; x++) {
+									  		if(x == i)
+									  			continue;
+									  		if(outgoingEdges[x].dest == overlappingInputNode)
+									  			continue;
+									  		bf.redirectEdge(innerEdges[i].source, innerEdges[i].dest, outgoingEdges[x].dest);
+									  		System.out.println("COMP ASSOC DONE");
+									  		//innerEdges[i] = outgoingEdges[x] ;
+						*/			  	}
+						//			  	 count++;
+									if(overlappingInputNode != -1)
 										break;
 								}
 							}
@@ -358,20 +415,17 @@ public class BoolFunctions {
 						//bf.exportToBLIF("intermediate-1");
 						//bf.exportToDOTandPNG("intermediate-1");
 						
-						System.out.println("node.id: "+node.id);
-						System.out.println("outerInput.dest: "+ outgoingEdges[i].dest);
-						System.out.println("innerInput.dest: "+ innerEdges[i].dest);
-						System.out.println("shared Input: "+overlappingInputNode);
+			//			System.out.println("node.id: "+node.id);
+			//			System.out.println("outerInput.dest: "+ outgoingEdges[i].dest);
+			//			System.out.println("innerInput.dest: "+ innerEdges[i].dest);
+			//			System.out.println("shared Input: "+overlappingInputNode);
 						
 						break;
 							}
 						}
 					}
-				}
-			}
-		}
 	}
-	*/ 
+	
 	/*
 	
 	/*public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
