@@ -267,7 +267,50 @@ public class BoolFunctions {
 		}
 	}
 	
+<<<<<<< Updated upstream
 	
+=======
+	/*public void DistributivityRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		for(long nodeID : bf.nodesMap.keySet()) {
+			Node node = nodesMap.get(nodeID);	
+			if(node.type != NodeType.MAJ)
+				continue;
+			int[] counts =  node.getCounts(internalGraph, nodesMap);
+			System.out.println("counts: "+ counts[0]+ " "+ counts[1] + " "+counts[2]);
+			if (counts[1] == 2) {
+				System.out.println("NODE HAS TWO MAJ  NODES");
+			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+					System.out.println(" INNER MAJ NODE FOUND");
+					Node[] outernode = node.getChildrenNodes(internalGraph, nodesMap);
+					Node innernode = nodesMap.get(nodeID);
+					Edge[] innerEdges = innernode.getOutgoingEdges(internalGraph, nodesMap);
+					Node[] childNode = innernode.getChildrenNodes(internalGraph, nodesMap);
+					Edge[] overlappingInputEdges = innerEdges;
+					Edge[] sameInput = null;
+					Edge[] diffInput;
+					Long oe = outerEdges[1].dest;
+					for(int j = 1; j < outerEdges.length ;j++) {////check this!!!!
+						Edge[] innerEdge = innernode.getOutgoingEdges(internalGraph, nodesMap);
+						for(int k = 0; k <= j ; k++) {
+				           if(overlappingInputEdges[j-1] != overlappingInputEdges[j]) {
+							if(overlappingInputEdges[j-1].dest == innerEdge[k].dest) {							
+								sameInput[k-1] = innerEdges[j];	
+								}
+							else
+								continue;
+							}
+						}
+							bf.deleteEdge(overlappingInputEdges[j-1].dest, overlappingInputEdges[j-1].source);
+							bf.deleteEdge(overlappingInputEdges[j].dest, overlappingInputEdges[j].source);
+						
+					}
+						}
+					}
+					
+					}*/
+	
+	/*
+>>>>>>> Stashed changes
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = bf.nodesMap.get(nodeID);
@@ -389,18 +432,20 @@ public class BoolFunctions {
 					}
 	}
 	
-	/*
 	
-	/*public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
+	
+	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
+		for(long nodeID : bf.nodesMap.keySet()) {
+			Node node = nodesMap.get(nodeID);
 		}
 		 
-	}
-	*/
+	
+	
 	/*		 
 	
 	public void InvertProp(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	 
 	}
 	*/
 	
-	
+	}	
 }
