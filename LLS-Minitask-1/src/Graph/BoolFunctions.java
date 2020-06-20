@@ -83,7 +83,7 @@ public class BoolFunctions {
 						}
 						if(overlappingInputNode == -1) {
 							//no overlapping input between inner and outer node found, continue
-							System.out.println("NO OVERLAP FOUND, SKIPPING");
+							//System.out.println("NO OVERLAP FOUND, SKIPPING");
 							continue;
 						}
 						//overlap found for input with id overlappingInputNode, exclude this node from swapping			
@@ -115,7 +115,7 @@ public class BoolFunctions {
 						}
 						if(outerInput == null)
 							continue;
-						System.out.println("FOUND INNER AND OUTER INPUT!");
+						//System.out.println("FOUND INNER AND OUTER INPUT!");
 						
 						//int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
 						//TODO select outerInput in a way that outerInput and innerInput are not equivalent and not equal to the shared value
@@ -124,10 +124,10 @@ public class BoolFunctions {
 						bf.exportToBLIF("intermediate-1");
 						bf.exportToDOTandPNG("intermediate-1");
 						
-						System.out.println("node.id: "+node.id);
-						System.out.println("outerInput.dest: "+ outerInput.dest);
-						System.out.println("innerInput.dest: "+ innerInput.dest);
-						System.out.println("shared Input: "+overlappingInputNode);
+					//	System.out.println("node.id: "+node.id);
+					//	System.out.println("outerInput.dest: "+ outerInput.dest);
+					//	System.out.println("innerInput.dest: "+ innerInput.dest);
+					//	System.out.println("shared Input: "+overlappingInputNode);
 						
 						// delete edge from node to outerInput
 						bf.deleteEdge(node.id, outerInput.dest);
@@ -308,27 +308,80 @@ public class BoolFunctions {
 					}*/
 	
 
-	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = bf.nodesMap.get(nodeID);
-			if(node.type != NodeType.MAJ)
-				continue;
-			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-			int Offset = (int) Math.random()*outgoingEdges.length;
-			if(outgoingEdges[Offset].dest != outgoingEdges[(Offset+1)%outgoingEdges.length].dest && outgoingEdges[Offset].dest != outgoingEdges[(Offset+2)%outgoingEdges.length].dest) {
-				//check if replacement is already inverted
-				if(outgoingEdges[(Offset+1%outgoingEdges.length)].dest % 2 == 0) {
-					//replacement is not an inverted value
-					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest + 1);
+	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {	
+		boolean modificationFound = true;
+		int count  = 0;
+		while(modificationFound) {
+			modificationFound = false;
+	//		bf.exportToBLIF("intermediate-1");
+			for(long nodeID : bf.nodesMap.keySet()) {
+				Node node = bf.nodesMap.get(nodeID);
+				if(node.type != NodeType.MAJ || node.id < 2) {
+					continue;
 				}
+				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+				int Offset = (int) (Math.random()*outgoingEdges.length);
+				//randomization
+				int Index_1 = (Math.random() > 0.5) ? 1 : 2;
+				int Index_2 = (Index_1 == 1) ? 2 : 1;
+				Index_1 = (Offset+Index_1)%outgoingEdges.length;
+				Index_2 = (Offset+Index_2)%outgoingEdges.length;
+			
+				
+				if(Long.compare(outgoingEdges[Offset].dest, (long) 3) < 0) {
+					System.out.println("HERE: " + outgoingEdges[Offset].dest + "  offset: "+ Offset);
+					continue;
+				}
+				
+		/*	if(outgoingEdges[Index_1].dest < 2) {
+					if(outgoingEdges[Index_2].dest > 2) {
+						int tmp = Index_1;
+						Index_2 = Index_1;
+						Index_1 = tmp;
+					}
+					if(outgoingEdges[Index_2].dest == 0) {
+						continue;
+					}
+				}
+		*/						
+				if(outgoingEdges[Offset].dest != outgoingEdges[Index_1].dest && outgoingEdges[Offset].dest != outgoingEdges[Index_2].dest) {
+					//check if replacement is already inverted
+					if(outgoingEdges[Index_2].dest % 2L == 0) {			
+						if(outgoingEdges[Index_1].dest == outgoingEdges[Index_2].dest) {
+							//System.out.println("EQUIVALENT VALUES");
+							continue;
+					}
+						
+						//replacement is not an inverted value
+						if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest + 1, true).size() != 0) {
+							modificationFound = true;
+							break;
+						}
+						else {
+							System.out.println("STH WRONG 1");
+						}
+					}
+					else {
+						//replacement is an inverted value
+						if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest - 1, true).size() != 0) {
+							modificationFound = true;
+							break;
+						}
+						else {
+							System.out.println("STH WRONG 2");
+						}
+					}		
+				} 
 				else {
-					//replacement is an inverted value
-					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest - 1);
-				}		
-				System.out.println("RELEVANCE OPERATION");
-			} 
-			else
-				continue;					
+					continue;
+				}					
+			}
+			System.out.println("#### DONE: "+count+" ####");
+		//	bf.exportToDOTandPNG(""+count);
+	//		bf.exportToBLIF("intermediate-2");
+	//		System.out.println("count = "+count);
+	//		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
+			count++;
 		}
 	}
 	
@@ -345,24 +398,24 @@ public class BoolFunctions {
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
 				for(int i = 0; i < outgoingEdges.length; i++) {
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						System.out.println("FOUND MAJ");
+				//		System.out.println("FOUND MAJ");
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
 						Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 						//check if overlap exists in node.children and innerNode.children
 						long overlappingInputNode = -1;
 						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
-							System.out.println("1");
+				//			System.out.println("1");
 							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
-								System.out.println("2");
+				//				System.out.println("2");
 								if(innerChild.type == NodeType.INV ) {
-									System.out.println("INV NODE FOUND");
-									System.out.println("node: "+node.id);
-									System.out.println("innerNode: "+innerNode.id);
-									System.out.println("child: "+ child.id);
-									System.out.println("innerChild: "+ innerChild.id);
+							//		System.out.println("INV NODE FOUND");
+							//		System.out.println("node: "+node.id);
+							//		System.out.println("innerNode: "+innerNode.id);
+							//		System.out.println("child: "+ child.id);
+							//		System.out.println("innerChild: "+ innerChild.id);
 								//get id which is not inverted
 									for(Node Invchild : innerChild.getChildrenNodes(internalGraph, nodesMap)) {
-										System.out.println("InvChild: "+ Invchild.id);
+							//			System.out.println("InvChild: "+ Invchild.id);
 						//			 if(Invchild.id == innerChild.id){
 						//				 System.out.println("INNER 1");
 						//				if(child.id == innerChild.id){

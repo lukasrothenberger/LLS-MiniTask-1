@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 //import org.jinternalGrapht.*;
 //import org.jinternalGrapht.internalGraph.DefaultEdge;
@@ -17,6 +19,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
+import org.jgrapht.util.DoublyLinkedList;
 
 public class GraphWrapper {
 	// Wrapper class for internal jgrapht-graph
@@ -93,8 +96,25 @@ public class GraphWrapper {
 	 * @throws Exception
 	 */
 	public void redirectEdge(long source, long oldTarget, long newTarget) throws Exception {
-		this.deleteEdge(source, oldTarget);
-		this.addEdge(source, newTarget);
+		int success = 0;
+		try {
+			this.deleteEdge(source, oldTarget);
+			success++;
+			this.addEdge(source, newTarget);
+			success++;
+		}
+		catch(Exception e) {
+			//undo successful modifications
+			if(success == 0) {
+			}
+			if(success == 1) {
+				this.addEdge(source, oldTarget);
+			}
+			if(success == 2) {
+				//do nothing
+			}
+			throw e;
+		}
 	}
 	
 	/**
@@ -399,10 +419,67 @@ public class GraphWrapper {
 	 * @param root
 	 * @param victim
 	 * @param replacement
+	 * @throws Exception 
 	 */
-	public void replaceInSubtree(long root, long victim, long replacement) {
-		// TODO Auto-generated method stub
-		System.out.println("GraphWrapper.ReplaceInSubtree not yet implemented!");
+	public DoublyLinkedList<Long[]> replaceInSubtree(long root, long victim, long replacement, boolean outermostCall) throws Exception {
+//		System.out.println("\treplace: ");
+//		System.out.println("\t\troot: "+root);
+//		System.out.println("\t\tvictim: "+ victim);
+//		System.out.println("\t\treplacement: "+ replacement);
+		if(root == replacement) {
+			return new DoublyLinkedList<Long[]>();
+		}
+		Node rootNode = nodesMap.get(root);
+		DoublyLinkedList<Long[]> appliedModifications = new DoublyLinkedList<Long[]>();
+		boolean modificationFound = true;
+		while(modificationFound) {
+			modificationFound = false;
+			for(Edge e : rootNode.getOutgoingEdges(internalGraph, nodesMap)) {
+				try {
+					if(e.dest == victim) {
+							this.redirectEdge(root, victim, replacement);
+							System.out.println("DONE SOMETHING");
+							modificationFound = true;
+							appliedModifications.add(new Long[] {root, victim, replacement});
+							break;
+					}
+					else {
+						//System.out.println("ELSE");
+							// concatenate lists
+						for(Long[] elem : replaceInSubtree(e.dest, victim, replacement, false)) {
+							modificationFound = true;
+							appliedModifications.add(elem);
+						}
+					}
+				}
+				catch(IllegalArgumentException ex) {
+					System.out.println("outermost: "+ outermostCall + " applMod: "+ appliedModifications.size());
+					//in case that Edges would produce a cycle
+					if(outermostCall) {
+						if(appliedModifications.size() > 0)
+							System.out.println("ROLLING BACK:");
+						appliedModifications.invert();
+						for(Long[] elem : appliedModifications) {
+							System.out.println("\t"+elem[0]+": "+elem[1]+" -> "+ elem[2]);
+						}
+						for(Long[] elem : appliedModifications) {
+							this.redirectEdge(elem[0], elem[2], elem[1]);
+						}
+						return new DoublyLinkedList<Long[]>();
+					}
+					else {
+						throw ex;
+					}
+				}
+			}
+		}	
+		if(appliedModifications.size() != 0) {
+			System.out.println("Applied: ");
+			for(Long[] elem : appliedModifications) {
+				System.out.println("\t"+elem[0]+": "+elem[1]+" -> "+ elem[2]);
+			}
+		}
+		return appliedModifications;
 	}
 	
 }
