@@ -10,7 +10,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
+		/*	String input_file = "data/aiger-set/ascii/aig_0_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -29,7 +29,7 @@ public class Main {
 			graph.exportToBLIF("majGraph");
 			graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
 			//graph.boolFunctions.DistributivityLR(graph.internalGraph, graph.nodesMap);
-			graph.boolFunctions.ComplementaryAssociativity(graph.internalGraph, graph.nodesMap);
+			//graph.boolFunctions.ComplementaryAssociativity(graph.internalGraph, graph.nodesMap);
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
 	
@@ -43,7 +43,7 @@ public class Main {
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 			//ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-	
+	*/
 			
 			//### modified Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
@@ -65,6 +65,7 @@ public class Main {
 			//fig2a.boolFunctions.ComplementaryAssociativity(fig2a.internalGraph, fig2a.nodesMap);
 			//fig2a.boolFunctions.Relevance(fig2a.internalGraph, fig2a.nodesMap);
 			fig2a.boolFunctions.Majority(fig2a.internalGraph, fig2a.nodesMap);
+			//fig2a.boolFunctions.DistributivityRL(fig2a.internalGraph, fig2a.nodesMap);
 			
 			fig2a.exportToDOTandPNG("fig2a-mod-assoc");
 			fig2a.exportToBLIF("fig2a-mod-assoc");
