@@ -85,6 +85,13 @@ public class GraphWrapper {
 		}
 	}
 	
+	/**
+	 * replaces an edge from source to oldTarget with an edge from source to newTarget.
+	 * @param source
+	 * @param oldTarget
+	 * @param newTarget
+	 * @throws Exception
+	 */
 	public void redirectEdge(long source, long oldTarget, long newTarget) throws Exception {
 		this.deleteEdge(source, oldTarget);
 		this.addEdge(source, newTarget);
@@ -369,7 +376,12 @@ public class GraphWrapper {
 		}
 	}
 
-
+	
+	/**
+	 * Removes the node with the given Id from the graph.
+	 * Deletes all incoming and outgoing edges to this node -> might lead to orphaned nodes!
+	 * @param id
+	 */
 	public void removeNode(long id) {
 		Node node = nodesMap.get(id);
 		for(Edge e : node.getIncomingEdges(internalGraph, nodesMap)) {
@@ -381,7 +393,13 @@ public class GraphWrapper {
 		internalGraph.removeVertex(node);
 	}
 
-
+	
+	/**
+	 * Replace occurrences of victim in the subtree starting from root with replacement.
+	 * @param root
+	 * @param victim
+	 * @param replacement
+	 */
 	public void replaceInSubtree(long root, long victim, long replacement) {
 		// TODO Auto-generated method stub
 		System.out.println("GraphWrapper.ReplaceInSubtree not yet implemented!");

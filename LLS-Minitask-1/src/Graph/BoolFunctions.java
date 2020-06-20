@@ -353,16 +353,16 @@ public class BoolFunctions {
 			if(node.type != NodeType.MAJ)
 				continue;
 			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-			int Offset = (int) Math.random()*3;
-			if(outgoingEdges[Offset].dest != outgoingEdges[(Offset+1)%3].dest && outgoingEdges[Offset].dest != outgoingEdges[(Offset+2)%3].dest) {
+			int Offset = (int) Math.random()*outgoingEdges.length;
+			if(outgoingEdges[Offset].dest != outgoingEdges[(Offset+1)%outgoingEdges.length].dest && outgoingEdges[Offset].dest != outgoingEdges[(Offset+2)%outgoingEdges.length].dest) {
 				//check if replacement is already inverted
-				if(outgoingEdges[(Offset+1%3)].dest % 2 == 0) {
+				if(outgoingEdges[(Offset+1%outgoingEdges.length)].dest % 2 == 0) {
 					//replacement is not an inverted value
-					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%3].dest, outgoingEdges[(Offset+1)%3].dest + 1);
+					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest + 1);
 				}
 				else {
 					//replacement is an inverted value
-					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%3].dest, outgoingEdges[(Offset+1)%3].dest - 1);
+					bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest, outgoingEdges[(Offset+1)%outgoingEdges.length].dest - 1);
 				}		
 				System.out.println("RELEVANCE OPERATION");
 			} 
@@ -464,7 +464,7 @@ public class BoolFunctions {
 						
 						break;
 							}
-						}
+						 	}
 					}
 	}
 	
