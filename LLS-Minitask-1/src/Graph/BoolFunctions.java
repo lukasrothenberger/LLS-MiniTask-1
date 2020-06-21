@@ -506,12 +506,17 @@ public class BoolFunctions {
 		
 		//check if applied changes are valid
 		bf.exportToBLIF("relevance-intermediate-1");
-		bf.exportToDOTandPNG("relevance-intermediate-1");
 		GW_copy.exportToBLIF("relevance-intermediate-2");
-		GW_copy.exportToDOTandPNG("relevance-intermediate-2");
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/relevance-intermediate-1.blif"), new File("output/relevance-intermediate-2.blif"));
 			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
