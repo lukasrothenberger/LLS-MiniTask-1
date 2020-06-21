@@ -105,12 +105,9 @@ public class GraphWrapper {
 			success++;
 			this.addEdge(source, newTarget);
 			success++;
-			System.out.println("redirected: "+ source+"->"+oldTarget + " to "+ source+"->"+newTarget);
-			
 			return true;
 		}
 		catch(Exception e) {
-			//e.printStackTrace();
 			//undo successful modifications
 			if(success == 0) {
 			}
@@ -421,6 +418,7 @@ public class GraphWrapper {
 	}
 	
 	
+	/*
 	private void __fillNodeQueue(Node rootNode, List<Long> queue) {
 		if(! (queue.contains(rootNode.id)))
 			queue.add(rootNode.id);
@@ -429,15 +427,7 @@ public class GraphWrapper {
 		}
 	}
 
-	/**
-	 * Replace occurrences of victim in the subtree starting from root with replacement.
-	 * Return boolean value. True, if a value has been replaced. False, else.
-	 * @param root
-	 * @param victim
-	 * @param replacement
-	 * @return
-	 * @throws Exception 
-	 */
+
 	public boolean replaceInSubtree(long root, long victim, long replacement) throws Exception {
 //		System.out.println("root: "+ root);
 //		System.out.println("victim: "+ victim);
@@ -482,14 +472,18 @@ public class GraphWrapper {
 		
 		return modificationFound;
 	}
+	*/
 	
-	
-	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {
-		System.out.println("RISR");
-//		if(victim < 2) {
-//			return false;
-//		}
-		
+	/**
+	 * Replace occurrences of victim in the subtree starting from root with replacement.
+	 * Return boolean value. True, if a value has been replaced. False, else.
+	 * @param root
+	 * @param victim
+	 * @param replacement
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {	
 		boolean modificationFound = false;
 		for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
 			if(e.dest == victim) {
@@ -498,7 +492,6 @@ public class GraphWrapper {
 					modificationFound = true;
 				}
 				catch(Exception ex) {
-					System.out.println("ex1");
 				}
 			}
 			else {
@@ -507,140 +500,13 @@ public class GraphWrapper {
 					modificationFound = true;
 				}
 				catch(Exception ex) {
-					System.out.println("ex2");
 				}
 			}
-		}
-		
+		}	
 		return modificationFound;
 	}
 		
 
 		
-		
-		public boolean replaceFirstOccurenceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {
-			System.out.println("RFOISR");
-//			if(victim < 2) {
-//				return false;
-//			}
-			
-			for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
-				if(e.dest == victim) {
-					try {
-						this.redirectEdge(e.source, e.dest, replacement);
-						return true;
-					}
-					catch(Exception ex) {
-						System.out.println("ex1");
-					}
-				}
-			}
-			
-			for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
-				if(replaceInSubtreeRecursive(e.dest, victim, replacement)) {
-					return true;
-				}
-			}
-			return false;
-		
-		/*boolean modificationFound = false;
-		for(Long queueNode : Queue) {
-			Node node = nodesMap.get(queueNode);
-			List<Long> victimList = new LinkedList<Long>();
-			for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
-				if(e.dest == victim) {
-					if(! (victimList.contains(node.id)))
-						victimList.add(node.id);
-				}
-			}
-			
-			for(Long nodeId : victimList) {
-//				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
-				try {
-					this.redirectEdge(nodeId, victim, replacement);
-					modificationFound = true;
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					//e1.printStackTrace();
-				}
-			}
-		}
-		*/
-
-	}
-	
-	
-	/**
-	 * Replace occurrences of victim in the subtree starting from root with replacement.
-	 * @param root
-	 * @param victim
-	 * @param replacement
-	 * @throws Exception 
-	 */
-	/*
-	public boolean replaceInSubtree(long root, long victim, long replacement, DoublyLinkedList<Long[]> appliedModifications, boolean outermostCall) throws Exception {
-		this.exportToDOTandPNG("pre");
-		
-		System.out.println("replaceInSubtree");
-		System.out.println("\treplace: ");
-		System.out.println("\t\troot: "+root);
-		System.out.println("\t\tvictim: "+ victim);
-		System.out.println("\t\treplacement: "+ replacement);
-		if(root == replacement) {
-			return false;
-		}
-		Node rootNode = nodesMap.get(root);
-		boolean modificationFound = true;
-		while(modificationFound) {
-			modificationFound = false;
-			for(Edge e : rootNode.getOutgoingEdges(internalGraph, nodesMap)) {
-				System.out.println("blub");
-				try {
-					if(e.dest == victim) {
-							this.redirectEdge(root, victim, replacement);
-							System.out.println("DONE SOMETHING");
-							modificationFound = true;
-							appliedModifications.add(new Long[] {root, victim, replacement});
-							break;
-					}
-					else {
-							// concatenate lists
-							modificationFound = replaceInSubtree(e.dest, victim, replacement, appliedModifications, false);
-							System.out.println("ELSE: "+ modificationFound + " "+e.dest+" "+root);
-							System.out.println("len: "+appliedModifications.size());
-						
-					}
-				}
-				catch(IllegalArgumentException ex) {
-					System.out.println("outermost: "+ outermostCall + " applMod: "+ appliedModifications.size());
-					//in case that Edges would produce a cycle
-					if(outermostCall) {
-						if(appliedModifications.size() > 0)
-							System.out.println("ROLLING BACK:");
-						appliedModifications.invert();
-						for(Long[] elem : appliedModifications) {
-							System.out.println("\t"+elem[0]+": "+elem[1]+" -> "+ elem[2]);
-						}
-						for(Long[] elem : appliedModifications) {
-							this.redirectEdge(elem[0], elem[2], elem[1]);
-							System.out.println("unroll");
-						}
-						return false;
-					}
-					else {
-						throw ex;
-					}
-				}
-			}
-		}	
-		if(appliedModifications.size() != 0) {
-			System.out.println("Applied: ");
-			for(Long[] elem : appliedModifications) {
-				System.out.println("\t"+elem[0]+": "+elem[1]+" -> "+ elem[2]);
-			}
-		}
-		return true;
-	}
-	*/
-	
 }
+	

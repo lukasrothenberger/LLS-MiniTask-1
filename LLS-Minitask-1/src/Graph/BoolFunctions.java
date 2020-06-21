@@ -456,11 +456,7 @@ public class BoolFunctions {
 		}
 		Collections.shuffle(keyList);
 		
-		boolean breaker = false;
 		for(long nodeId : keyList) {
-			if(breaker)
-				break;
-			System.out.println();
 			Node node = NM_copy.get(nodeId);
 			if(node.type != NodeType.MAJ)
 				continue;
@@ -483,13 +479,8 @@ public class BoolFunctions {
 			long victim = outgoingEdges[Index_1].dest;
 			long replacement = outgoingEdges[Index_2].dest;
 			
-			System.out.println("1. vic: "+ victim + " repl: "+ replacement);
-			
 			if(replacement == 0 || replacement == 1)
 				continue;
-			//if(victim == 0 || victim == 1)
-			//	continue; 
-			System.out.println("Node: "+ node);
 			
 			// invert replacement
 			if(replacement == 0) {
@@ -502,47 +493,15 @@ public class BoolFunctions {
 				replacement = replacement - 1L;
 			}
 			
-			System.out.println("2. vic: "+ victim + " repl: "+ replacement);
-			
 			// start replacement on z's children
 			Node z =  NM_copy.get(outgoingEdges[Offset].dest);
 			Edge[] z_outgoingEdges = z.getOutgoingEdges(IG_copy, NM_copy);
 			
-			System.out.println("z.id: "+z.id+ "  z_OE_lenght: "+ z_outgoingEdges.length);
-			
-			System.out.println("3. vic: "+ victim + " repl: "+ replacement);
 			for(Edge e : z_outgoingEdges) {
-				GW_copy.exportToBLIF("1");
-				GW_copy.exportToDOTandPNG("1");
-				System.out.println("4. vic: "+ victim + " repl: "+ replacement);
-				System.out.println("FOR: root: "+e.dest);
-				System.out.println("FOR: victim: "+victim);
-				System.out.println("FOR: repl: "+replacement);
 				if(GW_copy.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
-				//if(GW_copy.replaceInSubtree(e.dest, victim, replacement)) {
-					System.out.println("done something");
-					//GW_copy.exportToDOTandPNG("test");
-	/*				GW_copy.exportToBLIF("2");
-					try {
-						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/1.blif"), new File("output/2.blif"));
-						GW_copy.exportToDOTandPNG("2");
-						System.out.println("SUCCESS");
-					}
-					catch(Exception ex) {
-						GW_copy.exportToDOTandPNG("2");
-						throw ex;
-					}
-					breaker = true;
-					break;
-					*/
+					System.out.println("relevance: done something");
 				}
 			}
-			//if(GW_copy.replaceInSubtree(nodeId, victim, replacement)) {
-			//	System.out.println("done something");
-			//	GW_copy.exportToDOTandPNG("test");
-			//	break;
-			//}
-			
 		}
 		
 		//check if applied changes are valid
@@ -553,13 +512,10 @@ public class BoolFunctions {
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/relevance-intermediate-1.blif"), new File("output/relevance-intermediate-2.blif"));
 			// made changes are valid
-			System.out.println("#### VALID CHANGES #####");
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			System.out.println("changes not valid");
 			Relevance(internalGraph, nodesMap);
-		
 		}
 		
 	}
