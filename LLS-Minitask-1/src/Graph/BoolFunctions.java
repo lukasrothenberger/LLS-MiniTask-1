@@ -98,8 +98,6 @@ public class BoolFunctions {
 			Node node = NM_copy.get(nodeID);
 			if(node.associativityPossible(IG_copy, NM_copy)) {
 				Edge[] outgoingEdges = node.getOutgoingEdges(IG_copy, NM_copy);
-				//for(int i = 0; i < outgoingEdges.length; i++) {
-				//for(int i = 0; i < outgoingEdges.length; i++) {
 				int i = (int) Math.random()*outgoingEdges.length;
 					if(NM_copy.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
 						Node innerNode = NM_copy.get(outgoingEdges[i].dest);
@@ -116,12 +114,10 @@ public class BoolFunctions {
 							}
 							if(overlappingInputNode != -1 && overlappingInputNode != 0) {
 								break;
-							}
-							
+							}					
 						}
 						if(overlappingInputNode == -1) {
 							//no overlapping input between inner and outer node found, continue
-							System.out.println("NO OVERLAP FOUND, SKIPPING");
 							continue;
 						}
 						//overlap found for input with id overlappingInputNode, exclude this node from swapping			
@@ -129,14 +125,13 @@ public class BoolFunctions {
 						int innerOffset = (int) (Math.random() * 3) % 3;
 						Edge[] innerInputEdges = null;
 						Edge innerInput = null;
-						//for(innerOffset = 0; innerOffset < 3; innerOffset++) {		// TODO randomize?
+
 						while(true) {
 							innerOffset = (int) (Math.random() * 3);
 							// select random outgoing edge from inner node to maj node
 							innerInputEdges = innerNode.getOutgoingEdges(IG_copy, NM_copy);
 							innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
 							
-							//if(NM_copy.get(innerInput.dest).type == NodeType.MAJ)
 							if(innerInput.dest != overlappingInputNode)
 								break;
 						}
@@ -145,10 +140,8 @@ public class BoolFunctions {
 						//select outer input node
 						Edge[] outerInputEdges = null;
 						Edge outerInput = null;
-						//for(int outerOffset = 0; outerOffset < 3; outerOffset++) {  // TODO randomize
 						while(true) {
 							int outerOffset = (int) (Math.random()*3);
-							//outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
 							outerInputEdges = node.getOutgoingEdges(IG_copy, NM_copy);
 							outerInput = outerInputEdges[outerOffset % outerInputEdges.length];
 							
@@ -156,43 +149,22 @@ public class BoolFunctions {
 								break;
 						}
 						if(outerInput == null)
-							continue;
-						System.out.println("FOUND INNER AND OUTER INPUT!");
-						
-						//int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
-						//TODO select outerInput in a way that outerInput and innerInput are not equivalent and not equal to the shared value
-						
+							continue;						
 						// swap selected inner with outer edge
-				//		GW_copy.exportToBLIF("intermediate-1");
-				//		GW_copy.exportToDOTandPNG("intermediate-1");
-						
-						System.out.println("node.id: "+node.id);
-						System.out.println("outerInput.dest: "+ outerInput.dest);
-						System.out.println("innerInput.dest: "+ innerInput.dest);
-						System.out.println("shared Input: "+overlappingInputNode);
 						
 						// delete edge from node to outerInput
 						GW_copy.deleteEdge(node.id, outerInput.dest);
 						// delete edge from innerNode to innerInput
 						GW_copy.deleteEdge(innerNode.id, innerInput.dest);
 						
-			//			GW_copy.exportToDOTandPNG("intermediate-1-post-delete");
-						
 						int successfull = 0;
 						try {
-					//		GW_copy.redirectEdge(node.id, outerInput.dest, innerInput.dest);
-					//		GW_copy.redirectEdge(innerNode.id, innerInput.dest, outerInput.dest);
-							
 							// create edge from node to innerInput
 							GW_copy.addEdge(node.id, innerInput.dest);
 							successfull++;
 							// create edge from innerNode to outerInput
 							GW_copy.addEdge(innerNode.id, outerInput.dest);
-				//			GW_copy.exportToDOTandPNG("intermediate-1-post-add1");
 							successfull++;
-				//			GW_copy.exportToBLIF("intermediate-3");
-				//			GW_copy.exportToDOTandPNG("intermediate-3");
-				//			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-3.blif"));
 							
 						}
 						catch (Exception e) {
@@ -212,14 +184,8 @@ public class BoolFunctions {
 							
 						}
 						
-					//	GW_copy.exportToBLIF("intermediate-2");
-					//	GW_copy.exportToDOTandPNG("intermediate-2");
-						
-					//	ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
-						
 						break;
 					}
-				//}
 			}
 		}
 		
