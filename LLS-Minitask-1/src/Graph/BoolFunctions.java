@@ -346,7 +346,7 @@ public class BoolFunctions {
 	}*/
 					
 	
-	/*
+	
 
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {	
 	//		bf.exportToBLIF("intermediate-1");
@@ -479,7 +479,7 @@ public class BoolFunctions {
 									 }
 									  if(child.id != 0)  // don't allow constant ZERO as shared input
 										overlappingInputNode = child.id;
-						/*			  	for(int x = 0; x < 3; x++) {
+									  	for(int x = 0; x < 3; x++) {
 									  		if(x == i)
 									  			continue;
 									  		if(outgoingEdges[x].dest == overlappingInputNode)
@@ -514,6 +514,7 @@ public class BoolFunctions {
 							}
 						 	}
 					}
+			}
 	}
 	
 	
@@ -522,6 +523,7 @@ public class BoolFunctions {
 		for(long nodeID : bf.nodesMap.keySet()) {
 			Node node = nodesMap.get(nodeID);
 		}
+	}
 		 
 	
 	
