@@ -63,21 +63,54 @@ public class BoolFunctions {
 	
 	
 	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = nodesMap.get(nodeID);
-			if(node.associativityPossible(internalGraph, nodesMap)) {
-				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				for(int i = 0; i < outgoingEdges.length; i++) {
-					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);
+			
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		
+		// actual start of Associativity-code
+		
+		//randomize iteration
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : GW_copy.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);
+		
+		//loop at all nodes
+		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
+		for(long nodeID : keyList) {
+			Node node = NM_copy.get(nodeID);
+			if(node.associativityPossible(IG_copy, NM_copy)) {
+				Edge[] outgoingEdges = node.getOutgoingEdges(IG_copy, NM_copy);
+				//for(int i = 0; i < outgoingEdges.length; i++) {
+				//for(int i = 0; i < outgoingEdges.length; i++) {
+				int i = (int) Math.random()*outgoingEdges.length;
+					if(NM_copy.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
+						Node innerNode = NM_copy.get(outgoingEdges[i].dest);
 						//check if overlap exists in node.children and innerNode.children
 						long overlappingInputNode = -1;
-						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
-							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
+						for(Node child : node.getChildrenNodes(IG_copy, NM_copy)) {
+							for(Node innerChild : innerNode.getChildrenNodes(IG_copy, NM_copy)) {
 								if(child.id == innerChild.id) {
-									if(child.id != 0)  // don't allow constant zero as shared input
+								//	if(child.id != 0)  // don't allow constant zero as shared input
 										overlappingInputNode = child.id;
-									if(overlappingInputNode != 0)
+								//	if(overlappingInputNode != 0)
 										break;
 								}
 							}
@@ -88,7 +121,7 @@ public class BoolFunctions {
 						}
 						if(overlappingInputNode == -1) {
 							//no overlapping input between inner and outer node found, continue
-							//System.out.println("NO OVERLAP FOUND, SKIPPING");
+							System.out.println("NO OVERLAP FOUND, SKIPPING");
 							continue;
 						}
 						//overlap found for input with id overlappingInputNode, exclude this node from swapping			
@@ -96,12 +129,14 @@ public class BoolFunctions {
 						int innerOffset = (int) (Math.random() * 3) % 3;
 						Edge[] innerInputEdges = null;
 						Edge innerInput = null;
-						for(innerOffset = 0; innerOffset < 3; innerOffset++) {		// TODO randomize?
+						//for(innerOffset = 0; innerOffset < 3; innerOffset++) {		// TODO randomize?
+						while(true) {
+							innerOffset = (int) (Math.random() * 3);
 							// select random outgoing edge from inner node to maj node
-							innerInputEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
+							innerInputEdges = innerNode.getOutgoingEdges(IG_copy, NM_copy);
 							innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
 							
-							//if(nodesMap.get(innerInput.dest).type == NodeType.MAJ)
+							//if(NM_copy.get(innerInput.dest).type == NodeType.MAJ)
 							if(innerInput.dest != overlappingInputNode)
 								break;
 						}
@@ -110,9 +145,11 @@ public class BoolFunctions {
 						//select outer input node
 						Edge[] outerInputEdges = null;
 						Edge outerInput = null;
-						for(int outerOffset = 0; outerOffset < 3; outerOffset++) {
+						//for(int outerOffset = 0; outerOffset < 3; outerOffset++) {  // TODO randomize
+						while(true) {
+							int outerOffset = (int) (Math.random()*3);
 							//outerInput = outgoingEdges[(i+outerOffset) % outgoingEdges.length];
-							outerInputEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+							outerInputEdges = node.getOutgoingEdges(IG_copy, NM_copy);
 							outerInput = outerInputEdges[outerOffset % outerInputEdges.length];
 							
 							if(outerInput.dest != overlappingInputNode && outerInput.dest != innerNode.id && outerInput != null)
@@ -120,54 +157,54 @@ public class BoolFunctions {
 						}
 						if(outerInput == null)
 							continue;
-						//System.out.println("FOUND INNER AND OUTER INPUT!");
+						System.out.println("FOUND INNER AND OUTER INPUT!");
 						
 						//int outerOffset =  Math.random() < 0.5 ? 1 : 2; 
 						//TODO select outerInput in a way that outerInput and innerInput are not equivalent and not equal to the shared value
 						
 						// swap selected inner with outer edge
-						bf.exportToBLIF("intermediate-1");
-						bf.exportToDOTandPNG("intermediate-1");
+				//		GW_copy.exportToBLIF("intermediate-1");
+				//		GW_copy.exportToDOTandPNG("intermediate-1");
 						
-					//	System.out.println("node.id: "+node.id);
-					//	System.out.println("outerInput.dest: "+ outerInput.dest);
-					//	System.out.println("innerInput.dest: "+ innerInput.dest);
-					//	System.out.println("shared Input: "+overlappingInputNode);
+						System.out.println("node.id: "+node.id);
+						System.out.println("outerInput.dest: "+ outerInput.dest);
+						System.out.println("innerInput.dest: "+ innerInput.dest);
+						System.out.println("shared Input: "+overlappingInputNode);
 						
 						// delete edge from node to outerInput
-						bf.deleteEdge(node.id, outerInput.dest);
+						GW_copy.deleteEdge(node.id, outerInput.dest);
 						// delete edge from innerNode to innerInput
-						bf.deleteEdge(innerNode.id, innerInput.dest);
+						GW_copy.deleteEdge(innerNode.id, innerInput.dest);
 						
-			//			bf.exportToDOTandPNG("intermediate-1-post-delete");
+			//			GW_copy.exportToDOTandPNG("intermediate-1-post-delete");
 						
 						int successfull = 0;
 						try {
-					//		bf.redirectEdge(node.id, outerInput.dest, innerInput.dest);
-					//		bf.redirectEdge(innerNode.id, innerInput.dest, outerInput.dest);
+					//		GW_copy.redirectEdge(node.id, outerInput.dest, innerInput.dest);
+					//		GW_copy.redirectEdge(innerNode.id, innerInput.dest, outerInput.dest);
 							
 							// create edge from node to innerInput
-							bf.addEdge(node.id, innerInput.dest);
+							GW_copy.addEdge(node.id, innerInput.dest);
 							successfull++;
 							// create edge from innerNode to outerInput
-							bf.addEdge(innerNode.id, outerInput.dest);
-				//			bf.exportToDOTandPNG("intermediate-1-post-add1");
+							GW_copy.addEdge(innerNode.id, outerInput.dest);
+				//			GW_copy.exportToDOTandPNG("intermediate-1-post-add1");
 							successfull++;
-				//			bf.exportToBLIF("intermediate-3");
-				//			bf.exportToDOTandPNG("intermediate-3");
+				//			GW_copy.exportToBLIF("intermediate-3");
+				//			GW_copy.exportToDOTandPNG("intermediate-3");
 				//			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-3.blif"));
 							
 						}
 						catch (Exception e) {
 							e.printStackTrace();
 							if(successfull == 0) {
-								bf.addEdge(node.id, outerInput.dest);
-								bf.addEdge(innerNode.id, innerInput.dest);
+								GW_copy.addEdge(node.id, outerInput.dest);
+								GW_copy.addEdge(innerNode.id, innerInput.dest);
 							}
 							else if(successfull == 1) {
-								bf.deleteEdge(node.id, innerInput.dest);
-								bf.addEdge(node.id, outerInput.dest);
-								bf.addEdge(innerNode.id, innerInput.dest);
+								GW_copy.deleteEdge(node.id, innerInput.dest);
+								GW_copy.addEdge(node.id, outerInput.dest);
+								GW_copy.addEdge(innerNode.id, innerInput.dest);
 							}
 							else {
 								throw e;
@@ -175,16 +212,36 @@ public class BoolFunctions {
 							
 						}
 						
-						bf.exportToBLIF("intermediate-2");
-						bf.exportToDOTandPNG("intermediate-2");
+					//	GW_copy.exportToBLIF("intermediate-2");
+					//	GW_copy.exportToDOTandPNG("intermediate-2");
 						
-						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
+					//	ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
 						
 						break;
 					}
-				}
+				//}
 			}
 		}
+		
+		//check if applied changes are valid
+				bf.exportToBLIF("associativiy-intermediate-1");
+				GW_copy.exportToBLIF("associativity-intermediate-2");
+				GW_copy.exportToDOTandPNG("associativity-intermediate-2");
+				try {
+					ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/associativiy-intermediate-1.blif"), new File("output/associativity-intermediate-2.blif"));
+					// made changes are valid
+					//bf = GW_copy;
+					bf.internalGraph = GW_copy.internalGraph;
+					bf.nodesMap = GW_copy.nodesMap;
+					bf.inputNodes = GW_copy.inputNodes;
+					bf.outputNodes = GW_copy.outputNodes;
+					bf.graphModifier = GW_copy.graphModifier;
+					bf.boolFunctions = GW_copy.boolFunctions;
+				}
+				catch(Exception ex) {
+					// made changes are not valid
+					Associativity(internalGraph, nodesMap);
+				}
 	}
 	
 	
@@ -357,7 +414,6 @@ public class BoolFunctions {
 	 * @throws Exception
 	 */
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		// randomize iteration
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
@@ -378,6 +434,8 @@ public class BoolFunctions {
 			}
 		}
 		
+		// actual start of Relevance-code
+		//randomize iteration
 		List<Long> keyList = new LinkedList<Long>();
 		for(long nodeId : GW_copy.nodesMap.keySet()){
 			keyList.add(nodeId);
@@ -464,30 +522,18 @@ public class BoolFunctions {
 				continue;
 		//	if(node.associativityPossible(internalGraph, nodesMap)) {
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				for(int i = 0; i < outgoingEdges.length; i++) {
+				for(int c = 0; c < outgoingEdges.length; c++) {
+					int i = (int) Math.random()*outgoingEdges.length;
 					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-				//		System.out.println("FOUND MAJ");
 						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
 						Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
 						//check if overlap exists in node.children and innerNode.children
 						long overlappingInputNode = -1;
 						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
-				//			System.out.println("1");
 							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
-				//				System.out.println("2");
 								if(innerChild.type == NodeType.INV ) {
-							//		System.out.println("INV NODE FOUND");
-							//		System.out.println("node: "+node.id);
-							//		System.out.println("innerNode: "+innerNode.id);
-							//		System.out.println("child: "+ child.id);
-							//		System.out.println("innerChild: "+ innerChild.id);
 								//get id which is not inverted
 									for(Node Invchild : innerChild.getChildrenNodes(internalGraph, nodesMap)) {
-							//			System.out.println("InvChild: "+ Invchild.id);
-						//			 if(Invchild.id == innerChild.id){
-						//				 System.out.println("INNER 1");
-						//				if(child.id == innerChild.id){
-						//					System.out.println("INNER 2");
 									 for(int x = 0; x < 3; x++) {
 										 if(x==i)
 											 continue;
@@ -518,7 +564,12 @@ public class BoolFunctions {
 									  			continue;
 									  		if(outgoingEdges[x].dest == overlappingInputNode)
 									  			continue;
-									  		bf.redirectEdge(innerEdges[i].source, innerEdges[i].dest, outgoingEdges[x].dest);
+									  		try {
+									  			bf.redirectEdge(innerEdges[i].source, innerEdges[i].dest, outgoingEdges[x].dest);
+									  		}
+									  		catch(Exception ex) {
+									  			continue;
+									  		}
 									  		System.out.println("COMP ASSOC DONE");
 									  		//innerEdges[i] = outgoingEdges[x] ;
 								  	}
