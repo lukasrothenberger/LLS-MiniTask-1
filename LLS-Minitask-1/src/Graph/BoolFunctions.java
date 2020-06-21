@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.util.DoublyLinkedList;
 
 public class BoolFunctions {
@@ -429,18 +430,41 @@ public class BoolFunctions {
 	 */
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		// randomize iteration
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);
+			
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		
 		List<Long> keyList = new LinkedList<Long>();
-		for(long nodeId : bf.nodesMap.keySet()){
+		for(long nodeId : GW_copy.nodesMap.keySet()){
 			keyList.add(nodeId);
 		}
 		Collections.shuffle(keyList);
 		
+		boolean breaker = false;
 		for(long nodeId : keyList) {
+			if(breaker)
+				break;
 			System.out.println();
-			Node node = nodesMap.get(nodeId);
+			Node node = NM_copy.get(nodeId);
 			if(node.type != NodeType.MAJ)
 				continue;
-			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			Edge[] outgoingEdges = node.getOutgoingEdges(IG_copy, NM_copy);
 			if(outgoingEdges.length < 3)
 				continue;
 			
@@ -481,40 +505,61 @@ public class BoolFunctions {
 			System.out.println("2. vic: "+ victim + " repl: "+ replacement);
 			
 			// start replacement on z's children
-			Node z =  nodesMap.get(outgoingEdges[Offset].dest);
-			Edge[] z_outgoingEdges = z.getOutgoingEdges(internalGraph, nodesMap);
+			Node z =  NM_copy.get(outgoingEdges[Offset].dest);
+			Edge[] z_outgoingEdges = z.getOutgoingEdges(IG_copy, NM_copy);
 			
 			System.out.println("z.id: "+z.id+ "  z_OE_lenght: "+ z_outgoingEdges.length);
 			
 			System.out.println("3. vic: "+ victim + " repl: "+ replacement);
 			for(Edge e : z_outgoingEdges) {
-				bf.exportToBLIF("1");
-				bf.exportToDOTandPNG("1");
+				GW_copy.exportToBLIF("1");
+				GW_copy.exportToDOTandPNG("1");
 				System.out.println("4. vic: "+ victim + " repl: "+ replacement);
 				System.out.println("FOR: root: "+e.dest);
 				System.out.println("FOR: victim: "+victim);
 				System.out.println("FOR: repl: "+replacement);
-				if(bf.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
-				//if(bf.replaceInSubtree(e.dest, victim, replacement)) {
+				if(GW_copy.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
+				//if(GW_copy.replaceInSubtree(e.dest, victim, replacement)) {
 					System.out.println("done something");
-					//bf.exportToDOTandPNG("test");
-					bf.exportToBLIF("2");
+					//GW_copy.exportToDOTandPNG("test");
+	/*				GW_copy.exportToBLIF("2");
 					try {
 						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/1.blif"), new File("output/2.blif"));
+						GW_copy.exportToDOTandPNG("2");
+						System.out.println("SUCCESS");
 					}
 					catch(Exception ex) {
-						bf.exportToDOTandPNG("2");
+						GW_copy.exportToDOTandPNG("2");
 						throw ex;
 					}
+					breaker = true;
 					break;
+					*/
 				}
 			}
-			//if(bf.replaceInSubtree(nodeId, victim, replacement)) {
+			//if(GW_copy.replaceInSubtree(nodeId, victim, replacement)) {
 			//	System.out.println("done something");
-			//	bf.exportToDOTandPNG("test");
+			//	GW_copy.exportToDOTandPNG("test");
 			//	break;
 			//}
 			
+		}
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("relevance-intermediate-1");
+		bf.exportToDOTandPNG("relevance-intermediate-1");
+		GW_copy.exportToBLIF("relevance-intermediate-2");
+		GW_copy.exportToDOTandPNG("relevance-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/relevance-intermediate-1.blif"), new File("output/relevance-intermediate-2.blif"));
+			// made changes are valid
+			System.out.println("#### VALID CHANGES #####");
+		}
+		catch(Exception ex) {
+			// made changes are not valid
+			System.out.println("changes not valid");
+			Relevance(internalGraph, nodesMap);
+		
 		}
 		
 	}

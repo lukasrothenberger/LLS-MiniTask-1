@@ -15,6 +15,7 @@ import java.util.List;
 //import org.jinternalGrapht.internalGraph.SimpleGraph;
 
 import org.jgrapht.Graph;
+import org.jgrapht.graph.AbstractBaseGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.graph.DirectedPseudograph;
