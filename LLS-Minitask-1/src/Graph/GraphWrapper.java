@@ -17,6 +17,7 @@ import java.util.List;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jgrapht.graph.DirectedPseudograph;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.util.DoublyLinkedList;
@@ -36,6 +37,7 @@ public class GraphWrapper {
 	 */
 	public GraphWrapper() {
 		internalGraph = new DirectedAcyclicGraph<>(Edge.class);
+		//internalGraph = new DirectedPseudograph<>(Edge.class);
 		nodesMap = new HashMap<Long, Node>();
 		inputNodes = new HashSet<Node>();
 		outputNodes = new HashSet<Node>();
@@ -95,15 +97,19 @@ public class GraphWrapper {
 	 * @param newTarget
 	 * @throws Exception
 	 */
-	public void redirectEdge(long source, long oldTarget, long newTarget) throws Exception {
+	public boolean redirectEdge(long source, long oldTarget, long newTarget) throws Exception {
 		int success = 0;
 		try {
 			this.deleteEdge(source, oldTarget);
 			success++;
 			this.addEdge(source, newTarget);
 			success++;
+			System.out.println("redirected: "+ source+"->"+oldTarget + " to "+ source+"->"+newTarget);
+			
+			return true;
 		}
 		catch(Exception e) {
+			//e.printStackTrace();
 			//undo successful modifications
 			if(success == 0) {
 			}
@@ -432,22 +438,22 @@ public class GraphWrapper {
 	 * @throws Exception 
 	 */
 	public boolean replaceInSubtree(long root, long victim, long replacement) throws Exception {
-		System.out.println("root: "+ root);
-		System.out.println("victim: "+ victim);
-		System.out.println("replacement: "+ replacement);
+//		System.out.println("root: "+ root);
+//		System.out.println("victim: "+ victim);
+//		System.out.println("replacement: "+ replacement);
 	//	if(victim < 2) {
 	//		return false;
 	//	}
 		
-		this.exportToBLIF("1");
-		this.exportToDOTandPNG("1");
+//		this.exportToBLIF("1");
+//		this.exportToDOTandPNG("1");
 		List<Long> Queue = new LinkedList<Long>();
 		__fillNodeQueue(nodesMap.get(root), Queue);
-		System.out.println("done: "+Queue.size());
+//		System.out.println("done: "+Queue.size());
 		
-		System.out.println("Queue: ");
+//		System.out.println("Queue: ");
 		for(Long q : Queue) {
-			System.out.println("\t"+q);
+//			System.out.println("\t"+q);
 		}
 		
 		boolean modificationFound = false;
@@ -461,27 +467,105 @@ public class GraphWrapper {
 				}
 			}
 			for(Long nodeId : victimList) {
-				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
+//				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
 				try {
 					this.redirectEdge(nodeId, victim, replacement);
 					modificationFound = true;
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
 				}
 			}
-		}
-		this.exportToBLIF("2");
-		try {
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/1.blif"), new File("output/2.blif"));
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			this.exportToDOTandPNG("2");
-			throw e;
 		}
 		
 		
 		return modificationFound;
+	}
+	
+	
+	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {
+		System.out.println("RISR");
+//		if(victim < 2) {
+//			return false;
+//		}
+		
+		boolean modificationFound = false;
+		for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
+			if(e.dest == victim) {
+				try {
+					this.redirectEdge(e.source, e.dest, replacement);
+					modificationFound = true;
+				}
+				catch(Exception ex) {
+					System.out.println("ex1");
+				}
+			}
+			else {
+				try {
+					replaceInSubtreeRecursive(e.dest, victim, replacement);
+					modificationFound = true;
+				}
+				catch(Exception ex) {
+					System.out.println("ex2");
+				}
+			}
+		}
+		
+		return modificationFound;
+	}
+		
+
+		
+		
+		public boolean replaceFirstOccurenceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {
+			System.out.println("RFOISR");
+//			if(victim < 2) {
+//				return false;
+//			}
+			
+			for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
+				if(e.dest == victim) {
+					try {
+						this.redirectEdge(e.source, e.dest, replacement);
+						return true;
+					}
+					catch(Exception ex) {
+						System.out.println("ex1");
+					}
+				}
+			}
+			
+			for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
+				if(replaceInSubtreeRecursive(e.dest, victim, replacement)) {
+					return true;
+				}
+			}
+			return false;
+		
+		/*boolean modificationFound = false;
+		for(Long queueNode : Queue) {
+			Node node = nodesMap.get(queueNode);
+			List<Long> victimList = new LinkedList<Long>();
+			for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
+				if(e.dest == victim) {
+					if(! (victimList.contains(node.id)))
+						victimList.add(node.id);
+				}
+			}
+			
+			for(Long nodeId : victimList) {
+//				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
+				try {
+					this.redirectEdge(nodeId, victim, replacement);
+					modificationFound = true;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					//e1.printStackTrace();
+				}
+			}
+		}
+		*/
+
 	}
 	
 	

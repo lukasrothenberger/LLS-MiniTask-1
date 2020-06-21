@@ -1,7 +1,9 @@
 package Graph;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -347,7 +349,7 @@ public class BoolFunctions {
 					
 	
 	
-
+/*
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {	
 	//		bf.exportToBLIF("intermediate-1");
 			for(long nodeID : bf.nodesMap.keySet()) {
@@ -383,12 +385,12 @@ public class BoolFunctions {
 							Index_1 = tmp;
 						}
 					}
-					System.out.println("here");
+//					System.out.println("here");
 					
 					if(outgoingEdges[Offset].dest != outgoingEdges[Index_1].dest && outgoingEdges[Offset].dest != outgoingEdges[Index_2].dest) {
 						//check if replacement is already inverted
-						System.out.println("replacement: "+ outgoingEdges[Index_2].dest);
-						System.out.println("mod: "+(outgoingEdges[Index_2].dest % 2L));
+//						System.out.println("replacement: "+ outgoingEdges[Index_2].dest);
+//						System.out.println("mod: "+(outgoingEdges[Index_2].dest % 2L));
 						if(outgoingEdges[Index_2].dest % 2L == 0) {			
 							if(outgoingEdges[Index_1].dest == outgoingEdges[Index_2].dest) {
 								//System.out.println("EQUIVALENT VALUES");
@@ -418,8 +420,106 @@ public class BoolFunctions {
 	//		System.out.println("count = "+count);
 	//		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
 	}
-	
+*/
+	/**
+	 * does only a single relevance transformation
+	 * @param internalGraph
+	 * @param nodesMap
+	 * @throws Exception
+	 */
+	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		// randomize iteration
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : bf.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);
+		
+		for(long nodeId : keyList) {
+			System.out.println();
+			Node node = nodesMap.get(nodeId);
+			if(node.type != NodeType.MAJ)
+				continue;
+			Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
+			if(outgoingEdges.length < 3)
+				continue;
+			
+			int Offset;
+			while(true) {
+				Offset = (int) (Math.random() * outgoingEdges.length);
+				if(outgoingEdges[Offset].dest != 0)
+					break;
+			}
+			//randomization
+			int Index_1 = (Math.random() > 0.5) ? 1 : 2;
+			int Index_2 = (Index_1 == 1) ? 2 : 1;
+			Index_1 = (Offset+Index_1)%outgoingEdges.length;
+			Index_2 = (Offset+Index_2)%outgoingEdges.length;
+			
+			long victim = outgoingEdges[Index_1].dest;
+			long replacement = outgoingEdges[Index_2].dest;
+			
+			System.out.println("1. vic: "+ victim + " repl: "+ replacement);
+			
+			if(replacement == 0 || replacement == 1)
+				continue;
+			//if(victim == 0 || victim == 1)
+			//	continue; 
+			System.out.println("Node: "+ node);
+			
+			// invert replacement
+			if(replacement == 0) {
+				replacement = 1L;
+			}
+			else if(replacement % 2L == 0 ) {
+				replacement = replacement + 1L;
+			}
+			else {
+				replacement = replacement - 1L;
+			}
+			
+			System.out.println("2. vic: "+ victim + " repl: "+ replacement);
+			
+			// start replacement on z's children
+			Node z =  nodesMap.get(outgoingEdges[Offset].dest);
+			Edge[] z_outgoingEdges = z.getOutgoingEdges(internalGraph, nodesMap);
+			
+			System.out.println("z.id: "+z.id+ "  z_OE_lenght: "+ z_outgoingEdges.length);
+			
+			System.out.println("3. vic: "+ victim + " repl: "+ replacement);
+			for(Edge e : z_outgoingEdges) {
+				bf.exportToBLIF("1");
+				bf.exportToDOTandPNG("1");
+				System.out.println("4. vic: "+ victim + " repl: "+ replacement);
+				System.out.println("FOR: root: "+e.dest);
+				System.out.println("FOR: victim: "+victim);
+				System.out.println("FOR: repl: "+replacement);
+				if(bf.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
+				//if(bf.replaceInSubtree(e.dest, victim, replacement)) {
+					System.out.println("done something");
+					//bf.exportToDOTandPNG("test");
+					bf.exportToBLIF("2");
+					try {
+						ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/1.blif"), new File("output/2.blif"));
+					}
+					catch(Exception ex) {
+						bf.exportToDOTandPNG("2");
+						throw ex;
+					}
+					break;
+				}
+			}
+			//if(bf.replaceInSubtree(nodeId, victim, replacement)) {
+			//	System.out.println("done something");
+			//	bf.exportToDOTandPNG("test");
+			//	break;
+			//}
+			
+		}
+		
+	}
 
+	
 	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		//TODO not working for inverter on outer node
 		
