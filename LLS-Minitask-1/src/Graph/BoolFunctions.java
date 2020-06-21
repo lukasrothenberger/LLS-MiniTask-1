@@ -479,6 +479,124 @@ public class BoolFunctions {
 
 	
 	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);
+			
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		
+		// actual start of CompAssoc-code
+		//randomize iteration
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : GW_copy.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);
+		
+		// DO STUFF
+		for(long nodeId : keyList) {
+			Node node = GW_copy.nodesMap.get(nodeId);
+			Edge[] outgoingEdges = node.getOutgoingEdges(IG_copy, NM_copy);
+			if(node.type != NodeType.MAJ)
+				continue;
+			if(node.getCounts(IG_copy, NM_copy)[1] < 1) {
+				//no child MAJ node
+				continue;
+			}
+			//get index of M(y,u',z)
+			int index_outer_M = -1;
+			while(true) {
+				index_outer_M = (int) (Math.random()*outgoingEdges.length);
+				if(NM_copy.get(outgoingEdges[index_outer_M].dest).type == NodeType.MAJ) {
+					break;
+				}
+			}
+			
+			//get overlap
+			long outerOverlappingValue = -1;
+			long innerOverlappingValue = -1;
+			for(Edge outerEdge: node.getOutgoingEdges(IG_copy, NM_copy)) {
+				for(Edge innerEdge: NM_copy.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(IG_copy, NM_copy)) {
+					//check for overlap
+					if(outerEdge.dest - 1 == innerEdge.dest && innerEdge.dest % 2L == 0) {
+						// -> outer value inverted
+						// get index of x
+						int index_outer_x = -1;
+						while(true) {
+							index_outer_x = (int) (Math.random()*outgoingEdges.length);
+							if(index_outer_x != index_outer_M) {
+								if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
+									break;
+								}
+							}
+						}
+						// replace inner u' with x
+						GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+						System.out.println("CompAssoc: done something");			
+					}
+					else if(innerEdge.dest - 1 == outerEdge.dest && outerEdge.dest % 2L == 0) {
+						// -> innver value inverted
+						// get index of x
+						int index_outer_x = -1;
+						while(true) {
+							index_outer_x = (int) (Math.random()*outgoingEdges.length);
+							if(index_outer_x != index_outer_M) {
+								if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
+									break;
+								}
+							}
+						}
+						// replace inner u' with x
+						GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+						System.out.println("CompAssoc: done something");
+					}
+					else {
+						// -> no overlap
+						continue;
+					//	System.out.println("no overlap");
+					}
+				}
+			}
+			
+		}
+		// END DO STUFF
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("compAssoc-intermediate-1");
+		GW_copy.exportToBLIF("compAssoc-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/compAssoc-intermediate-1.blif"), new File("output/compAssoc-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			// made changes are not valid
+			ComplementaryAssociativity(internalGraph, nodesMap);
+		}
+	}
+	
+/*	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		//TODO not working for inverter on outer node
 		
 		int count = 0;
@@ -567,6 +685,7 @@ public class BoolFunctions {
 					}
 			}
 	}
+	*/
 	
 	
 	
