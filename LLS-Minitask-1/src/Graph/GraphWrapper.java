@@ -412,7 +412,78 @@ public class GraphWrapper {
 		}
 		internalGraph.removeVertex(node);
 	}
+	
+	
+	private void __fillNodeQueue(Node rootNode, List<Long> queue) {
+		if(! (queue.contains(rootNode.id)))
+			queue.add(rootNode.id);
+		for(Node node: rootNode.getChildrenNodes(internalGraph, nodesMap)) {
+			__fillNodeQueue(node, queue);
+		}
+	}
 
+	/**
+	 * Replace occurrences of victim in the subtree starting from root with replacement.
+	 * Return boolean value. True, if a value has been replaced. False, else.
+	 * @param root
+	 * @param victim
+	 * @param replacement
+	 * @return
+	 * @throws Exception 
+	 */
+	public boolean replaceInSubtree(long root, long victim, long replacement) throws Exception {
+		System.out.println("root: "+ root);
+		System.out.println("victim: "+ victim);
+		System.out.println("replacement: "+ replacement);
+	//	if(victim < 2) {
+	//		return false;
+	//	}
+		
+		this.exportToBLIF("1");
+		this.exportToDOTandPNG("1");
+		List<Long> Queue = new LinkedList<Long>();
+		__fillNodeQueue(nodesMap.get(root), Queue);
+		System.out.println("done: "+Queue.size());
+		
+		System.out.println("Queue: ");
+		for(Long q : Queue) {
+			System.out.println("\t"+q);
+		}
+		
+		boolean modificationFound = false;
+		for(Long queueNode : Queue) {
+			Node node = nodesMap.get(queueNode);
+			List<Long> victimList = new LinkedList<Long>();
+			for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
+				if(e.dest == victim) {
+					if(! (victimList.contains(node.id)))
+						victimList.add(node.id);
+				}
+			}
+			for(Long nodeId : victimList) {
+				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
+				try {
+					this.redirectEdge(nodeId, victim, replacement);
+					modificationFound = true;
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		}
+		this.exportToBLIF("2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/1.blif"), new File("output/2.blif"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			this.exportToDOTandPNG("2");
+			throw e;
+		}
+		
+		
+		return modificationFound;
+	}
+	
 	
 	/**
 	 * Replace occurrences of victim in the subtree starting from root with replacement.
@@ -421,20 +492,24 @@ public class GraphWrapper {
 	 * @param replacement
 	 * @throws Exception 
 	 */
-	public DoublyLinkedList<Long[]> replaceInSubtree(long root, long victim, long replacement, boolean outermostCall) throws Exception {
-//		System.out.println("\treplace: ");
-//		System.out.println("\t\troot: "+root);
-//		System.out.println("\t\tvictim: "+ victim);
-//		System.out.println("\t\treplacement: "+ replacement);
+	/*
+	public boolean replaceInSubtree(long root, long victim, long replacement, DoublyLinkedList<Long[]> appliedModifications, boolean outermostCall) throws Exception {
+		this.exportToDOTandPNG("pre");
+		
+		System.out.println("replaceInSubtree");
+		System.out.println("\treplace: ");
+		System.out.println("\t\troot: "+root);
+		System.out.println("\t\tvictim: "+ victim);
+		System.out.println("\t\treplacement: "+ replacement);
 		if(root == replacement) {
-			return new DoublyLinkedList<Long[]>();
+			return false;
 		}
 		Node rootNode = nodesMap.get(root);
-		DoublyLinkedList<Long[]> appliedModifications = new DoublyLinkedList<Long[]>();
 		boolean modificationFound = true;
 		while(modificationFound) {
 			modificationFound = false;
 			for(Edge e : rootNode.getOutgoingEdges(internalGraph, nodesMap)) {
+				System.out.println("blub");
 				try {
 					if(e.dest == victim) {
 							this.redirectEdge(root, victim, replacement);
@@ -444,12 +519,11 @@ public class GraphWrapper {
 							break;
 					}
 					else {
-						//System.out.println("ELSE");
 							// concatenate lists
-						for(Long[] elem : replaceInSubtree(e.dest, victim, replacement, false)) {
-							modificationFound = true;
-							appliedModifications.add(elem);
-						}
+							modificationFound = replaceInSubtree(e.dest, victim, replacement, appliedModifications, false);
+							System.out.println("ELSE: "+ modificationFound + " "+e.dest+" "+root);
+							System.out.println("len: "+appliedModifications.size());
+						
 					}
 				}
 				catch(IllegalArgumentException ex) {
@@ -464,8 +538,9 @@ public class GraphWrapper {
 						}
 						for(Long[] elem : appliedModifications) {
 							this.redirectEdge(elem[0], elem[2], elem[1]);
+							System.out.println("unroll");
 						}
-						return new DoublyLinkedList<Long[]>();
+						return false;
 					}
 					else {
 						throw ex;
@@ -479,7 +554,8 @@ public class GraphWrapper {
 				System.out.println("\t"+elem[0]+": "+elem[1]+" -> "+ elem[2]);
 			}
 		}
-		return appliedModifications;
+		return true;
 	}
+	*/
 	
 }

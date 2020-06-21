@@ -5,6 +5,8 @@ import Parser.ReadFile;
 
 import java.io.File;
 
+import org.jgrapht.util.DoublyLinkedList;
+
 import Graph.GraphWrapper;
 
 public class Main {
@@ -29,11 +31,11 @@ public class Main {
 			graph.exportToBLIF("majGraph");
 			
 			//graph.boolFunctions.DistributivityLR(graph.internalGraph, graph.nodesMap);
-			for(int i = 0; i < 10000; i++) {
+//			for(int i = 0; i < 100; i++) {
 			//	graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap);
 			//	graph.boolFunctions.ComplementaryAssociativity(graph.internalGraph, graph.nodesMap);
 				graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap);
-			}
+//			}
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
 	
@@ -47,7 +49,7 @@ public class Main {
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 			//ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-*/	
+	*/
 	/*		
 			//### modified Fig.2.a example Graph
 			GraphWrapper fig2a_mod = new GraphWrapper();
@@ -90,8 +92,8 @@ public class Main {
 			fig2a.exportToDOTandPNG("fig2a");
 			fig2a.exportToBLIF("fig2a");
 			
-			//fig2a.replaceInSubtree(12, 8, 10, true);
-			fig2a.redirectEdge(14, 4, 10);
+			//fig2a.replaceInSubtree(12, 8, 6);
+			//fig2a.redirectEdge(14, 4, 10);
 			
 			//fig2a.boolFunctions.Associativity(fig2a.internalGraph, fig2a.nodesMap);
 			fig2a.boolFunctions.Relevance(fig2a.internalGraph, fig2a.nodesMap);
@@ -100,8 +102,8 @@ public class Main {
 			fig2a.exportToDOTandPNG("fig2a-assoc");
 			fig2a.exportToBLIF("fig2a-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a.blif"), new File("output/fig2a-assoc.blif"));
-	
 		
+			
 		}
 	
 }

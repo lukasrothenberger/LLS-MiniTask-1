@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.jgrapht.Graph;
+import org.jgrapht.util.DoublyLinkedList;
 
 public class BoolFunctions {
 	private GraphWrapper bf;
@@ -309,10 +310,6 @@ public class BoolFunctions {
 	
 
 	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {	
-		boolean modificationFound = true;
-		int count  = 0;
-		while(modificationFound) {
-			modificationFound = false;
 	//		bf.exportToBLIF("intermediate-1");
 			for(long nodeID : bf.nodesMap.keySet()) {
 				Node node = bf.nodesMap.get(nodeID);
@@ -320,69 +317,67 @@ public class BoolFunctions {
 					continue;
 				}
 				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				int Offset = (int) (Math.random()*outgoingEdges.length);
-				//randomization
-				int Index_1 = (Math.random() > 0.5) ? 1 : 2;
-				int Index_2 = (Index_1 == 1) ? 2 : 1;
-				Index_1 = (Offset+Index_1)%outgoingEdges.length;
-				Index_2 = (Offset+Index_2)%outgoingEdges.length;
-			
-				
-				if(Long.compare(outgoingEdges[Offset].dest, (long) 3) < 0) {
-					System.out.println("HERE: " + outgoingEdges[Offset].dest + "  offset: "+ Offset);
-					continue;
-				}
-				
-		/*	if(outgoingEdges[Index_1].dest < 2) {
-					if(outgoingEdges[Index_2].dest > 2) {
-						int tmp = Index_1;
-						Index_2 = Index_1;
-						Index_1 = tmp;
+				int Offset = 0;
+				for(int i = 0; i < 3; i++) {
+						if(outgoingEdges[i].dest > 1) {
+							Offset = i;
+						}
+						else {
+							continue;
+						}
+					
+					//Offset = (int) (Math.random()*outgoingEdges.length);
+					//randomization
+					int Index_1 = (Math.random() > 0.5) ? 1 : 2;
+					int Index_2 = (Index_1 == 1) ? 2 : 1;
+					Index_1 = (Offset+Index_1)%outgoingEdges.length;
+					Index_2 = (Offset+Index_2)%outgoingEdges.length;			
+					
+					if(outgoingEdges[Index_1].dest <= 2) {
+						if(outgoingEdges[Index_2].dest <= 2) {
+							continue;
+						}
+						else {
+							//switch
+							int tmp = Index_1;
+							Index_2 = Index_1;
+							Index_1 = tmp;
+						}
 					}
-					if(outgoingEdges[Index_2].dest == 0) {
+					System.out.println("here");
+					
+					if(outgoingEdges[Offset].dest != outgoingEdges[Index_1].dest && outgoingEdges[Offset].dest != outgoingEdges[Index_2].dest) {
+						//check if replacement is already inverted
+						System.out.println("replacement: "+ outgoingEdges[Index_2].dest);
+						System.out.println("mod: "+(outgoingEdges[Index_2].dest % 2L));
+						if(outgoingEdges[Index_2].dest % 2L == 0) {			
+							if(outgoingEdges[Index_1].dest == outgoingEdges[Index_2].dest) {
+								//System.out.println("EQUIVALENT VALUES");
+								continue;
+							}
+							
+							//replacement is not an inverted value
+							
+								if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest + 1)) {
+									return;
+								}
+						}
+						else {
+							//replacement is an inverted value
+							if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest - 1)) {
+								return;
+							}
+						}		
+					} 
+					else {
 						continue;
 					}
 				}
-		*/						
-				if(outgoingEdges[Offset].dest != outgoingEdges[Index_1].dest && outgoingEdges[Offset].dest != outgoingEdges[Index_2].dest) {
-					//check if replacement is already inverted
-					if(outgoingEdges[Index_2].dest % 2L == 0) {			
-						if(outgoingEdges[Index_1].dest == outgoingEdges[Index_2].dest) {
-							//System.out.println("EQUIVALENT VALUES");
-							continue;
-					}
-						
-						//replacement is not an inverted value
-						if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest + 1, true).size() != 0) {
-							modificationFound = true;
-							break;
-						}
-						else {
-							System.out.println("STH WRONG 1");
-						}
-					}
-					else {
-						//replacement is an inverted value
-						if(bf.replaceInSubtree(outgoingEdges[Offset].dest, outgoingEdges[Index_1].dest, outgoingEdges[Index_2].dest - 1, true).size() != 0) {
-							modificationFound = true;
-							break;
-						}
-						else {
-							System.out.println("STH WRONG 2");
-						}
-					}		
-				} 
-				else {
-					continue;
-				}					
 			}
-			System.out.println("#### DONE: "+count+" ####");
 		//	bf.exportToDOTandPNG(""+count);
 	//		bf.exportToBLIF("intermediate-2");
 	//		System.out.println("count = "+count);
 	//		ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/intermediate-1.blif"), new File("output/intermediate-2.blif"));
-			count++;
-		}
 	}
 	
 
