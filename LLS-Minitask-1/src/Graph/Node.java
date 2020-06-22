@@ -10,7 +10,7 @@ import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.AttributeType;
 
 public class Node {
-	long id;
+	public long id;
 	NodeType type;
 	NodeModifier modifier;
 	boolean input = false;

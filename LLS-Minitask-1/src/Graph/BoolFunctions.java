@@ -14,7 +14,7 @@ import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.jgrapht.util.DoublyLinkedList;
 
 public class BoolFunctions {
-	private GraphWrapper bf;
+	public GraphWrapper bf;
 	
 	public GraphModifier graphModifier;
 
@@ -23,14 +23,14 @@ public class BoolFunctions {
 	}
 	
 	
-	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+	public GraphWrapper Majority(int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			//do nothing
-			return;
+			return bf;
 		}
 		//create working copy of internal Graph
 		GraphWrapper GW_copy = new GraphWrapper();
-		for(Node n : internalGraph.vertexSet()) {
+		for(Node n : bf.internalGraph.vertexSet()) {
 			if(n.modifier == NodeModifier.INPUT) {
 				GW_copy.addInputNode(n.id);
 				GW_copy.getNode(n.id).input = n.input;
@@ -52,7 +52,7 @@ public class BoolFunctions {
 				GW_copy.getNode(n.id).type = n.type;
 			}
 		}
-		for(Edge e : internalGraph.edgeSet()) {
+		for(Edge e : bf.internalGraph.edgeSet()) {
 			for(int i = 0; i < e.weight; i++)
 				GW_copy.addEdge(e.source, e.dest);
 		}
@@ -119,11 +119,13 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			System.out.println("MAJORITY");
+			return GW_copy;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			Majority(internalGraph, nodesMap, recursionCount+1);
+			Majority(recursionCount+1);
 		}
+		return bf;
 	}
 	
 	
@@ -365,17 +367,17 @@ public class BoolFunctions {
 		}
 	}*/
 	
-	public void DistributivityRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+	public GraphWrapper DistributivityRL(int recursionCount) throws Exception {
 		//randomize iteration
 		if(recursionCount > 5) {
-			return;
+			return bf;
 		}
 		
 		//Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		
 		//create working copy of internal Graph
 		GraphWrapper GW_copy = new GraphWrapper();
-		for(Node n : internalGraph.vertexSet()) {
+		for(Node n : bf.internalGraph.vertexSet()) {
 			if(n.modifier == NodeModifier.INPUT) {
 				GW_copy.addInputNode(n.id);
 				GW_copy.getNode(n.id).input = n.input;
@@ -397,7 +399,7 @@ public class BoolFunctions {
 				GW_copy.getNode(n.id).type = n.type;
 			}
 		}
-		for(Edge e : internalGraph.edgeSet()) {
+		for(Edge e : bf.internalGraph.edgeSet()) {
 			for(int i = 0; i < e.weight; i++)
 				GW_copy.addEdge(e.source, e.dest);
 		}
@@ -418,6 +420,11 @@ public class BoolFunctions {
 			if(counts[1] < 2) {
 				continue;
 			}
+			for(Node n: bf.internalGraph.vertexSet()) {
+				System.out.println("beginning: contained node: "+n.id);
+			}
+			
+			
 			Edge[] outerEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);			
 			Node[] outerchild = node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap); //getting all the outer nodes
 			Node innerNode1 = GW_copy.nodesMap.get(outerEdges[0].dest);	
@@ -473,9 +480,11 @@ public class BoolFunctions {
 			try {
 			for(Edge removeOuterEdges : outerEdges) {
 				GW_copy.deleteEdge(node.id, removeOuterEdges.dest);
+				System.out.println("## deleted edge "+node.id + " -> "+removeOuterEdges.dest);
 			}
 			for(Node createEdge : overlappingInput) {
 				GW_copy.addEdge(node.id, createEdge.id);
+				System.out.println("## added edge "+node.id + " -> "+createEdge.id);
 			}
 			
 			for(Node n : NonoverlappingInput)
@@ -485,20 +494,22 @@ public class BoolFunctions {
 			
 			Long NextFreeID = GW_copy.getNextFreeId();
 			//M(u,v,z)
-			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);		
+			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);
+			System.out.println("added gate: "+NextFreeID);
 			GW_copy.addEdge(node.id, NextFreeID);
 			System.out.println("Dist. inner done something");
 			break;
 			}
 			catch(Exception e) {
 				e.printStackTrace();
-				DistributivityRL(internalGraph, nodesMap, recursionCount+1);
-				return ;
+				DistributivityRL(recursionCount+1);
+				return bf;
 			}
 		}
 			
 			//check if applied changes are valid
-		//GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
+		System.out.println("#### " + GW_copy.internalGraph.hashCode()+" #### PRINTING");
+		GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
 		System.out.println("outer blif export 1");
 		bf.exportToBLIF("Distributivity-intermediate-1");
 		System.out.println("outer blif export 2");
@@ -510,7 +521,6 @@ public class BoolFunctions {
 			//bf = GW_copy;
 			System.out.println("bf: "+bf.internalGraph.hashCode());
 			System.out.println("GW_copy: "+GW_copy.internalGraph.hashCode());
-			System.out.println("internalGraph: "+internalGraph.hashCode());
 			System.out.println("bf.int.len "+bf.nodesMap.keySet().size());
 			System.out.println("GW.int.len "+GW_copy.nodesMap.keySet().size());
 			bf.internalGraph = GW_copy.internalGraph;
@@ -521,12 +531,17 @@ public class BoolFunctions {
 			bf.boolFunctions = GW_copy.boolFunctions;
 			System.out.println("Distributivity: done something");
 			System.out.println("bf post: "+ bf.internalGraph.hashCode());
-			System.out.println("int post: "+ internalGraph.hashCode());
+			System.out.println("bf bool post: "+ bf.boolFunctions.bf.internalGraph.hashCode());
+			for(Node n: bf.internalGraph.vertexSet()) {
+				System.out.println("inside: contained node: "+n.id);
+			}
+			return GW_copy;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			DistributivityRL(internalGraph, nodesMap, recursionCount+1);
+			DistributivityRL(recursionCount+1);
 		}
+		return bf;
 	}
 	
 	

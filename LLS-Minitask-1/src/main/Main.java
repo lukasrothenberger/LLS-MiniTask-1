@@ -93,15 +93,12 @@ public class Main {
 			
 	//		for(int i = 0; i < 10; i++) {
 				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 0");
-				fig2a_mod.boolFunctions.Majority(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				System.out.println("sleep");
-				Thread.sleep(2000);
-				System.out.println("end sleep");
+				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 				fig2a_mod.exportToDOTandPNG("post_maj");
-				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 1");
-				fig2a_mod.boolFunctions.DistributivityRL(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 2");
-				fig2a_mod.Remove_UnReachableNodes();
+				System.out.println("#### " + fig2a_mod.boolFunctions.bf.internalGraph.hashCode()+" #### 1");
+				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+				System.out.println("#### " + fig2a_mod.boolFunctions.bf.internalGraph.hashCode()+" #### 2");
+				//fig2a_mod.Remove_UnReachableNodes();
 	//			fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
 			//	fig2a_mod.boolFunctions.Associativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 				//fig2a_mod.boolFunctions.ComplementaryAssociativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
@@ -114,6 +111,9 @@ public class Main {
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
+			for(Graph.Node n: fig2a_mod.internalGraph.vertexSet()) {
+				System.out.println("outside: contained node: "+n.id);
+			}
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	
