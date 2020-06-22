@@ -744,8 +744,15 @@ public class BoolFunctions {
 							}
 						}
 						// replace inner u' with x
-						GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
-						System.out.println("CompAssoc: done something");
+						try {
+							GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+							System.out.println("CompAssoc: done something");
+						}
+						catch(Exception ex) {
+							//restart
+							ComplementaryAssociativity(internalGraph, nodesMap, recursionCount+1);
+							return;
+						}
 					}
 					else {
 						// -> no overlap

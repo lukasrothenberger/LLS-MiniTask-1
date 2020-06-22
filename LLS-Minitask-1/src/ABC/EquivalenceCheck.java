@@ -28,8 +28,8 @@ public class EquivalenceCheck {
 			tmp_eq_check_script.createNewFile();
 			FileWriter fw = new FileWriter(tmp_eq_check_script);
 			fw.write("cec ");
-			fw.write(blifOne.getAbsolutePath()+" ");
-			fw.write(blifTwo.getAbsolutePath()+" ");
+			fw.write("\""+blifOne.getAbsolutePath()+"\" ");
+			fw.write("\""+blifTwo.getAbsolutePath()+"\" ");
 			fw.flush();
 			fw.close();
 			System.out.println("\t\tcreated tmp_compare_script for abc equivalence checking.");
