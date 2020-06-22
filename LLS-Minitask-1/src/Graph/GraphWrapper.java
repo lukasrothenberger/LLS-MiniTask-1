@@ -519,6 +519,28 @@ public class GraphWrapper {
 		return modificationFound;
 	}
 		
+    private List<Node> getSubtree(Node root){
+    	List<Node> VisitedNodes = new LinkedList<Node>();
+    	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
+    		VisitedNodes.add(rootnode);
+    		VisitedNodes.addAll(getSubtree(rootnode));
+    	}
+		return VisitedNodes;
+    }
+    
+	public void Remove_UnReachableNodes() {
+		List<Node> VisitedNodes = new LinkedList<Node>();
+		for(Node outnodes : this.outputNodes) {
+			VisitedNodes.addAll(getSubtree(outnodes));
+			VisitedNodes.add(outnodes);
+		}    
+		for(Node removeNode : this.nodesMap.values()) {
+			if(VisitedNodes.contains(removeNode))
+				continue;
+			this.removeNode(removeNode.id);				
+		}
+	}
+	
 
 		
 }

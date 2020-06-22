@@ -268,7 +268,7 @@ public class BoolFunctions {
 	}
 	
 	
-	public void DistributivityLR(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+	/*public void DistributivityLR(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		//TODO bugged
 		
 		boolean modificationFound = true;
@@ -350,10 +350,140 @@ public class BoolFunctions {
 					continue;
 			}
 		}
+	}*/
+	
+	public void DistributivityRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+		//randomize iteration
+		if(recursionCount > 5) {
+			return;
+		}
+		
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);
+			
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : bf.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);
+		
+		/// Distributivity logic
+		
+		for(long nodeID : keyList) {
+			Node node = NM_copy.get(nodeID);	
+			if(node.type != NodeType.MAJ)
+				continue;
+			int[] counts = node.getCounts(IG_copy, NM_copy);
+			if(counts[1] < 2) {
+				continue;
+			}
+			Edge[] outerEdges = node.getOutgoingEdges(IG_copy, NM_copy);			
+			Node[] outerchild = node.getChildrenNodes(IG_copy, NM_copy); //getting all the outer nodes
+			Node innerNode1 = NM_copy.get(outerEdges[0].dest);	
+			Node innerNode2 = NM_copy.get(outerEdges[1].dest);
+			
+			while(true) {
+				int innerOffset = (int) (Math.random() * 3);
+				innerNode1 = outerchild[innerOffset % outerchild.length];			
+				if(innerNode1.type == NodeType.MAJ)
+					break;
+			}
+			while(true) {
+				int innerOffset = (int) (Math.random() * 3);
+				innerNode2 = outerchild[innerOffset % outerchild.length];			
+				if(innerNode2.type == NodeType.MAJ && innerNode1.id != innerNode2.id)
+					break;
+			}
+			Node unUsedOuterChild = null;
+			for(Node unUsed: outerchild) {
+				if(unUsed != innerNode1 && unUsed != innerNode2) {
+					unUsedOuterChild = unUsed;
+				}
+			}
+			
+			List<Node> overlappingInput = new LinkedList<Node>();
+			List<Node> NonoverlappingInput = new LinkedList<Node>();
+			for(Node innerChild1 : innerNode1.getChildrenNodes(IG_copy, NM_copy)){
+				for(Node innerChild2 : innerNode2.getChildrenNodes(IG_copy, NM_copy)) {
+					if(innerChild1.id != innerChild2.id) {		
+						if(NonoverlappingInput.contains(innerChild2)) {}
+						else NonoverlappingInput.add(innerChild2);
+						if(NonoverlappingInput.contains(innerChild1)) {}
+						else	NonoverlappingInput.add(innerChild1);
+					}
+					else {
+						System.out.println("Checking for matching input");
+						if(overlappingInput.contains(innerChild2)) {}
+						else
+							overlappingInput.add(innerChild2);
+					}
+				}
+			}		
+			NonoverlappingInput.removeAll(overlappingInput); // removing repetitive values
+		//redirecting 
+			if(NonoverlappingInput.isEmpty())
+				continue;
+			if(overlappingInput.size() != 2)
+				continue;
+			try {
+			for(Edge removeOuterEdges : outerEdges) {
+				GW_copy.deleteEdge(node.id, removeOuterEdges.dest);
+			}
+			for(Node createEdge : overlappingInput) {
+				GW_copy.addEdge(node.id, createEdge.id);
+			}
+			Long NextFreeID = GW_copy.getNextFreeId();
+			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);	
+			GW_copy.addEdge(node.id, NextFreeID);
+			break;
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				DistributivityRL(internalGraph, nodesMap, recursionCount+1);
+				return ;
+			}
+		}
+			
+			//check if applied changes are valid
+		GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
+		bf.exportToBLIF("Distributivity-intermediate-1");
+		GW_copy.exportToBLIF("Distributivity-intermediate-2");
+		//GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/Distributivity-intermediate-1.blif"), new File("output/Distributivity-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+			System.out.println("Distributivity: done something");
+		}
+		catch(Exception ex) {
+			// made changes are not valid
+			DistributivityRL(internalGraph, nodesMap, recursionCount+1);
+		}
 	}
 	
-	
-	
+	/*
 //	@SuppressWarnings({ "null", "unchecked" })
 	public void DistributivityRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
 		//randomize iteration
@@ -406,7 +536,7 @@ public class BoolFunctions {
 						System.out.println("Looping at inner MAJ nodes");
 						if(innerNode.id != overlappingInputEdges[l%3].source) {
 							System.out.println("At the first Maj node");
-									//continue;
+									break;
 							}
 						else {
 							Edge[] CEdge1 = innerNode.getOutgoingEdges(internalGraph, nodesMap);
@@ -444,13 +574,13 @@ public class BoolFunctions {
 						graphModifier.convertVALtoMAJnodes();
 						bf.redirectEdge(innerEdges[j].source,innerEdges[j].dest, innernode.id );
 						
-				} */
+				} 
 						}	
 					}
 				}
 			}
 		}
-			}
+			}*/
 		
 		
 	

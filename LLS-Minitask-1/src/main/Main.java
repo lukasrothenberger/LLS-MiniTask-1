@@ -17,7 +17,7 @@ public class Main {
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
 		
-			GraphWrapper graph = Input_Parser.Invoke_Parser(input_file);
+/*			GraphWrapper graph = Input_Parser.Invoke_Parser(input_file);
 			
 			//##### Export Graph to BLIF FORMAT #####
 			graph.exportToBLIF("unmodifiedGraph");
@@ -56,9 +56,9 @@ public class Main {
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 			//ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
 	
-			
+*/			
 			//### modified Fig.2.a example Graph
-	/*		GraphWrapper fig2a_mod = new GraphWrapper();
+		GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
@@ -66,27 +66,28 @@ public class Main {
 			fig2a_mod.addOutputNode(10); //h
 			fig2a_mod.addMajGate(20, 2, 4, 6);
 			fig2a_mod.addMajGate(14, 8, 5, 4);
-			fig2a_mod.addMajGate(18, 6, 9, 6);
+			fig2a_mod.addMajGate(18, 6, 9, 2);
 			fig2a_mod.addMajGate(16, 18, 8, 20);
 			fig2a_mod.addMajGate(10, 16, 4, 14);
 			
 			fig2a_mod.exportToDOTandPNG("fig2a_mod");
 			fig2a_mod.exportToBLIF("fig2a_mod");
 			
-			fig2a_mod.boolFunctions.Majority(fig2a_mod.internalGraph, fig2a_mod.nodesMap);
-			fig2a_mod.exportToDOTandPNG("post_maj");
-			fig2a_mod.boolFunctions.Associativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap);
-			fig2a_mod.exportToDOTandPNG("post_assoc");
-			fig2a_mod.boolFunctions.ComplementaryAssociativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap);
-			fig2a_mod.exportToDOTandPNG("post_CA");
+		//	fig2a_mod.boolFunctions.Majority(fig2a_mod.internalGraph, fig2a_mod.nodesMap,0);
+		//	fig2a_mod.exportToDOTandPNG("post_maj");
+		//	fig2a_mod.boolFunctions.Associativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap,0);
+		//	fig2a_mod.exportToDOTandPNG("post_assoc");
+		//	fig2a_mod.boolFunctions.ComplementaryAssociativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap,0);
+		//	fig2a_mod.exportToDOTandPNG("post_CA");
 		//	fig2a_mod.boolFunctions.Relevance(fig2a_mod.internalGraph, fig2a_mod.nodesMap);
-			//fig2a_mod.boolFunctions.DistributivityRL(fig2a_mod.internalGraph, fig2a_mod.nodesMap);
+			fig2a_mod.boolFunctions.DistributivityRL(fig2a_mod.internalGraph, fig2a_mod.nodesMap,0);
+			fig2a_mod.Remove_UnReachableNodes();
 			
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	
-	*/
+	
 			
 	/*		//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
