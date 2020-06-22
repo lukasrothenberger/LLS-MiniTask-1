@@ -544,18 +544,15 @@ public class GraphWrapper {
 		
 		for(Node nodeToCopy : cleanedSubtree) {
 			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE || nodeToCopy.id < 2) {
-				System.out.println("nodeToCopy.id: "+ nodeToCopy.id);
 				long cloneID = 0;
 				if(nodeToCopy.id % 2 == 0) {
 					//non-inverted node
 					if(nodeToCloneId.keySet().contains(nodeToCopy.id+1)){
 						//inverted version already exists
 						cloneID = nodeToCloneId.get(nodeToCopy.id+1)-1;
-						System.out.println("\t1");
 					}
 					else {
 						cloneID = this.getNextFreeId();
-						System.out.println("\t2");
 					}
 				}
 				else {
@@ -563,11 +560,9 @@ public class GraphWrapper {
 					if(nodeToCloneId.keySet().contains(nodeToCopy.id-1)){
 						//non-inverted version already exists
 						cloneID = nodeToCloneId.get(nodeToCopy.id-1)+1;
-						System.out.println("\t3");
 					}
 					else {
 						cloneID = this.getNextFreeId()+1;
-						System.out.println("\t4");
 					}
 				}
 				nodeToCopy.cloneNode(this, cloneID);

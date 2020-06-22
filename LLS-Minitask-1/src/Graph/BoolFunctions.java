@@ -99,7 +99,6 @@ public class BoolFunctions {
 				//majority operation is possible
 				//delete current node
 				GW_copy.removeNode(node.id);
-				System.out.println("REMOVED NODE: "+node.id);
 				for(Edge e : incomingEdges) {
 					GW_copy.addEdge(e.source, replaceByValue);
 				}
@@ -109,7 +108,6 @@ public class BoolFunctions {
 		//check if applied changes are valid
 		bf.exportToBLIF("majority-intermediate-1");
 		GW_copy.exportToBLIF("majority-intermediate-2");
-		GW_copy.exportToDOTandPNG("maj-int");
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majority-intermediate-1.blif"), new File("output/majority-intermediate-2.blif"));
 			// made changes are valid
@@ -431,9 +429,6 @@ public class BoolFunctions {
 			if(counts[1] < 2) {
 				continue;
 			}
-			for(Node n: bf.internalGraph.vertexSet()) {
-				System.out.println("beginning: contained node: "+n.id);
-			}
 			
 			
 			Edge[] outerEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);			
@@ -471,7 +466,6 @@ public class BoolFunctions {
 						else	NonoverlappingInput.add(innerChild1);
 					}
 					else {
-						System.out.println("Checking for matching input");
 						if(overlappingInput.contains(innerChild2)) {}
 						else
 							if(innerChild2.id != 0)
@@ -491,22 +485,14 @@ public class BoolFunctions {
 			try {
 			for(Edge removeOuterEdges : outerEdges) {
 				GW_copy.deleteEdge(node.id, removeOuterEdges.dest);
-				System.out.println("## deleted edge "+node.id + " -> "+removeOuterEdges.dest);
 			}
 			for(Node createEdge : overlappingInput) {
 				GW_copy.addEdge(node.id, createEdge.id);
-				System.out.println("## added edge "+node.id + " -> "+createEdge.id);
 			}
-			
-			for(Node n : NonoverlappingInput)
-				System.out.println("Non-overlap: "+n);
-			for(Node n : overlappingInput)
-				System.out.println("Overlap: "+n);
 			
 			Long NextFreeID = GW_copy.getNextFreeId();
 			//M(u,v,z)
 			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);
-			System.out.println("added gate: "+NextFreeID);
 			GW_copy.addEdge(node.id, NextFreeID);
 			System.out.println("Dist. inner done something");
 			break;
@@ -518,33 +504,19 @@ public class BoolFunctions {
 		}
 			
 			//check if applied changes are valid
-		System.out.println("#### " + GW_copy.internalGraph.hashCode()+" #### PRINTING");
-		GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
-		System.out.println("outer blif export 1");
 		bf.exportToBLIF("Distributivity-intermediate-1");
-		System.out.println("outer blif export 2");
 		GW_copy.exportToBLIF("Distributivity-intermediate-2");
 		//GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/Distributivity-intermediate-1.blif"), new File("output/Distributivity-intermediate-2.blif"));
 			// made changes are valid
 			//bf = GW_copy;
-			System.out.println("bf: "+bf.internalGraph.hashCode());
-			System.out.println("GW_copy: "+GW_copy.internalGraph.hashCode());
-			System.out.println("bf.int.len "+bf.nodesMap.keySet().size());
-			System.out.println("GW.int.len "+GW_copy.nodesMap.keySet().size());
 			bf.internalGraph = GW_copy.internalGraph;
 			bf.nodesMap = GW_copy.nodesMap;
 			bf.inputNodes = GW_copy.inputNodes;
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			System.out.println("Distributivity: done something");
-			System.out.println("bf post: "+ bf.internalGraph.hashCode());
-			System.out.println("bf bool post: "+ bf.boolFunctions.bf.internalGraph.hashCode());
-			for(Node n: bf.internalGraph.vertexSet()) {
-				System.out.println("inside: contained node: "+n.id);
-			}
 			GW_copy.Remove_UnReachableNodes();
 			return GW_copy;
 		}
@@ -661,7 +633,6 @@ public class BoolFunctions {
 		//check if applied changes are valid
 		try {
 			bf.exportToBLIF("relevance-intermediate-1");
-			GW_copy.exportToDOTandPNG("test");
 			GW_copy.exportToBLIF("relevance-intermediate-2");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/relevance-intermediate-1.blif"), new File("output/relevance-intermediate-2.blif"));
 			// made changes are valid
@@ -877,7 +848,6 @@ public class BoolFunctions {
 		Collections.shuffle(keyList);	
 		// DO STUFF
 		for(long nodeId : keyList) {
-			System.out.println("NodeID: "+ nodeId);
 			Node node = GW_copy.nodesMap.get(nodeId);
 			if(node.type != NodeType.MAJ)
 				continue;
@@ -907,28 +877,18 @@ public class BoolFunctions {
 			try {
 				//construct left inner MAJ node;
 					//left copy subtree
-					System.out.println("### COPY TREE 1 ###");
 					long left_copy_subtree_id = GW_copy.copySubtree(node.id);
 					//replace v/u in subtree
-					System.out.println("### REP SUBTREE 1 ###");
 					GW_copy.replaceInSubtreeRecursive(left_copy_subtree_id, id_v, id_u);
 				long id_left_inner_maj = GW_copy.getNextFreeId();
-				System.out.println("### ADD MAJ GATE 1 ###");
-				System.out.println("maj: "+id_left_inner_maj);
-				System.out.println("id_v_inv: "+ id_v_inv);
-				System.out.println("left_copy_subt_id: "+ left_copy_subtree_id);
-				System.out.println("id_u: "+ id_u);
 				GW_copy.addMajGate(id_left_inner_maj, id_v_inv, left_copy_subtree_id, id_u);	
 				
 				//construct right inner MAJ node
 					//right copy subtree
-					System.out.println("### COPY TREE 2 ###");
 					long right_copy_subtree_id = GW_copy.copySubtree(node.id);
 					//replace v/u' in subtree
-					System.out.println("### REP SUBTREE 2 ###");
 					GW_copy.replaceInSubtreeRecursive(right_copy_subtree_id, id_v, id_u_inv);
 				long id_right_inner_maj = GW_copy.getNextFreeId();
-				System.out.println("### ADD MAJ GATE 2 ###");
 				GW_copy.addMajGate(id_right_inner_maj, id_v_inv, right_copy_subtree_id, id_u_inv);
 				
 				//construct outer Maj Gate

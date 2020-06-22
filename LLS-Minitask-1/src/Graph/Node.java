@@ -307,7 +307,6 @@ public class Node {
 
 
 	public long cloneNode(GraphWrapper GW, long cloneID) throws Exception {
-		System.out.println("cloned: "+this.id+ " to "+ cloneID);
 		Node newNode = new Node(cloneID, this.type, this.modifier);
 		newNode.input = this.input;
 		newNode.output = this.output;
