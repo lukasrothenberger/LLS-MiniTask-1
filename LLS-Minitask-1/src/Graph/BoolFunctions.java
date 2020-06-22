@@ -483,171 +483,6 @@ public class BoolFunctions {
 		}
 	}
 	
-	/*
-//	@SuppressWarnings({ "null", "unchecked" })
-	public void DistributivityRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		//randomize iteration
-		List<Long> keyList = new LinkedList<Long>();
-		for(long nodeId : bf.nodesMap.keySet()){
-			keyList.add(nodeId);
-		}
-//		Collections.shuffle(keyList);  TODO reenable
-		
-		
-		for(long nodeID : keyList) {
-			Node node = nodesMap.get(nodeID);	
-			if(node.type != NodeType.MAJ)
-				continue;
-			System.out.println("Outer Node: " + node.id);
-			int[] counts =  node.getCounts(internalGraph, nodesMap);
-			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);			
-			Node[] outernode = node.getChildrenNodes(internalGraph, nodesMap); //getting all the outer nodes
-		//	Node innerNode = nodesMap.get(outerEdges[0].dest);	
-		//	Node innerNode1 = nodesMap.get(outerEdges[1].dest);///new addition
-		//	Node innerNode2 = nodesMap.get(outerEdges[2].dest);///new addition
-			if (counts[1] >= 2) {
-			for(int i = 0; i < outerEdges.length; i++) {
-				System.out.println("Counts of Maj Node:" +counts[1]);
-			    Node innerNode = nodesMap.get(outerEdges[i].dest);	
-			    System.out.println("INNER NODE : " +innerNode.id);
-				//Node innerNode1 = nodesMap.get(outerEdges[i+1].dest);
-				//Node innerNode2 = nodesMap.get(outerEdges[i+2].dest);
-				Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
-				//Edge[] innerEdges1 = innerNode1.getOutgoingEdges(internalGraph, nodesMap); ///new addition
-			//	Edge[] innerEdges2 = innerNode2.getOutgoingEdges(internalGraph, nodesMap);///new addition
-				Edge[] overlappingInputEdges = innerEdges;
-				Edge sameInput[] = new Edge[3];
-				Edge diffInput[] = new Edge[3];
-				Node[] childNode1 = new Node[3] ;
-				//Node[] childNode2 = new Node[3] ;
-				//Node[] childNode3 = new Node[3] ;
-				if(innerNode.type == NodeType.MAJ ) { ///new addition
-				System.out.println("MAJ NODE FOUND with ID : " +innerNode.id);//get the ID and Edges of the MAJ node							
-				for(int j = 0; j < innerEdges.length ; j++) {
-						childNode1 = innerNode.getChildrenNodes(internalGraph, nodesMap);
-						//childNode2 = innerNode1.getChildrenNodes(internalGraph, nodesMap);
-						System.out.println("CHILD NODE: " + childNode1[j % 3].id);
-						//System.out.println("CHILD NODE 2: " + childNode2[j].id);
-						System.out.println(innerEdges[j].dest);
-						System.out.println(overlappingInputEdges[j].dest);
-				
-				for(int l = 0; l <innerEdges.length ;l++) {
-					if(nodesMap.get(innerEdges[l % 3].source).type == NodeType.MAJ) {
-						System.out.println("Looping at inner MAJ nodes");
-						if(innerNode.id != overlappingInputEdges[l%3].source) {
-							System.out.println("At the first Maj node");
-									break;
-							}
-						else {
-							Edge[] CEdge1 = innerNode.getOutgoingEdges(internalGraph, nodesMap);
-							System.out.println("At second Maj Node for Comparisson of same input");
-							for(int k = 0; k < innerEdges.length; k++) {
-								if(overlappingInputEdges[k].dest == childNode1[l].id) {						
-									System.out.println("Checking for matching input");
-									sameInput[k] = CEdge1[l];
-									System.out.println("Same Input is " +sameInput[k]);
-								}
-								else {
-									diffInput[k] = CEdge1[l];
-									}
-							System.out.println("Diff Input is " +diffInput[k]);
-								}		
-							}
-						}
-					}
-					
-				/*	try {
-					bf.redirectEdge(sameInput[j].source, sameInput[j].dest, node.id);
-					System.out.println("Added common inputs to outer MAJ node");
-					graphModifier.convertMAJtoVALnodes();
-					bf.redirectEdge(diffInput[j].source, diffInput[j].dest, innernode.id);
-					System.out.println("Added diff Inputs to inner MAJ node");
-					graphModifier.convertMAJtoVALnodes();
-							//bf.deleteEdge(overlappingInputEdges[j].dest, overlappingInputEdges[j].source);
-							//bf.deleteEdge(overlappingInputEdges[j].dest, overlappingInputEdges[j].source);
-						}
-					
-					catch(Exception e) {
-						e.printStackTrace();
-						graphModifier.convertVALtoMAJnodes();
-						bf.redirectEdge(overlappingInputEdges[j].source, overlappingInputEdges[j].dest, innernode.id);
-						graphModifier.convertVALtoMAJnodes();
-						bf.redirectEdge(innerEdges[j].source,innerEdges[j].dest, innernode.id );
-						
-				} 
-						}	
-					}
-				}
-			}
-		}
-			}*/
-		
-		
-	
-	/*/////////////// trying new logic!!!!!
-	public void DistRL(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = nodesMap.get(nodeID);	
-			if(node.type != NodeType.MAJ)
-				continue;
-			System.out.println("Outer Node: " + node.id);
-			Edge[] outerEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-			Edge[] innerEdge0 = null; Node[] childNode0;
-			Edge[] innerEdge1 = null; Node[] childNode1;
-			Edge[] innerEdge2 = null; Node[] childNode2;
-		for(int i = 0; i < outerEdges.length; i++) {
-			System.out.println(outerEdges);
-			Node innerNode = nodesMap.get(outerEdges[i].dest);
-			int[] counts =  innerNode.getCounts(internalGraph, nodesMap);
-			//System.out.println(counts);
-			if (counts[1] == 2){
-				System.out.println("Count1");
-				
-				if(innerNode.type != NodeType.MAJ){
-					System.out.println("Count2");
-				if(i == 0){
-					System.out.println(innerEdge0);
-					//System.out.println(childNode0);
-					innerEdge0= innerNode.getOutgoingEdges(internalGraph, nodesMap);
-					childNode0= innerNode.getChildrenNodes(internalGraph, nodesMap);
-					System.out.println(innerEdge0);
-					System.out.println(childNode0);
-					}
-				else if (i==1){
-					System.out.println(innerEdge1);
-					//System.out.println(childNode1);
-					innerEdge1= innerNode.getOutgoingEdges(internalGraph, nodesMap);
-					childNode1= innerNode.getChildrenNodes(internalGraph, nodesMap);
-
-				}
-				else if (i == 2) {
-					System.out.println(innerEdge2);
-				//	System.out.println(childNode2);
-					innerEdge2= innerNode.getOutgoingEdges(internalGraph, nodesMap);
-					childNode2= innerNode.getChildrenNodes(internalGraph, nodesMap);
-
-				}
-				}
-			}
-		}
-		for(int i = 0; i < outerEdges.length;i++) {
-			for(int j = 0; j< outerEdges.length ; j++) {
-				if(innerEdge0.length > 0 ) {// to make sure its not empty
-				}
-				if(innerEdge1.length > 0 ) {// to make sure its not empty
-				}
-				
-				if(innerEdge2.length > 0 ) {// to make sure its not empty
-				}
-				
-			}
-		}
-		}
-	}
-		*/			
-	
-					
-	
 	
 	/**
 	 * does only a single relevance transformation
@@ -796,8 +631,7 @@ public class BoolFunctions {
 		for(long nodeId : GW_copy.nodesMap.keySet()){
 			keyList.add(nodeId);
 		}
-		Collections.shuffle(keyList);
-		
+		Collections.shuffle(keyList);	
 		// DO STUFF
 		for(long nodeId : keyList) {
 			Node node = GW_copy.nodesMap.get(nodeId);
@@ -815,27 +649,23 @@ public class BoolFunctions {
 				if(NM_copy.get(outgoingEdges[index_outer_M].dest).type == NodeType.MAJ) {
 					break;
 				}
-			}
-			
+			}		
 			//get overlap
 			long outerOverlappingValue = -1;
 			long innerOverlappingValue = -1;
-
 			//randomize iteration
 			List<Edge> outerOutEdges = new LinkedList<Edge>();
 			for(Edge e : node.getOutgoingEdges(IG_copy, NM_copy)){
 				outerOutEdges.add(e);
 			}
-			Collections.shuffle(outerOutEdges);
-			
+			Collections.shuffle(outerOutEdges);		
 			for(Edge outerEdge: outerOutEdges) {
 				//randomize iteration
 				List<Edge> innerOutEdges = new LinkedList<Edge>();
 				for(Edge e : NM_copy.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(IG_copy, NM_copy)){
 					innerOutEdges.add(e);
 				}
-				Collections.shuffle(innerOutEdges);
-				
+				Collections.shuffle(innerOutEdges);		
 				for(Edge innerEdge: innerOutEdges) {
 					//check for overlap
 					if(outerEdge.dest - 1 == innerEdge.dest && innerEdge.dest % 2L == 0) {
@@ -890,8 +720,7 @@ public class BoolFunctions {
 					//	System.out.println("no overlap");
 					}
 				}
-			}
-			
+			}		
 		}
 		// END DO STUFF
 		
@@ -915,98 +744,6 @@ public class BoolFunctions {
 			ComplementaryAssociativity(internalGraph, nodesMap, recursionCount+1);
 		}
 	}
-	
-/*	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		//TODO not working for inverter on outer node
-		
-		int count = 0;
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = nodesMap.get(nodeID);
-			if(node.type != NodeType.MAJ)
-				continue;
-		//	if(node.associativityPossible(internalGraph, nodesMap)) {
-				Edge[] outgoingEdges = node.getOutgoingEdges(internalGraph, nodesMap);
-				for(int c = 0; c < outgoingEdges.length; c++) {
-					int i = (int) Math.random()*outgoingEdges.length;
-					if(nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						Node innerNode = nodesMap.get(outgoingEdges[i].dest);
-						Edge[] innerEdges = innerNode.getOutgoingEdges(internalGraph, nodesMap);
-						//check if overlap exists in node.children and innerNode.children
-						long overlappingInputNode = -1;
-						for(Node child : node.getChildrenNodes(internalGraph, nodesMap)) {
-							for(Node innerChild : innerNode.getChildrenNodes(internalGraph, nodesMap)) {
-								if(innerChild.type == NodeType.INV ) {
-								//get id which is not inverted
-									for(Node Invchild : innerChild.getChildrenNodes(internalGraph, nodesMap)) {
-									 for(int x = 0; x < 3; x++) {
-										 if(x==i)
-											 continue;
-										 if(outgoingEdges[x].dest == Invchild.id && Invchild.id != 0) {
-											 System.out.println("x: "+ x+ "   -> "+outgoingEdges[x].dest);
-											 //shared inverted value between inner and outer node
-											overlappingInputNode = Invchild.id;
-											for(int j = 0; j < 3; j++) {
-												if(innerEdges[j].dest == innerChild.id) {
-													for(int y = 0; y < 3; y++) {
-														if(y == i) //exclude path to MAJ node
-															continue;
-														if(outgoingEdges[y].dest == overlappingInputNode)
-															continue;
-														// outgoingEdges[y] points to remaining value
-														bf.redirectEdge(innerEdges[j].source, innerEdges[j].dest, outgoingEdges[y].dest);
-														bf.removeNode(innerChild.id);
-												  		System.out.println("COMP ASSOC DONE");
-													}
-												}
-											}
-										 }
-									 }
-									  if(child.id != 0)  // don't allow constant ZERO as shared input
-										overlappingInputNode = child.id;
-									  	for(int x = 0; x < 3; x++) {
-									  		if(x == i)
-									  			continue;
-									  		if(outgoingEdges[x].dest == overlappingInputNode)
-									  			continue;
-									  		try {
-									  			bf.redirectEdge(innerEdges[i].source, innerEdges[i].dest, outgoingEdges[x].dest);
-									  		}
-									  		catch(Exception ex) {
-									  			continue;
-									  		}
-									  		System.out.println("COMP ASSOC DONE");
-									  		//innerEdges[i] = outgoingEdges[x] ;
-								  	}
-						//			  	 count++;
-									if(overlappingInputNode != -1)
-										break;
-								}
-							}
-							if(overlappingInputNode != -1 && overlappingInputNode != 0) {
-								break;
-							}
-							
-						}
-						
-			//TODO select outerInput in a way that outerInput and innerInput are not equivalent and not equal to the shared value
-						
-						// swap selected inner with outer edge
-						//bf.exportToBLIF("intermediate-1");
-						//bf.exportToDOTandPNG("intermediate-1");
-						
-			//			System.out.println("node.id: "+node.id);
-			//			System.out.println("outerInput.dest: "+ outgoingEdges[i].dest);
-			//			System.out.println("innerInput.dest: "+ innerEdges[i].dest);
-			//			System.out.println("shared Input: "+overlappingInputNode);
-						
-						break;
-							}
-						 	}
-					}
-			}
-	}
-	*/
-	
 	
 	
 	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
