@@ -22,7 +22,11 @@ public class BoolFunctions {
 	}
 	
 	
-	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+		if(recursionCount > 5) {
+			//do nothing
+			return;
+		}
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
@@ -105,12 +109,16 @@ public class BoolFunctions {
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			Majority(internalGraph, nodesMap);
+			Majority(internalGraph, nodesMap, recursionCount+1);
 		}
 	}
 	
 	
-	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception{
+	public void Associativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception{
+		if(recursionCount > 5) {
+			return;
+		}
+		
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
@@ -160,7 +168,7 @@ public class BoolFunctions {
 										break;
 								}
 							}
-							if(overlappingInputNode != -1 && overlappingInputNode != 0) {
+							if(overlappingInputNode != -1 ) {//&& overlappingInputNode != 0) {
 								break;
 							}					
 						}
@@ -251,10 +259,11 @@ public class BoolFunctions {
 					bf.outputNodes = GW_copy.outputNodes;
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
+					System.out.println("assoc: done something");
 				}
 				catch(Exception ex) {
 					// made changes are not valid
-					Associativity(internalGraph, nodesMap);
+					Associativity(internalGraph, nodesMap, recursionCount+1);
 				}
 	}
 	
@@ -516,7 +525,11 @@ public class BoolFunctions {
 	 * @param nodesMap
 	 * @throws Exception
 	 */
-	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+	public void Relevance(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+		if(recursionCount > 5) {
+			return;
+		}
+		
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
@@ -545,7 +558,10 @@ public class BoolFunctions {
 		}
 		Collections.shuffle(keyList);
 		
+		boolean loopBreaker = false;
 		for(long nodeId : keyList) {
+			if(loopBreaker)
+				break;
 			Node node = NM_copy.get(nodeId);
 			if(node.type != NodeType.MAJ)
 				continue;
@@ -589,6 +605,8 @@ public class BoolFunctions {
 			for(Edge e : z_outgoingEdges) {
 				if(GW_copy.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
 					System.out.println("relevance: done something");
+					loopBreaker = true;
+					break;
 				}
 			}
 		}
@@ -610,13 +628,18 @@ public class BoolFunctions {
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			Relevance(internalGraph, nodesMap);
+			Relevance(internalGraph, nodesMap, recursionCount+1);
 		}
 		
 	}
 
 	
-	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
+	public void ComplementaryAssociativity(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
+		if(recursionCount > 5) {
+			// do nothing
+			return;
+		}
+		
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
@@ -667,8 +690,23 @@ public class BoolFunctions {
 			//get overlap
 			long outerOverlappingValue = -1;
 			long innerOverlappingValue = -1;
-			for(Edge outerEdge: node.getOutgoingEdges(IG_copy, NM_copy)) {
-				for(Edge innerEdge: NM_copy.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(IG_copy, NM_copy)) {
+
+			//randomize iteration
+			List<Edge> outerOutEdges = new LinkedList<Edge>();
+			for(Edge e : node.getOutgoingEdges(IG_copy, NM_copy)){
+				outerOutEdges.add(e);
+			}
+			Collections.shuffle(outerOutEdges);
+			
+			for(Edge outerEdge: outerOutEdges) {
+				//randomize iteration
+				List<Edge> innerOutEdges = new LinkedList<Edge>();
+				for(Edge e : NM_copy.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(IG_copy, NM_copy)){
+					innerOutEdges.add(e);
+				}
+				Collections.shuffle(innerOutEdges);
+				
+				for(Edge innerEdge: innerOutEdges) {
 					//check for overlap
 					if(outerEdge.dest - 1 == innerEdge.dest && innerEdge.dest % 2L == 0) {
 						// -> outer value inverted
@@ -683,7 +721,14 @@ public class BoolFunctions {
 							}
 						}
 						// replace inner u' with x
-						GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+						try {
+							GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+						}
+						catch(Exception ex) {
+							//restart
+							ComplementaryAssociativity(internalGraph, nodesMap, recursionCount+1);
+							return;
+						}
 						System.out.println("CompAssoc: done something");			
 					}
 					else if(innerEdge.dest - 1 == outerEdge.dest && outerEdge.dest % 2L == 0) {
@@ -730,7 +775,7 @@ public class BoolFunctions {
 		catch(Exception ex) {
 			ex.printStackTrace();
 			// made changes are not valid
-			ComplementaryAssociativity(internalGraph, nodesMap);
+			ComplementaryAssociativity(internalGraph, nodesMap, recursionCount+1);
 		}
 	}
 	

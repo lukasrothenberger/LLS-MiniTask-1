@@ -125,8 +125,9 @@ public class Node {
 									child2 = nodesMap.get(e.dest);
 								if(count == 2)
 									child3 = nodesMap.get(e.dest);
-								if(count > 2)
+								if(count > 2) {
 									throw new Exception("Incorrect number of children for MAJ node: "+ this.id);
+								}
 								count++;
 								tmpWeight--;
 							}

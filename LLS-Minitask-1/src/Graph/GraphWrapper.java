@@ -149,6 +149,19 @@ public class GraphWrapper {
 		Node destNode = nodesMap.get(dest);
 		Edge newEdge = new Edge(source, dest);
 		internalGraph.addEdge(sourceNode, destNode, newEdge);
+		
+		//validation
+		int summedWeight = 0;
+		for(Edge e : internalGraph.edgesOf(sourceNode)) {
+			if(e.source != sourceNode.id)
+				continue;
+			summedWeight += e.weight;
+		}
+		if(summedWeight > 3) {
+			System.out.println("INVALID NODE: "+ source+". Rollback creation of edge.");
+			//rollback 
+			internalGraph.removeEdge(sourceNode, destNode);
+		}
 	}
 	
 	/**
