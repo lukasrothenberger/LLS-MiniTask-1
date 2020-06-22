@@ -248,7 +248,7 @@ public class BoolFunctions {
 		//check if applied changes are valid
 				bf.exportToBLIF("associativiy-intermediate-1");
 				GW_copy.exportToBLIF("associativity-intermediate-2");
-				GW_copy.exportToDOTandPNG("associativity-intermediate-2");
+				//GW_copy.exportToDOTandPNG("associativity-intermediate-2");
 				try {
 					ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/associativiy-intermediate-1.blif"), new File("output/associativity-intermediate-2.blif"));
 					// made changes are valid
@@ -461,7 +461,7 @@ public class BoolFunctions {
 		}
 			
 			//check if applied changes are valid
-		GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
+		//GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
 		bf.exportToBLIF("Distributivity-intermediate-1");
 		GW_copy.exportToBLIF("Distributivity-intermediate-2");
 		//GW_copy.exportToDOTandPNG("Distributivity-intermediate-2");
