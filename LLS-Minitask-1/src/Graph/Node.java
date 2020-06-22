@@ -10,7 +10,7 @@ import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.AttributeType;
 
 public class Node {
-	long id;
+	public long id;
 	NodeType type;
 	NodeModifier modifier;
 	boolean input = false;
@@ -136,6 +136,7 @@ public class Node {
 								tmpWeight--;
 							}
 						}
+						
 						return ".subckt maj3 A="+child1.toBLIFIdentifier()+" B="+child2.toBLIFIdentifier()+" C="+child3.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 					case INV:{
@@ -151,7 +152,6 @@ public class Node {
 								throw new Exception("Incorrect number of children for INV node: "+ this.id);
 							count++;
 						}
-						System.out.println("ID: "+this.id);
 						return ".subckt inv A="+child1.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 				}
@@ -307,7 +307,6 @@ public class Node {
 
 
 	public long cloneNode(GraphWrapper GW, long cloneID) throws Exception {
-		System.out.println("cloned: "+this.id+ " to "+ cloneID);
 		Node newNode = new Node(cloneID, this.type, this.modifier);
 		newNode.input = this.input;
 		newNode.output = this.output;

@@ -23,6 +23,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.util.DoublyLinkedList;
 
+
 public class GraphWrapper {
 	// Wrapper class for internal jgrapht-graph
 	
@@ -174,7 +175,7 @@ public class GraphWrapper {
 		
 		for(Edge e : internalGraph.getAllEdges(nodesMap.get(source), nodesMap.get(dest))){
 			if(e.weight > 1) {
-				e.weight--;
+				internalGraph.getEdge(nodesMap.get(e.source), nodesMap.get(e.dest)).weight--;
 				return;
 			}
 			internalGraph.removeEdge(e);
@@ -429,6 +430,9 @@ public class GraphWrapper {
 		for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
 			internalGraph.removeEdge(e);
 		}
+		this.inputNodes.remove(node);
+		this.outputNodes.remove(node);
+		this.nodesMap.remove(node);
 		internalGraph.removeVertex(node);
 	}
 	
@@ -498,7 +502,12 @@ public class GraphWrapper {
 	 * @return
 	 * @throws Exception 
 	 */
-	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {	
+	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement, List<Long> visited) throws Exception {
+		if(visited.contains(root)) {
+			//looping
+			throw new Exception("loop found");
+		}
+		visited.add(root);
 		boolean modificationFound = false;
 		for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
 			if(e.dest == victim) {
@@ -511,7 +520,7 @@ public class GraphWrapper {
 			}
 			else {
 				try {
-					replaceInSubtreeRecursive(e.dest, victim, replacement);
+					replaceInSubtreeRecursive(e.dest, victim, replacement, visited);
 					modificationFound = true;
 				}
 				catch(Exception ex) {
@@ -532,7 +541,7 @@ public class GraphWrapper {
 		HashMap<Long, Long> nodeToCloneId = new HashMap<Long, Long>();
 		//clone all nodes in subtree
 		List<Node> cleanedSubtree = new LinkedList<Node>();
-		for(Node n : getSubtree(rootNode)) {
+		for(Node n : getSubtree(rootNode, new LinkedList<Long>())) {
 			if(cleanedSubtree.contains(n))
 				continue;
 			cleanedSubtree.add(n);
@@ -540,18 +549,15 @@ public class GraphWrapper {
 		
 		for(Node nodeToCopy : cleanedSubtree) {
 			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE || nodeToCopy.id < 2) {
-				System.out.println("nodeToCopy.id: "+ nodeToCopy.id);
 				long cloneID = 0;
 				if(nodeToCopy.id % 2 == 0) {
 					//non-inverted node
 					if(nodeToCloneId.keySet().contains(nodeToCopy.id+1)){
 						//inverted version already exists
 						cloneID = nodeToCloneId.get(nodeToCopy.id+1)-1;
-						System.out.println("\t1");
 					}
 					else {
 						cloneID = this.getNextFreeId();
-						System.out.println("\t2");
 					}
 				}
 				else {
@@ -559,11 +565,9 @@ public class GraphWrapper {
 					if(nodeToCloneId.keySet().contains(nodeToCopy.id-1)){
 						//non-inverted version already exists
 						cloneID = nodeToCloneId.get(nodeToCopy.id-1)+1;
-						System.out.println("\t3");
 					}
 					else {
 						cloneID = this.getNextFreeId()+1;
-						System.out.println("\t4");
 					}
 				}
 				nodeToCopy.cloneNode(this, cloneID);
@@ -588,25 +592,37 @@ public class GraphWrapper {
 	}
 	
 	
-    private List<Node> getSubtree(Node root){
+    private List<Node> getSubtree(Node root, List<Long> visited) throws Exception{
+		if(visited.contains(root.id)) {
+			//looping
+			throw new Exception("found loop..");
+		}
+		visited.add(root.id);
     	List<Node> VisitedNodes = new LinkedList<Node>();
     	VisitedNodes.add(root);
     	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
     		VisitedNodes.add(rootnode);
-    		VisitedNodes.addAll(getSubtree(rootnode));
+    		VisitedNodes.addAll(getSubtree(rootnode, visited));
     	}
 		return VisitedNodes;
     }
     
-	public void Remove_UnReachableNodes() {
+	public void Remove_UnReachableNodes() throws Exception {
 		List<Node> VisitedNodes = new LinkedList<Node>();
 		for(Node outnodes : this.outputNodes) {
-			VisitedNodes.addAll(getSubtree(outnodes));
+			VisitedNodes.addAll(getSubtree(outnodes, new LinkedList<Long>()));
 		}    
 		for(Node removeNode : this.nodesMap.values()) {
 			if(VisitedNodes.contains(removeNode))
 				continue;
-			this.removeNode(removeNode.id);				
+			if(removeNode.modifier == NodeModifier.INPUT || removeNode.modifier == NodeModifier.OUTPUT)
+				continue;
+			try {
+				this.removeNode(removeNode.id);
+			}
+			catch(Exception ex) {
+				// already removed
+			}
 		}
 	}
 	
