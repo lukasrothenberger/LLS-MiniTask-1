@@ -53,7 +53,6 @@ public class BoolFunctions {
 		Collections.shuffle(keyList);
 		
 		for(long nodeID : keyList) {
-			System.out.println("node: "+ nodeID);
 			Node node = bf.nodesMap.get(nodeID);
 			if(node.type != NodeType.MAJ)
 				continue;
@@ -93,7 +92,6 @@ public class BoolFunctions {
 		//check if applied changes are valid
 		bf.exportToBLIF("majority-intermediate-1");
 		GW_copy.exportToBLIF("majority-intermediate-2");
-		GW_copy.exportToDOTandPNG("majority-intermediate-2");
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majority-intermediate-1.blif"), new File("output/majority-intermediate-2.blif"));
 			// made changes are valid
@@ -104,7 +102,6 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			System.out.println("APPLIED");
 		}
 		catch(Exception ex) {
 			// made changes are not valid
@@ -597,9 +594,10 @@ public class BoolFunctions {
 		}
 		
 		//check if applied changes are valid
-		bf.exportToBLIF("relevance-intermediate-1");
-		GW_copy.exportToBLIF("relevance-intermediate-2");
 		try {
+			bf.exportToBLIF("relevance-intermediate-1");
+			GW_copy.exportToDOTandPNG("test");
+			GW_copy.exportToBLIF("relevance-intermediate-2");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/relevance-intermediate-1.blif"), new File("output/relevance-intermediate-2.blif"));
 			// made changes are valid
 			//bf = GW_copy;
