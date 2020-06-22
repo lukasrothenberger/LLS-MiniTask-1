@@ -111,6 +111,8 @@ public class BoolFunctions {
 			// made changes are not valid
 			Majority(internalGraph, nodesMap, recursionCount+1);
 		}
+		
+		System.out.println("MAJORITY");
 	}
 	
 	
@@ -431,7 +433,8 @@ public class BoolFunctions {
 						System.out.println("Checking for matching input");
 						if(overlappingInput.contains(innerChild2)) {}
 						else
-							overlappingInput.add(innerChild2);
+							if(innerChild2.id != 0)
+								overlappingInput.add(innerChild2);
 					}
 				}
 			}		
@@ -441,6 +444,9 @@ public class BoolFunctions {
 				continue;
 			if(overlappingInput.size() != 2)
 				continue;
+			if(NonoverlappingInput.size() == 1 && NonoverlappingInput.get(0).id == 0) {
+				NonoverlappingInput.add(NonoverlappingInput.get(0));
+			}
 			try {
 			for(Edge removeOuterEdges : outerEdges) {
 				GW_copy.deleteEdge(node.id, removeOuterEdges.dest);
@@ -448,8 +454,15 @@ public class BoolFunctions {
 			for(Node createEdge : overlappingInput) {
 				GW_copy.addEdge(node.id, createEdge.id);
 			}
+			
+			for(Node n : NonoverlappingInput)
+				System.out.println("Non-overlap: "+n);
+			for(Node n : overlappingInput)
+				System.out.println("Overlap: "+n);
+			
 			Long NextFreeID = GW_copy.getNextFreeId();
-			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);	
+			//M(u,v,z)
+			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);		
 			GW_copy.addEdge(node.id, NextFreeID);
 			break;
 			}
@@ -469,6 +482,9 @@ public class BoolFunctions {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/Distributivity-intermediate-1.blif"), new File("output/Distributivity-intermediate-2.blif"));
 			// made changes are valid
 			//bf = GW_copy;
+			System.out.println("bf: "+bf.internalGraph.hashCode());
+			System.out.println("GW_copy: "+GW_copy.internalGraph.hashCode());
+			System.out.println("internalGraph: "+internalGraph.hashCode());
 			bf.internalGraph = GW_copy.internalGraph;
 			bf.nodesMap = GW_copy.nodesMap;
 			bf.inputNodes = GW_copy.inputNodes;
@@ -745,7 +761,7 @@ public class BoolFunctions {
 	
 	
 	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
-		if(recursionCount > 5) {
+		if(recursionCount > 10) {
 			// do nothing
 			return;
 		}	
@@ -787,10 +803,12 @@ public class BoolFunctions {
 			int index_x = (int)(Math.random()*3);
 			//get x
 			long id_x = node_children[index_x].id;
+			int tmp_random = (int) Math.round(Math.random()) + 1;
 			//get y
-			long id_y = node_children[(index_x+1)%node_children.length].id;
+			long id_y = node_children[(index_x+tmp_random)%node_children.length].id;
 			//get z
-			long id_z = node_children[(index_x+2)%node_children.length].id;
+			tmp_random = (tmp_random == 1) ? 2 : 1;
+			long id_z = node_children[(index_x+tmp_random)%node_children.length].id;
 			//get v
 			long id_v = id_x;
 			//get v'

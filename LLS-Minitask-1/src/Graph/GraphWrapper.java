@@ -136,8 +136,6 @@ public class GraphWrapper {
 			return;
 			//throw new Exception("test - don't allow double edges");
 		}
-		this.exportToDOTandPNG("test");
-		System.out.println("try to add edge: "+ source+ " -> "+ dest);
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -163,10 +161,7 @@ public class GraphWrapper {
 		if(summedWeight > 3) {
 			System.out.println("INVALID NODE: "+ source+". Rollback creation of edge.");
 			//rollback 
-			//internalGraph.removeEdge(sourceNode, destNode);
-			System.out.println("exiting");
-			System.exit(0);
-			//throw new Exception("asdf");
+			internalGraph.removeEdge(sourceNode, destNode);
 		}
 	}
 	
@@ -388,6 +383,7 @@ public class GraphWrapper {
 			String[] c = {"dot", "-Tpng", "output/"+filename+".dot", "-o", "output/"+filename+".png"};
 			//String[] c = {"dot", "-?"};
 			Process p = Runtime.getRuntime().exec(c);
+			p.waitFor();
 			System.out.println("\tDone.");
 		}
 		catch (Exception e) {
@@ -543,7 +539,7 @@ public class GraphWrapper {
 		}	
 		
 		for(Node nodeToCopy : cleanedSubtree) {
-			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE) {
+			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE || nodeToCopy.id < 2) {
 				System.out.println("nodeToCopy.id: "+ nodeToCopy.id);
 				long cloneID = 0;
 				if(nodeToCopy.id % 2 == 0) {
