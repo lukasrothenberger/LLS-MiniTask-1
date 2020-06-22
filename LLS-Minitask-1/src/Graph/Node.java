@@ -28,6 +28,10 @@ public class Node {
 		this.modifier = modifier;
 	}
 	
+	
+	
+	
+	
 	/**
 	 * Textual representation of a node for printing.
 	 */
@@ -147,6 +151,7 @@ public class Node {
 								throw new Exception("Incorrect number of children for INV node: "+ this.id);
 							count++;
 						}
+						System.out.println("ID: "+this.id);
 						return ".subckt inv A="+child1.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 				}
@@ -295,5 +300,19 @@ public class Node {
 		Edge[] resultArray = new Edge[resultList.size()];
 		resultArray = resultList.toArray(resultArray);
 		return resultArray;
+	}
+
+
+
+
+
+	public long cloneNode(GraphWrapper GW, long cloneID) throws Exception {
+		System.out.println("cloned: "+this.id+ " to "+ cloneID);
+		Node newNode = new Node(cloneID, this.type, this.modifier);
+		newNode.input = this.input;
+		newNode.output = this.output;
+		GW.internalGraph.addVertex(newNode);
+		GW.nodesMap.put(cloneID, newNode);
+		return cloneID;
 	}
 }

@@ -58,7 +58,8 @@ public class GraphWrapper {
 			if(id > maxId)
 				maxId = id;
 		}
-		return maxId+2;
+		maxId = (maxId % 2 == 0) ? maxId+2 : maxId+1; 
+		return maxId;
 	}
 	
 	
@@ -135,6 +136,8 @@ public class GraphWrapper {
 			return;
 			//throw new Exception("test - don't allow double edges");
 		}
+		this.exportToDOTandPNG("test");
+		System.out.println("try to add edge: "+ source+ " -> "+ dest);
 		Node sourceNode = nodesMap.get(source);
 		if(dest % 2 != 0) {
 			// dest is an inverted node
@@ -160,7 +163,10 @@ public class GraphWrapper {
 		if(summedWeight > 3) {
 			System.out.println("INVALID NODE: "+ source+". Rollback creation of edge.");
 			//rollback 
-			internalGraph.removeEdge(sourceNode, destNode);
+			//internalGraph.removeEdge(sourceNode, destNode);
+			System.out.println("exiting");
+			System.exit(0);
+			//throw new Exception("asdf");
 		}
 	}
 	
@@ -519,8 +525,76 @@ public class GraphWrapper {
 		return modificationFound;
 	}
 		
+	
+	/**
+	 * returns the index of the root node of the copy.
+	 * @return
+	 * @throws Exception 
+	 */
+	public long copySubtree(long root) throws Exception {
+		Node rootNode = this.getNode(root);
+		HashMap<Long, Long> nodeToCloneId = new HashMap<Long, Long>();
+		//clone all nodes in subtree
+		List<Node> cleanedSubtree = new LinkedList<Node>();
+		for(Node n : getSubtree(rootNode)) {
+			if(cleanedSubtree.contains(n))
+				continue;
+			cleanedSubtree.add(n);
+		}	
+		
+		for(Node nodeToCopy : cleanedSubtree) {
+			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE) {
+				System.out.println("nodeToCopy.id: "+ nodeToCopy.id);
+				long cloneID = 0;
+				if(nodeToCopy.id % 2 == 0) {
+					//non-inverted node
+					if(nodeToCloneId.keySet().contains(nodeToCopy.id+1)){
+						//inverted version already exists
+						cloneID = nodeToCloneId.get(nodeToCopy.id+1)-1;
+						System.out.println("\t1");
+					}
+					else {
+						cloneID = this.getNextFreeId();
+						System.out.println("\t2");
+					}
+				}
+				else {
+					//inverted node
+					if(nodeToCloneId.keySet().contains(nodeToCopy.id-1)){
+						//non-inverted version already exists
+						cloneID = nodeToCloneId.get(nodeToCopy.id-1)+1;
+						System.out.println("\t3");
+					}
+					else {
+						cloneID = this.getNextFreeId()+1;
+						System.out.println("\t4");
+					}
+				}
+				nodeToCopy.cloneNode(this, cloneID);
+				//create a key-value mapping: oldId -> cloneIds
+				nodeToCloneId.put(nodeToCopy.id, cloneID);
+			}
+			else {
+				//don't clone in/out nodes
+				nodeToCloneId.put(nodeToCopy.id, nodeToCopy.id);
+			}
+		}
+		//iterate over all edges in subtree
+		for(Node nodeToCopy : cleanedSubtree) {
+			for(Edge edgeToCopy : nodeToCopy.getOutgoingEdges(internalGraph, nodesMap)) {
+				// add edges with replaced IDs
+				long cloneSourceID = nodeToCloneId.get(edgeToCopy.source);
+				long cloneDestID = nodeToCloneId.get(edgeToCopy.dest);
+				this.addEdge(cloneSourceID, cloneDestID);
+			}
+		}
+		return nodeToCloneId.get(rootNode.id);
+	}
+	
+	
     private List<Node> getSubtree(Node root){
     	List<Node> VisitedNodes = new LinkedList<Node>();
+    	VisitedNodes.add(root);
     	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
     		VisitedNodes.add(rootnode);
     		VisitedNodes.addAll(getSubtree(rootnode));
@@ -532,7 +606,6 @@ public class GraphWrapper {
 		List<Node> VisitedNodes = new LinkedList<Node>();
 		for(Node outnodes : this.outputNodes) {
 			VisitedNodes.addAll(getSubtree(outnodes));
-			VisitedNodes.add(outnodes);
 		}    
 		for(Node removeNode : this.nodesMap.values()) {
 			if(VisitedNodes.contains(removeNode))

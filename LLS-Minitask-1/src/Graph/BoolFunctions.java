@@ -744,7 +744,7 @@ public class BoolFunctions {
 	}
 	
 	
-	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) {
+	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			// do nothing
 			return;
@@ -777,7 +777,71 @@ public class BoolFunctions {
 		Collections.shuffle(keyList);	
 		// DO STUFF
 		for(long nodeId : keyList) {
+			System.out.println("NodeID: "+ nodeId);
+			Node node = GW_copy.nodesMap.get(nodeId);
+			if(node.type != NodeType.MAJ)
+				continue;
+			if(node.modifier != NodeModifier.INTERMEDIATE) // In/Out nodes not copyable
+				continue;
+			Node[] node_children = node.getChildrenNodes(IG_copy, NM_copy);
+			int index_x = (int)(Math.random()*3);
+			//get x
+			long id_x = node_children[index_x].id;
+			//get y
+			long id_y = node_children[(index_x+1)%node_children.length].id;
+			//get z
+			long id_z = node_children[(index_x+2)%node_children.length].id;
+			//get v
+			long id_v = id_x;
+			//get v'
+			long id_v_inv = (id_v % 2 == 0) ? id_v+1 : id_v-1;  
+			//get u'
+			long id_u_inv = id_z;
+			//get u
+			long id_u = (id_u_inv % 2 == 0) ? id_u_inv+1 : id_u_inv-1;
 			
+			try {
+				//construct left inner MAJ node;
+					//left copy subtree
+					System.out.println("### COPY TREE 1 ###");
+					long left_copy_subtree_id = GW_copy.copySubtree(node.id);
+					//replace v/u in subtree
+					System.out.println("### REP SUBTREE 1 ###");
+					GW_copy.replaceInSubtreeRecursive(left_copy_subtree_id, id_v, id_u);
+				long id_left_inner_maj = GW_copy.getNextFreeId();
+				System.out.println("### ADD MAJ GATE 1 ###");
+				System.out.println("maj: "+id_left_inner_maj);
+				System.out.println("id_v_inv: "+ id_v_inv);
+				System.out.println("left_copy_subt_id: "+ left_copy_subtree_id);
+				System.out.println("id_u: "+ id_u);
+				GW_copy.addMajGate(id_left_inner_maj, id_v_inv, left_copy_subtree_id, id_u);	
+				
+				//construct right inner MAJ node
+					//right copy subtree
+					System.out.println("### COPY TREE 2 ###");
+					long right_copy_subtree_id = GW_copy.copySubtree(node.id);
+					//replace v/u' in subtree
+					System.out.println("### REP SUBTREE 2 ###");
+					GW_copy.replaceInSubtreeRecursive(right_copy_subtree_id, id_v, id_u_inv);
+				long id_right_inner_maj = GW_copy.getNextFreeId();
+				System.out.println("### ADD MAJ GATE 2 ###");
+				GW_copy.addMajGate(id_right_inner_maj, id_v_inv, right_copy_subtree_id, id_u_inv);
+				
+				//construct outer Maj Gate
+				long id_outer_maj = GW_copy.getNextFreeId();
+				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);			
+				
+				//replace node with the created MAJ node
+				for(Edge e : node.getIncomingEdges(IG_copy, NM_copy)) {
+					GW_copy.redirectEdge(e.source, e.dest, id_outer_maj);
+				}
+				break;
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				Substitution(internalGraph, nodesMap, recursionCount+1);
+				return;			
+			}
 		}
 		// END DO STUFF
 		
