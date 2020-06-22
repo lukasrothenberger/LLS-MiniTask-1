@@ -23,6 +23,7 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.util.DoublyLinkedList;
 
+
 public class GraphWrapper {
 	// Wrapper class for internal jgrapht-graph
 	
@@ -174,7 +175,7 @@ public class GraphWrapper {
 		
 		for(Edge e : internalGraph.getAllEdges(nodesMap.get(source), nodesMap.get(dest))){
 			if(e.weight > 1) {
-				e.weight--;
+				internalGraph.getEdge(nodesMap.get(e.source), nodesMap.get(e.dest)).weight--;
 				return;
 			}
 			internalGraph.removeEdge(e);
@@ -429,6 +430,9 @@ public class GraphWrapper {
 		for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
 			internalGraph.removeEdge(e);
 		}
+		this.inputNodes.remove(node);
+		this.outputNodes.remove(node);
+		this.nodesMap.remove(node);
 		internalGraph.removeVertex(node);
 	}
 	
@@ -606,7 +610,14 @@ public class GraphWrapper {
 		for(Node removeNode : this.nodesMap.values()) {
 			if(VisitedNodes.contains(removeNode))
 				continue;
-			this.removeNode(removeNode.id);				
+			if(removeNode.modifier == NodeModifier.INPUT || removeNode.modifier == NodeModifier.OUTPUT)
+				continue;
+			try {
+				this.removeNode(removeNode.id);
+			}
+			catch(Exception ex) {
+				// already removed
+			}
 		}
 	}
 	

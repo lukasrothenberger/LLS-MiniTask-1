@@ -151,7 +151,6 @@ public class Node {
 								throw new Exception("Incorrect number of children for INV node: "+ this.id);
 							count++;
 						}
-						System.out.println("ID: "+this.id);
 						return ".subckt inv A="+child1.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 				}

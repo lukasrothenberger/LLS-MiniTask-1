@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_1_min.aag";
+	/*		String input_file = "data/aiger-set/ascii/aig_1_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -35,13 +35,14 @@ public class Main {
 			
 		
 		//	for(int i = 0; i < 3; i++) {
-		//		graph.boolFunctions.Majority(graph.internalGraph, graph.nodesMap, 0);
+				System.out.println("#### " + graph.internalGraph.hashCode()+" #### 0");
+				graph.boolFunctions.Majority(graph.internalGraph, graph.nodesMap, 0);
 				System.out.println("#### " + graph.internalGraph.hashCode()+" #### 1");
 				graph.boolFunctions.DistributivityRL(graph.internalGraph, graph.nodesMap, 0);
 				System.out.println("#### " + graph.internalGraph.hashCode()+" #### 2");
 		//		graph.boolFunctions.Associativity(graph.internalGraph, graph.nodesMap, 0);
 		//		graph.boolFunctions.ComplementaryAssociativity(graph.internalGraph, graph.nodesMap, 0);
-				graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
+		//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 		//		graph.boolFunctions.Substitution(graph.internalGraph, graph.nodesMap, 0);
 		//		graph.exportToDOTandPNG("graph_visible_changes");
 		//		graph.boolFunctions.Majority(graph.internalGraph, graph.nodesMap, 0);
@@ -61,17 +62,17 @@ public class Main {
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
 			//ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-	
+	*/
 			
 			//### modified Fig.2.a example Graph
-	/*	GraphWrapper fig2a_mod = new GraphWrapper();
+		GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
 			fig2a_mod.addInputNode(8); //z
 			fig2a_mod.addOutputNode(10); //h
 			fig2a_mod.addMajGate(20, 2, 0, 6);
-			fig2a_mod.addMajGate(14, 8, 5, 4);
+			fig2a_mod.addMajGate(14, 8, 4, 4);
 			fig2a_mod.addMajGate(18, 6, 0, 2);
 			fig2a_mod.addMajGate(16, 18, 8, 20);
 			fig2a_mod.addMajGate(10, 16, 4, 14);
@@ -91,8 +92,15 @@ public class Main {
 		//	fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 	//		for(int i = 0; i < 10; i++) {
+				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 0");
 				fig2a_mod.boolFunctions.Majority(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
+				System.out.println("sleep");
+				Thread.sleep(2000);
+				System.out.println("end sleep");
+				fig2a_mod.exportToDOTandPNG("post_maj");
+				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 1");
 				fig2a_mod.boolFunctions.DistributivityRL(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
+				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 2");
 				fig2a_mod.Remove_UnReachableNodes();
 	//			fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
 			//	fig2a_mod.boolFunctions.Associativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
@@ -109,7 +117,7 @@ public class Main {
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	
-	*/
+	
 			
 	/*		//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
