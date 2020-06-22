@@ -23,7 +23,37 @@ public class BoolFunctions {
 	
 	
 	public void Majority(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) throws Exception {
-		for(long nodeID : bf.nodesMap.keySet()) {
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);
+			
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		
+		// actual start of Associativity-code
+		
+		//randomize iteration
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : GW_copy.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);
+		
+		for(long nodeID : keyList) {
+			System.out.println("node: "+ nodeID);
 			Node node = bf.nodesMap.get(nodeID);
 			if(node.type != NodeType.MAJ)
 				continue;
@@ -53,11 +83,32 @@ public class BoolFunctions {
 			else {
 				//majority operation is possible
 				//delete current node
-				bf.removeNode(node.id);
+				GW_copy.removeNode(node.id);
 				for(Edge e : incomingEdges) {
-					bf.addEdge(e.source, replaceByValue);
+					GW_copy.addEdge(e.source, replaceByValue);
 				}
 			}
+		}
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("majority-intermediate-1");
+		GW_copy.exportToBLIF("majority-intermediate-2");
+		GW_copy.exportToDOTandPNG("majority-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majority-intermediate-1.blif"), new File("output/majority-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+			System.out.println("APPLIED");
+		}
+		catch(Exception ex) {
+			// made changes are not valid
+			Majority(internalGraph, nodesMap);
 		}
 	}
 	
