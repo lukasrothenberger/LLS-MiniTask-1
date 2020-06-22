@@ -622,7 +622,7 @@ public class BoolFunctions {
 			Edge[] z_outgoingEdges = z.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 			
 			for(Edge e : z_outgoingEdges) {
-				if(GW_copy.replaceInSubtreeRecursive(e.dest, victim, replacement)) {
+				if(GW_copy.replaceInSubtreeRecursive(e.dest, victim, replacement, new LinkedList<Long>())) {
 					System.out.println("relevance: done something");
 					loopBreaker = true;
 					break;
@@ -879,7 +879,7 @@ public class BoolFunctions {
 					//left copy subtree
 					long left_copy_subtree_id = GW_copy.copySubtree(node.id);
 					//replace v/u in subtree
-					GW_copy.replaceInSubtreeRecursive(left_copy_subtree_id, id_v, id_u);
+					GW_copy.replaceInSubtreeRecursive(left_copy_subtree_id, id_v, id_u, new LinkedList<Long>());
 				long id_left_inner_maj = GW_copy.getNextFreeId();
 				GW_copy.addMajGate(id_left_inner_maj, id_v_inv, left_copy_subtree_id, id_u);	
 				
@@ -887,7 +887,7 @@ public class BoolFunctions {
 					//right copy subtree
 					long right_copy_subtree_id = GW_copy.copySubtree(node.id);
 					//replace v/u' in subtree
-					GW_copy.replaceInSubtreeRecursive(right_copy_subtree_id, id_v, id_u_inv);
+					GW_copy.replaceInSubtreeRecursive(right_copy_subtree_id, id_v, id_u_inv, new LinkedList<Long>());
 				long id_right_inner_maj = GW_copy.getNextFreeId();
 				GW_copy.addMajGate(id_right_inner_maj, id_v_inv, right_copy_subtree_id, id_u_inv);
 				

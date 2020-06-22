@@ -34,19 +34,13 @@ public class Main {
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
 		
-			for(int i = 0; i < 3; i++) {
+			for(int i = 0; i < 10; i++) {
 				graph = graph.boolFunctions.Majority(0);
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToDOTandPNG("majGraph-assoc");
-				for(int j = 0; j < 5; j++)
 				graph = graph.boolFunctions.Associativity(0);
-				for(int j = 0; j < 5; j++)
 				graph = graph.boolFunctions.ComplementaryAssociativity(0);
-				for(int j = 0; j < 5; j++)
 				graph = graph.boolFunctions.Relevance(0);
-				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Substitution( 0);
-				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Majority(0);
 				graph = graph.boolFunctions.DistributivityRL(0);
 				graph.exportToDOTandPNG("majGraph-assoc");

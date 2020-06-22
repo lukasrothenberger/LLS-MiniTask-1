@@ -502,7 +502,12 @@ public class GraphWrapper {
 	 * @return
 	 * @throws Exception 
 	 */
-	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement) throws Exception {	
+	public boolean replaceInSubtreeRecursive(long root, long victim, long replacement, List<Long> visited) throws Exception {
+		if(visited.contains(root)) {
+			//looping
+			throw new Exception("loop found");
+		}
+		visited.add(root);
 		boolean modificationFound = false;
 		for(Edge e : nodesMap.get(root).getOutgoingEdges(internalGraph, nodesMap)) {
 			if(e.dest == victim) {
@@ -515,7 +520,7 @@ public class GraphWrapper {
 			}
 			else {
 				try {
-					replaceInSubtreeRecursive(e.dest, victim, replacement);
+					replaceInSubtreeRecursive(e.dest, victim, replacement, visited);
 					modificationFound = true;
 				}
 				catch(Exception ex) {
@@ -536,7 +541,7 @@ public class GraphWrapper {
 		HashMap<Long, Long> nodeToCloneId = new HashMap<Long, Long>();
 		//clone all nodes in subtree
 		List<Node> cleanedSubtree = new LinkedList<Node>();
-		for(Node n : getSubtree(rootNode)) {
+		for(Node n : getSubtree(rootNode, new LinkedList<Long>())) {
 			if(cleanedSubtree.contains(n))
 				continue;
 			cleanedSubtree.add(n);
@@ -587,20 +592,25 @@ public class GraphWrapper {
 	}
 	
 	
-    private List<Node> getSubtree(Node root){
+    private List<Node> getSubtree(Node root, List<Long> visited) throws Exception{
+		if(visited.contains(root.id)) {
+			//looping
+			throw new Exception("found loop..");
+		}
+		visited.add(root.id);
     	List<Node> VisitedNodes = new LinkedList<Node>();
     	VisitedNodes.add(root);
     	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
     		VisitedNodes.add(rootnode);
-    		VisitedNodes.addAll(getSubtree(rootnode));
+    		VisitedNodes.addAll(getSubtree(rootnode, visited));
     	}
 		return VisitedNodes;
     }
     
-	public void Remove_UnReachableNodes() {
+	public void Remove_UnReachableNodes() throws Exception {
 		List<Node> VisitedNodes = new LinkedList<Node>();
 		for(Node outnodes : this.outputNodes) {
-			VisitedNodes.addAll(getSubtree(outnodes));
+			VisitedNodes.addAll(getSubtree(outnodes, new LinkedList<Long>()));
 		}    
 		for(Node removeNode : this.nodesMap.values()) {
 			if(VisitedNodes.contains(removeNode))
