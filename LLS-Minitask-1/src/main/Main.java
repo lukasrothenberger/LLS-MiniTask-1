@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_4_min.aag";
+			String input_file = "data/aiger-set/ascii/aig_3_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -51,7 +51,7 @@ public class Main {
 	
 			//#### Perform Equivalence checks:
 			//input file <-> created unmodified Graph
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_4_min.blif"), new File("output/unmodifiedGraph.blif"));
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_3_min.blif"), new File("output/unmodifiedGraph.blif"));
 			//created unmodified Graph <-> MAJ Graph
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 			//MAJ Graph <-> majGraph-assoc

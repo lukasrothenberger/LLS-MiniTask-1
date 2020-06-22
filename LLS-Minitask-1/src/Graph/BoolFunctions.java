@@ -428,13 +428,15 @@ public class BoolFunctions {
 			int[] counts = node.getCounts(GW_copy.internalGraph, GW_copy.nodesMap);
 			if(counts[1] < 2) {
 				continue;
-			}
-			
+			}	
 			
 			Edge[] outerEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);			
 			Node[] outerchild = node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap); //getting all the outer nodes
-			Node innerNode1 = GW_copy.nodesMap.get(outerEdges[0].dest);	
-			Node innerNode2 = GW_copy.nodesMap.get(outerEdges[1].dest);
+			//randomize
+			int tmp_random = (int)Math.round(Math.random());
+			Node innerNode1 = GW_copy.nodesMap.get(outerEdges[tmp_random].dest);
+			tmp_random = (tmp_random == 0) ? 1 : 0;
+			Node innerNode2 = GW_copy.nodesMap.get(outerEdges[tmp_random].dest);
 			
 			while(true) {
 				int innerOffset = (int) (Math.random() * 3);
@@ -518,7 +520,11 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			GW_copy.Remove_UnReachableNodes();
-			return GW_copy;
+			GraphWrapper buffer = DistributivityRL(0);
+			if(buffer.nodesMap.values().size() >= GW_copy.nodesMap.values().size()) {
+				return GW_copy;
+			}
+			return buffer;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
