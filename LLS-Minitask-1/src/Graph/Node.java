@@ -136,6 +136,7 @@ public class Node {
 								tmpWeight--;
 							}
 						}
+						
 						return ".subckt maj3 A="+child1.toBLIFIdentifier()+" B="+child2.toBLIFIdentifier()+" C="+child3.toBLIFIdentifier()+" O="+this.toBLIFIdentifier()+"\n";
 					}
 					case INV:{

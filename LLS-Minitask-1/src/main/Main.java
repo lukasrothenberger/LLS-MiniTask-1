@@ -91,22 +91,20 @@ public class Main {
 		//	fig2a_mod.Remove_UnReachableNodes();
 		//	fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
-	//		for(int i = 0; i < 10; i++) {
-				System.out.println("#### " + fig2a_mod.internalGraph.hashCode()+" #### 0");
+		//	for(int i = 0; i < 3; i++) {
 				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				fig2a_mod.exportToDOTandPNG("post_maj");
-				System.out.println("#### " + fig2a_mod.boolFunctions.bf.internalGraph.hashCode()+" #### 1");
 				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
-				System.out.println("#### " + fig2a_mod.boolFunctions.bf.internalGraph.hashCode()+" #### 2");
 				//fig2a_mod.Remove_UnReachableNodes();
-	//			fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
-			//	fig2a_mod.boolFunctions.Associativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				//fig2a_mod.boolFunctions.ComplementaryAssociativity(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				//fig2a_mod.boolFunctions.Relevance(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				//fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				//fig2a_mod.boolFunctions.Majority(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-				//fig2a_mod.boolFunctions.DistributivityRL(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
-	//		}
+				//fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
+				fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
+				fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
+				fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
+				fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
+				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+				//fig2a_mod.Remove_UnReachableNodes();
+			//}
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
