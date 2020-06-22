@@ -603,14 +603,12 @@ public class BoolFunctions {
 		if(recursionCount > 5) {
 			// do nothing
 			return;
-		}
-		
+		}	
 		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
 		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
 		//fill NM_copy
 		for(Node node : IG_copy.vertexSet()) {
-			NM_copy.put(node.id, node);
-			
+			NM_copy.put(node.id, node);	
 		}
 		GraphWrapper GW_copy = new GraphWrapper();
 		GW_copy.internalGraph = IG_copy;
@@ -746,9 +744,61 @@ public class BoolFunctions {
 	}
 	
 	
-	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {
-		for(long nodeID : bf.nodesMap.keySet()) {
-			Node node = nodesMap.get(nodeID);
+	public void Substitution(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap, int recursionCount) {
+		if(recursionCount > 5) {
+			// do nothing
+			return;
+		}	
+		Graph<Node, Edge> IG_copy = (Graph<Node, Edge>)((AbstractBaseGraph<Node, Edge>)internalGraph).clone();
+		HashMap<Long, Node> NM_copy = new HashMap<Long, Node>();
+		//fill NM_copy
+		for(Node node : IG_copy.vertexSet()) {
+			NM_copy.put(node.id, node);		
+		}
+		GraphWrapper GW_copy = new GraphWrapper();
+		GW_copy.internalGraph = IG_copy;
+		GW_copy.nodesMap = NM_copy;
+		//set input/output nodes
+		for(Node node : GW_copy.internalGraph.vertexSet()) {
+			if(node.modifier == NodeModifier.INPUT) {
+				GW_copy.inputNodes.add(node);
+			}
+			if(node.modifier == NodeModifier.OUTPUT) {
+				GW_copy.outputNodes.add(node);
+			}
+		}
+		
+		// actual start of CompAssoc-code
+		//randomize iteration
+		List<Long> keyList = new LinkedList<Long>();
+		for(long nodeId : GW_copy.nodesMap.keySet()){
+			keyList.add(nodeId);
+		}
+		Collections.shuffle(keyList);	
+		// DO STUFF
+		for(long nodeId : keyList) {
+			
+		}
+		// END DO STUFF
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("Substitution-intermediate-1");
+		GW_copy.exportToBLIF("Substitution-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/Substitution-intermediate-1.blif"), new File("output/Substitution-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			// made changes are not valid
+			Substitution(internalGraph, nodesMap, recursionCount+1);
 		}
 	}
 		 
