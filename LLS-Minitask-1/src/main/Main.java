@@ -33,32 +33,32 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
-			int effort = 2;
+			int effort = 60;
 		
 			for(int i = 0; i < effort; i++) {
 				graph = graph.boolFunctions.Majority(0);
 				graph.exportToBLIF("post_maj_1"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
 				graph.exportToBLIF("post_dist_1"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Associativity(0);
 				graph.exportToBLIF("post_assoc"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.ComplementaryAssociativity(0);
 				graph.exportToBLIF("post_compAssoc"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Relevance(0);
 				graph.exportToBLIF("post_relev"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Substitution( 0);
 				graph.exportToBLIF("post_subst"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
 				graph.exportToBLIF("post_maj_2"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
 				graph.exportToBLIF("post_dist_2"+"_"+i);
-				graph.exportToDOTandPNG("majGraph-assoc");
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 			}
 			
 //			graph = graph.boolFunctions.Substitution(0);
@@ -75,18 +75,19 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-			ABC.Statistics.printStatistics(new File("output/majGraph.blif"));
+			ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true);
 			for(int i = 0 ; i < effort; i++ ) {	
-				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"));	
-				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_assoc"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"));
-				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"));
+				System.out.println("### Iteration "+i+" ###");
+				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"), true, false);	
+				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_assoc"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
 			}
-			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"));
+			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true);
 		
 			
 			//### modified Fig.2.a example Graph

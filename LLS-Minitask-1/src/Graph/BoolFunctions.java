@@ -24,7 +24,7 @@ public class BoolFunctions {
 	
 	
 	public GraphWrapper Majority(int recursionCount) throws Exception {
-		if(recursionCount > 5) {
+		if(recursionCount > 10) {
 			//do nothing
 			return bf;
 		}
@@ -289,7 +289,7 @@ public class BoolFunctions {
 					bf.boolFunctions = GW_copy.boolFunctions;
 					System.out.println("assoc: done something");
 					if(Math.random() > 0.6) {
-						return GW_copy.boolFunctions.Associativity(4);
+						return GW_copy.boolFunctions.Associativity(0);
 					}
 					else {
 						return GW_copy;
@@ -531,7 +531,7 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.7) {
+			if(Math.random() > 0.6) {
 				return GW_copy.boolFunctions.DistributivityRL(0);
 			}
 			else {
@@ -662,7 +662,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.Relevance(4);
+				return GW_copy.boolFunctions.Relevance(0);
 			}
 			else {
 				return GW_copy;
@@ -821,7 +821,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.ComplementaryAssociativity(4);
+				return GW_copy.boolFunctions.ComplementaryAssociativity(0);
 			}
 			else {
 				return GW_copy;
@@ -829,7 +829,7 @@ public class BoolFunctions {
 			//return GW_copy;
 		}
 		catch(Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			// made changes are not valid
 			return ComplementaryAssociativity(recursionCount+1);
 		}

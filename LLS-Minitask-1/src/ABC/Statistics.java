@@ -13,8 +13,10 @@ public class Statistics {
 	 * Prints the results to the console and returns them as a String.
 	 * @param blifOne File Object representing the first BLIF file.
 	 */
-	public static void printStatistics(File blifOne) {
-		System.out.println("\t"+blifOne.getAbsolutePath());
+	public static void printStatistics(File blifOne, boolean printTotalOnly, boolean printFileName) {
+		if(printFileName) {
+			System.out.println("\t"+blifOne.getAbsolutePath());
+		}
 		
 		//build abc Script
 		File tmp_statistics_script = new File("temp/tmp_statistics_script");
@@ -40,8 +42,14 @@ public class Statistics {
 				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line;
 				while ((line = input.readLine()) != null) {
-					if(line.contains("TOTAL") || line.contains("Other") || line.contains("Inverter"))
-						System.out.println(line);
+					if(printTotalOnly) {
+						if(line.contains("TOTAL"))
+							System.out.println(line);
+					}
+					else {
+						if(line.contains("TOTAL") || line.contains("Other") || line.contains("Inverter"))
+							System.out.println(line);
+					}
 				}
 				input.close();
 			} catch (IOException e) {
