@@ -33,7 +33,7 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
-			int effort = 50;
+			int effort = 1;
 			int SubstitutionAfterUnsuccessfulIterations = 3;
 			
 			String lastStatisticsString = "";
@@ -56,7 +56,7 @@ public class Main {
 				
 				//generate and handle statistics for local minimum escaping
 				graph.exportToBLIF("intermediate-statistics");
-				String statisticsResult = ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, false, false);
+				String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
 				if(statisticsResult.equals(lastStatisticsString)) {
 					unchangedStatisticsCount++;
 				}
@@ -66,7 +66,7 @@ public class Main {
 				lastStatisticsString = statisticsResult;
 			}
 			
-//			graph = graph.boolFunctions.Substitution(0);
+			ABC.Statistics.getIntegerStatistics(new File("output/intermediate-statistics.blif"));
 			
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");

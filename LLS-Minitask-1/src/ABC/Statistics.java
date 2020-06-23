@@ -70,4 +70,32 @@ public class Statistics {
 	   System.out.println("ERROR: abc statistics generation could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
 	return "ERROR";
 	}
+	
+	/**
+	 * returns an array of the following form: [InverterCount, OtherCount, TotalCount].
+	 * @param blifOne
+	 * @return
+	 */
+	public static int[] getIntegerStatistics(File blifOne) {
+		int[] returnList = new int[3];
+		String statisticsString = printStatistics(blifOne, false, false, false);
+		int outerCount = 0; 
+		for(Object obj : statisticsString.lines().toArray()) {
+			String line = (String) obj;
+			int innerCount = 0;
+			for(String s : line.split(" ")) {
+				//filter out empty Strings
+				if(s.equals(""))
+					continue;
+				if(innerCount == 2) {
+					returnList[outerCount] = Integer.parseInt(s);
+					break;
+				}
+				innerCount++;
+			}
+			outerCount++;
+		}
+		
+		return returnList;
+	}
 }
