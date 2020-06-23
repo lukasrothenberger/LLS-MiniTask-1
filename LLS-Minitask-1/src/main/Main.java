@@ -75,18 +75,18 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));
+			ABC.Statistics.printStatistics(new File("output/majGraph.blif"));
 			for(int i = 0 ; i < effort; i++ ) {	
-				ABC.Statistics.getStatistics(new File("output/post_maj_1"+"_"+i+".blif"));	
-				ABC.Statistics.getStatistics(new File("output/post_dist_1"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_assoc"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_compAssoc"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_relev"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_subst"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_maj_2"+"_"+i+".blif"));
-				ABC.Statistics.getStatistics(new File("output/post_dist_2"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"));	
+				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_assoc"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"));
+				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"));
 			}
-			ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
+			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"));
 		
 			
 			//### modified Fig.2.a example Graph

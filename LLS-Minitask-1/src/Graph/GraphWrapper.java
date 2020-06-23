@@ -572,7 +572,6 @@ public class GraphWrapper {
 				}
 				nodeToCopy.cloneNode(this, cloneID);
 				//create a key-value mapping: oldId -> cloneIds
-				System.out.println("cloned: "+ nodeToCopy.id + " to "+ cloneID);
 				nodeToCloneId.put(nodeToCopy.id, cloneID);
 			}
 			else {

@@ -13,9 +13,8 @@ public class Statistics {
 	 * Prints the results to the console and returns them as a String.
 	 * @param blifOne File Object representing the first BLIF file.
 	 */
-	public static void getStatistics(File blifOne) {
-		System.out.println("Retrieving Statistics for:");
-		System.out.println("\t"+blifOne.getAbsolutePath()+"\n");
+	public static void printStatistics(File blifOne) {
+		System.out.println("\t"+blifOne.getAbsolutePath());
 		
 		//build abc Script
 		File tmp_statistics_script = new File("temp/tmp_statistics_script");
@@ -29,7 +28,6 @@ public class Statistics {
 			fw.write("print_level\n");
 			fw.flush();
 			fw.close();
-			System.out.println("\t\tcreated tmp_statistics_script for abc statistics generation.");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -38,18 +36,17 @@ public class Statistics {
 		for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
 			String[] c = {abcExecutablePath, "-f", "temp/tmp_statistics_script"};
 			try {
-				System.out.println("ABC Statistics for "+blifOne.getAbsolutePath()+ ":");
 				Process p = Runtime.getRuntime().exec(c);
 				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line;
 				while ((line = input.readLine()) != null) {
-				  System.out.println(line);
+					if(line.contains("TOTAL") || line.contains("Other") || line.contains("Inverter"))
+						System.out.println(line);
 				}
 				input.close();
 			} catch (IOException e) {
 				continue;
 			}
-			System.out.println("\tDone.");
 			return;
 		}
 	   System.out.println("ERROR: abc statistics generation could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");

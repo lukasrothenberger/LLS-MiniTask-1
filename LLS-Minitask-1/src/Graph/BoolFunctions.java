@@ -119,7 +119,13 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			System.out.println("MAJORITY");
-			return GW_copy;
+			if(Math.random() > 0.6) {
+				return GW_copy.boolFunctions.Majority(0);
+			}
+			else {
+				return GW_copy;
+			}
+			//return GW_copy;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
@@ -282,7 +288,12 @@ public class BoolFunctions {
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
 					System.out.println("assoc: done something");
-					return GW_copy.boolFunctions.Associativity(4);
+					if(Math.random() > 0.6) {
+						return GW_copy.boolFunctions.Associativity(4);
+					}
+					else {
+						return GW_copy;
+					}
 					//return GW_copy;
 				}
 				catch(Exception ex) {
@@ -520,8 +531,8 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.8) {
-				return GW_copy.boolFunctions.DistributivityRL(4);
+			if(Math.random() > 0.7) {
+				return GW_copy.boolFunctions.DistributivityRL(0);
 			}
 			else {
 				return GW_copy;
@@ -650,7 +661,7 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.8) {
+			if(Math.random() > 0.6) {
 				return GW_copy.boolFunctions.Relevance(4);
 			}
 			else {
@@ -809,7 +820,7 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.8) {
+			if(Math.random() > 0.6) {
 				return GW_copy.boolFunctions.ComplementaryAssociativity(4);
 			}
 			else {
@@ -893,15 +904,15 @@ public class BoolFunctions {
 			//get u
 			long id_u = (id_u_inv % 2 == 0) ? id_u_inv+1 : id_u_inv-1;
 			
-			System.out.println("node: "+node.id);
-			System.out.println("x: "+id_x);
-			System.out.println("y: "+id_y);
-			System.out.println("z: "+id_z);
-			System.out.println("v: " +id_v);
-			System.out.println("v': "+ id_v_inv);
-			System.out.println("u: "+id_u);
-			System.out.println("u': "+id_u_inv);
-			System.out.println();
+//			System.out.println("node: "+node.id);
+//			System.out.println("x: "+id_x);
+//			System.out.println("y: "+id_y);
+//			System.out.println("z: "+id_z);
+//			System.out.println("v: " +id_v);
+//			System.out.println("v': "+ id_v_inv);
+//			System.out.println("u: "+id_u);
+//			System.out.println("u': "+id_u_inv);
+//			System.out.println();
 			
 			
 			try {
@@ -938,7 +949,6 @@ public class BoolFunctions {
 				break;
 			}
 			catch(Exception e) {
-				e.printStackTrace();
 				return Substitution(recursionCount+1);
 			}
 		}
@@ -958,7 +968,7 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.7)
+			if(Math.random() > 0.9)
 				return GW_copy.boolFunctions.Substitution(4);
 			else
 				return GW_copy;
