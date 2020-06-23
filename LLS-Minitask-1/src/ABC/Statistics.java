@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import com.sun.net.httpserver.Authenticator.Result;
+
 public class Statistics {
 	
 	/**
@@ -13,7 +15,9 @@ public class Statistics {
 	 * Prints the results to the console and returns them as a String.
 	 * @param blifOne File Object representing the first BLIF file.
 	 */
-	public static void printStatistics(File blifOne, boolean printTotalOnly, boolean printFileName) {
+	public static String printStatistics(File blifOne, boolean printTotalOnly, boolean printFileName, boolean printToConsole) {
+		String returnString = "";
+		
 		if(printFileName) {
 			System.out.println("\t"+blifOne.getAbsolutePath());
 		}
@@ -43,20 +47,27 @@ public class Statistics {
 				String line;
 				while ((line = input.readLine()) != null) {
 					if(printTotalOnly) {
-						if(line.contains("TOTAL"))
-							System.out.println(line);
+						if(line.contains("TOTAL")) {
+							if(printToConsole)
+								System.out.println(line);
+							returnString += line+"\n";
+						}
 					}
 					else {
-						if(line.contains("TOTAL") || line.contains("Other") || line.contains("Inverter"))
-							System.out.println(line);
+						if(line.contains("TOTAL") || line.contains("Other") || line.contains("Inverter")) {
+							if(printToConsole)
+								System.out.println(line);
+							returnString += line+"\n";
+						}
 					}
 				}
 				input.close();
 			} catch (IOException e) {
 				continue;
 			}
-			return;
+			return returnString;
 		}
 	   System.out.println("ERROR: abc statistics generation could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
+	return "ERROR";
 	}
 }

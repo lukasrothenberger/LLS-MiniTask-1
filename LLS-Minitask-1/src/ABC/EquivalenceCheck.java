@@ -52,13 +52,58 @@ public class EquivalenceCheck {
 				continue;
 			}
 			if(! containsSuccessMessage) {
-				System.out.println("Networks not equivalent!");
-				System.out.println("\t"+blifOne.getAbsolutePath());
-				System.out.println("\t"+blifTwo.getAbsolutePath()+"");
 				throw new Exception("Networks not equivalent! : ");
 			}
 			return;
 		}
 	   System.out.println("ERROR: abc equivalence check could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
 	}
+	
+	
+	public static void performEquivalenceCheckWithConsolePrint(File blifOne, File blifTwo) throws Exception {;
+	//build abc Script
+	File tmp_eq_check_script = new File("temp/tmp_compare_script");
+	if(tmp_eq_check_script.exists())
+		tmp_eq_check_script.delete();
+	try {
+		tmp_eq_check_script.createNewFile();
+		FileWriter fw = new FileWriter(tmp_eq_check_script);
+		fw.write("cec ");
+		fw.write("\""+blifOne.getAbsolutePath()+"\" ");
+		fw.write("\""+blifTwo.getAbsolutePath()+"\" ");
+		fw.flush();
+		fw.close();
+		//System.out.println("\t\tcreated tmp_compare_script for abc equivalence checking.");
+	}
+	catch (IOException e) {
+		e.printStackTrace();
+	}
+	
+	for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
+		String[] c = {abcExecutablePath, "-f", "temp/tmp_compare_script"};
+		boolean containsSuccessMessage = false;
+		try {
+		//	System.out.println("Output of equivalence check:");
+			Process p = Runtime.getRuntime().exec(c);
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line;
+			while ((line = input.readLine()) != null) {
+				if(line.contains("Networks are equivalent"))
+					containsSuccessMessage = true;
+			//  System.out.println(line);
+			}
+			input.close();
+		} catch (IOException e) {
+			continue;
+		}
+		if(! containsSuccessMessage) {
+			System.out.println("Networks not equivalent!");
+			System.out.println("\t"+blifOne.getAbsolutePath());
+			System.out.println("\t"+blifTwo.getAbsolutePath()+"");
+			throw new Exception("Networks not equivalent! : ");
+		}
+		return;
+	}
+   System.out.println("ERROR: abc equivalence check could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
+}
 }

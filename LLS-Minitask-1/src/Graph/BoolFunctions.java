@@ -180,104 +180,112 @@ public class BoolFunctions {
 		
 		// actual start of Associativity-code
 		
-		//randomize iteration
-		List<Long> keyList = new LinkedList<Long>();
-		for(long nodeId : GW_copy.nodesMap.keySet()){
-			keyList.add(nodeId);
-		}
-		Collections.shuffle(keyList);
-		
 		//loop at all nodes
 		// get the inputs(edges) and do M(x,y,z) = M(y,z,x) = M(z,x,y)
-		for(long nodeID : keyList) {
-			Node node = GW_copy.nodesMap.get(nodeID);
-			if(node.associativityPossible(GW_copy.internalGraph, GW_copy.nodesMap)) {
-				Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-				int i = (int) Math.random()*outgoingEdges.length;
-					if(GW_copy.nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
-						Node innerNode = GW_copy.nodesMap.get(outgoingEdges[i].dest);
-						//check if overlap exists in node.children and innerNode.children
-						long overlappingInputNode = -1;
-						for(Node child : node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap)) {
-							for(Node innerChild : innerNode.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap)) {
-								if(child.id == innerChild.id) {
-								//	if(child.id != 0)  // don't allow constant zero as shared input
-										overlappingInputNode = child.id;
-								//	if(overlappingInputNode != 0)
-										break;
+		int loop_count = 0;
+		boolean modificationFound = true;
+		while(modificationFound && loop_count < GW_copy.nodesMap.keySet().size()) {
+			loop_count++;
+			modificationFound = false;
+			
+			//randomize iteration
+			List<Long> keyList = new LinkedList<Long>();
+			for(long nodeId : GW_copy.nodesMap.keySet()){
+				keyList.add(nodeId);
+			}
+			Collections.shuffle(keyList);
+		
+			for(long nodeID : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeID);
+				if(node.associativityPossible(GW_copy.internalGraph, GW_copy.nodesMap)) {
+					Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+					int i = (int) Math.random()*outgoingEdges.length;
+						if(GW_copy.nodesMap.get(outgoingEdges[i].dest).type == NodeType.MAJ) {
+							Node innerNode = GW_copy.nodesMap.get(outgoingEdges[i].dest);
+							//check if overlap exists in node.children and innerNode.children
+							long overlappingInputNode = -1;
+							for(Node child : node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								for(Node innerChild : innerNode.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap)) {
+									if(child.id == innerChild.id) {
+									//	if(child.id != 0)  // don't allow constant zero as shared input
+											overlappingInputNode = child.id;
+									//	if(overlappingInputNode != 0)
+											break;
+									}
 								}
+								if(overlappingInputNode != -1 ) {//&& overlappingInputNode != 0) {
+									break;
+								}					
 							}
-							if(overlappingInputNode != -1 ) {//&& overlappingInputNode != 0) {
-								break;
-							}					
-						}
-						if(overlappingInputNode == -1) {
-							//no overlapping input between inner and outer node found, continue
-							continue;
-						}
-						//overlap found for input with id overlappingInputNode, exclude this node from swapping			
-						
-						int innerOffset = (int) (Math.random() * 3) % 3;
-						Edge[] innerInputEdges = null;
-						Edge innerInput = null;
-
-						while(true) {
-							innerOffset = (int) (Math.random() * 3);
-							// select random outgoing edge from inner node to maj node
-							innerInputEdges = innerNode.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-							innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
-							
-							if(innerInput.dest != overlappingInputNode)
-								break;
-						}
-						if(innerInput == null)
-							continue;
-						//select outer input node
-						Edge[] outerInputEdges = null;
-						Edge outerInput = null;
-						while(true) {
-							int outerOffset = (int) (Math.random()*3);
-							outerInputEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-							outerInput = outerInputEdges[outerOffset % outerInputEdges.length];
-							
-							if(outerInput.dest != overlappingInputNode && outerInput.dest != innerNode.id && outerInput != null)
-								break;
-						}
-						if(outerInput == null)
-							continue;						
-						// swap selected inner with outer edge
-						
-						// delete edge from node to outerInput
-						GW_copy.deleteEdge(node.id, outerInput.dest);
-						// delete edge from innerNode to innerInput
-						GW_copy.deleteEdge(innerNode.id, innerInput.dest);
-						
-						int successfull = 0;
-						try {
-							// create edge from node to innerInput
-							GW_copy.addEdge(node.id, innerInput.dest);
-							successfull++;
-							// create edge from innerNode to outerInput
-							GW_copy.addEdge(innerNode.id, outerInput.dest);
-							successfull++;
-							
-						}
-						catch (Exception e) {
-							if(successfull == 0) {
-								GW_copy.addEdge(node.id, outerInput.dest);
-								GW_copy.addEdge(innerNode.id, innerInput.dest);
+							if(overlappingInputNode == -1) {
+								//no overlapping input between inner and outer node found, continue
+								continue;
 							}
-							else if(successfull == 1) {
-								GW_copy.deleteEdge(node.id, innerInput.dest);
-								GW_copy.addEdge(node.id, outerInput.dest);
-								GW_copy.addEdge(innerNode.id, innerInput.dest);
+							//overlap found for input with id overlappingInputNode, exclude this node from swapping			
+							
+							int innerOffset = (int) (Math.random() * 3) % 3;
+							Edge[] innerInputEdges = null;
+							Edge innerInput = null;
+	
+							while(true) {
+								innerOffset = (int) (Math.random() * 3);
+								// select random outgoing edge from inner node to maj node
+								innerInputEdges = innerNode.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+								innerInput = innerInputEdges[innerOffset % innerInputEdges.length];
+								
+								if(innerInput.dest != overlappingInputNode)
+									break;
 							}
-							else {
-								throw e;
-							}							
-						}					
-						break;
-					}
+							if(innerInput == null)
+								continue;
+							//select outer input node
+							Edge[] outerInputEdges = null;
+							Edge outerInput = null;
+							while(true) {
+								int outerOffset = (int) (Math.random()*3);
+								outerInputEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+								outerInput = outerInputEdges[outerOffset % outerInputEdges.length];
+								
+								if(outerInput.dest != overlappingInputNode && outerInput.dest != innerNode.id && outerInput != null)
+									break;
+							}
+							if(outerInput == null)
+								continue;						
+							// swap selected inner with outer edge
+							
+							// delete edge from node to outerInput
+							GW_copy.deleteEdge(node.id, outerInput.dest);
+							// delete edge from innerNode to innerInput
+							GW_copy.deleteEdge(innerNode.id, innerInput.dest);
+							
+							int successfull = 0;
+							try {
+								// create edge from node to innerInput
+								GW_copy.addEdge(node.id, innerInput.dest);
+								successfull++;
+								// create edge from innerNode to outerInput
+								GW_copy.addEdge(innerNode.id, outerInput.dest);
+								successfull++;
+								modificationFound = true;
+								//System.out.println("assoc: done something");
+							}
+							catch (Exception e) {
+								if(successfull == 0) {
+									GW_copy.addEdge(node.id, outerInput.dest);
+									GW_copy.addEdge(innerNode.id, innerInput.dest);
+								}
+								else if(successfull == 1) {
+									GW_copy.deleteEdge(node.id, innerInput.dest);
+									GW_copy.addEdge(node.id, outerInput.dest);
+									GW_copy.addEdge(innerNode.id, innerInput.dest);
+								}
+								else {
+									throw e;
+								}							
+							}						
+							break;
+						}
+				}
 			}
 		}
 		
@@ -295,7 +303,6 @@ public class BoolFunctions {
 					bf.outputNodes = GW_copy.outputNodes;
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
-					System.out.println("assoc: done something");
 					if(Math.random() > 0.6) {
 						return GW_copy.boolFunctions.Associativity(0);
 					}
@@ -720,99 +727,112 @@ public class BoolFunctions {
 				GW_copy.addEdge(e.source, e.dest);
 		}
 		
-		
-		List<Long> keyList = new LinkedList<Long>();
-		for(long nodeId : GW_copy.nodesMap.keySet()){
-			keyList.add(nodeId);
-		}
-		Collections.shuffle(keyList);
 		// DO STUFF
-		for(long nodeId : keyList) {
-			Node node = GW_copy.nodesMap.get(nodeId);
-			Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-			if(node.type != NodeType.MAJ)
-				continue;
-			if(node.getCounts(GW_copy.internalGraph, GW_copy.nodesMap)[1] < 1) {
-				//no child MAJ node
-				continue;
-			}
-			//get index of M(y,u',z)
-			int index_outer_M = -1;
-			while(true) {
-				index_outer_M = (int) (Math.random()*outgoingEdges.length);
-				if(GW_copy.nodesMap.get(outgoingEdges[index_outer_M].dest).type == NodeType.MAJ) {
-					break;
-				}
-			}		
-			//get overlap
-			long outerOverlappingValue = -1;
-			long innerOverlappingValue = -1;
+		int loop_count = 0;
+		boolean modificationFound = true;
+		while(modificationFound || loop_count < GW_copy.nodesMap.keySet().size()) {
+			loop_count++;
+			modificationFound = false;
+			
 			//randomize iteration
-			List<Edge> outerOutEdges = new LinkedList<Edge>();
-			for(Edge e : node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)){
-				outerOutEdges.add(e);
+			List<Long> keyList = new LinkedList<Long>();
+			for(long nodeId : GW_copy.nodesMap.keySet()){
+				keyList.add(nodeId);
 			}
-			Collections.shuffle(outerOutEdges);		
-			for(Edge outerEdge: outerOutEdges) {
+			Collections.shuffle(keyList);
+			for(long nodeId : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeId);
+				Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+				if(node.type != NodeType.MAJ)
+					continue;
+				if(node.getCounts(GW_copy.internalGraph, GW_copy.nodesMap)[1] < 1) {
+					//no child MAJ node
+					continue;
+				}
+				//get index of M(y,u',z)
+				int index_outer_M = -1;
+				while(true) {
+					index_outer_M = (int) (Math.random()*outgoingEdges.length);
+					if(GW_copy.nodesMap.get(outgoingEdges[index_outer_M].dest).type == NodeType.MAJ) {
+						break;
+					}
+				}		
+				//get overlap
+				long outerOverlappingValue = -1;
+				long innerOverlappingValue = -1;
 				//randomize iteration
-				List<Edge> innerOutEdges = new LinkedList<Edge>();
-				for(Edge e : GW_copy.nodesMap.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)){
-					innerOutEdges.add(e);
+				List<Edge> outerOutEdges = new LinkedList<Edge>();
+				for(Edge e : node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)){
+					outerOutEdges.add(e);
 				}
-				Collections.shuffle(innerOutEdges);		
-				for(Edge innerEdge: innerOutEdges) {
-					//check for overlap
-					if(outerEdge.dest - 1 == innerEdge.dest && innerEdge.dest % 2L == 0) {
-						// -> outer value inverted
-						// get index of x
-						int index_outer_x = -1;
-						while(true) {
-							index_outer_x = (int) (Math.random()*outgoingEdges.length);
-							if(index_outer_x != index_outer_M) {
-								if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
-									break;
+				Collections.shuffle(outerOutEdges);		
+				for(Edge outerEdge: outerOutEdges) {
+					//randomize iteration
+					List<Edge> innerOutEdges = new LinkedList<Edge>();
+					for(Edge e : GW_copy.nodesMap.get(outgoingEdges[index_outer_M].dest).getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)){
+						innerOutEdges.add(e);
+					}
+					Collections.shuffle(innerOutEdges);		
+					for(Edge innerEdge: innerOutEdges) {
+						//check for overlap
+						if(outerEdge.dest - 1 == innerEdge.dest && innerEdge.dest % 2L == 0) {
+							// -> outer value inverted
+							// get index of x
+							int index_outer_x = -1;
+							while(true) {
+								index_outer_x = (int) (Math.random()*outgoingEdges.length);
+								if(index_outer_x != index_outer_M) {
+									if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
+										break;
+									}
 								}
 							}
+							// replace inner u' with x
+							try {
+								GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+							}
+							catch(Exception ex) {
+								//restart
+								return ComplementaryAssociativity(recursionCount+1);
+							}
+							//System.out.println("CompAssoc: done something");			
 						}
-						// replace inner u' with x
-						try {
-							GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
-						}
-						catch(Exception ex) {
-							//restart
-							return ComplementaryAssociativity(recursionCount+1);
-						}
-						System.out.println("CompAssoc: done something");			
-					}
-					else if(innerEdge.dest - 1 == outerEdge.dest && outerEdge.dest % 2L == 0) {
-						// -> innver value inverted
-						// get index of x
-						int index_outer_x = -1;
-						while(true) {
-							index_outer_x = (int) (Math.random()*outgoingEdges.length);
-							if(index_outer_x != index_outer_M) {
-								if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
-									break;
+						else if(innerEdge.dest - 1 == outerEdge.dest && outerEdge.dest % 2L == 0) {
+							// -> innver value inverted
+							// get index of x
+							int index_outer_x = -1;
+							while(true) {
+								index_outer_x = (int) (Math.random()*outgoingEdges.length);
+								if(index_outer_x != index_outer_M) {
+									if(outgoingEdges[index_outer_x].dest != outerEdge.dest) {
+										break;
+									}
 								}
 							}
+							// replace inner u' with x
+							try {
+								GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
+								modificationFound = true;
+								//System.out.println("CompAssoc: done something");
+								break;
+							}
+							catch(Exception ex) {
+								//restart
+								return ComplementaryAssociativity(recursionCount+1);
+							}
 						}
-						// replace inner u' with x
-						try {
-							GW_copy.redirectEdge(innerEdge.source, innerEdge.dest, outgoingEdges[index_outer_x].dest);
-							System.out.println("CompAssoc: done something");
-						}
-						catch(Exception ex) {
-							//restart
-							return ComplementaryAssociativity(recursionCount+1);
+						else {
+							// -> no overlap
+							continue;
+						//	System.out.println("no overlap");
 						}
 					}
-					else {
-						// -> no overlap
-						continue;
-					//	System.out.println("no overlap");
-					}
-				}
-			}		
+					if(modificationFound)
+						break;
+				}	
+				if(modificationFound)
+					break;
+			}
 		}
 		// END DO STUFF
 		
@@ -829,6 +849,8 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
+			
+			System.out.println("\t-> changes not discarded!");
 			if(Math.random() > 0.6) {
 				return GW_copy.boolFunctions.ComplementaryAssociativity(0);
 			}
@@ -1065,7 +1087,7 @@ public class BoolFunctions {
 					Node parentInverter = GW_copy.nodesMap.get(incomingEdges[0].source);
 					for(Edge e : parentInverter.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 						GW_copy.redirectEdge(e.source, e.dest, node.id);
-						System.out.println("invProp: done something");
+						//System.out.println("invProp: done something");
 					}
 					GW_copy.Remove_UnReachableNodes();
 					modificationFound = true;

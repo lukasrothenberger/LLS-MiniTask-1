@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
+			String input_file = "data/aiger-set/ascii/aig_7_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -33,38 +33,37 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
-			int effort = 10;
-		
+			int effort = 50;
+			int SubstitutionAfterUnsuccessfulIterations = 3;
+			
+			String lastStatisticsString = "";
+			int unchangedStatisticsCount = 0;
 			for(int i = 0; i < effort; i++) {
+				System.out.println("##### Iteration: "+i+" #####");
 				graph = graph.boolFunctions.InverterPropagationLR(0);
-				graph.exportToBLIF("post_invProp"+"_"+i);
 				graph = graph.boolFunctions.TrivialReplacements(0);
-				graph.exportToBLIF("post_trivRep"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_1"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_1"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Associativity(0);
-				graph.exportToBLIF("post_assoc"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.ComplementaryAssociativity(0);
-				graph.exportToBLIF("post_compAssoc"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Relevance(0);
-				graph.exportToBLIF("post_relev"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
-				graph.exportToDOTandPNG("post-trivRep");
-		//		graph.exportToDOTandPNG("majGraph-assoc");
-				graph = graph.boolFunctions.Substitution(0);
-				graph.exportToBLIF("post_subst"+"_"+i);
+				if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
+					graph = graph.boolFunctions.Substitution(0);
+				}
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_2"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_2"+"_"+i);
-		//		graph.exportToDOTandPNG("majGraph-assoc");
+				graph.Remove_UnReachableNodes();
+				
+				//generate and handle statistics for local minimum escaping
+				graph.exportToBLIF("intermediate-statistics");
+				String statisticsResult = ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, false, false);
+				if(statisticsResult.equals(lastStatisticsString)) {
+					unchangedStatisticsCount++;
+				}
+				else {
+					unchangedStatisticsCount = 0;
+				}
+				lastStatisticsString = statisticsResult;
 			}
 			
 //			graph = graph.boolFunctions.Substitution(0);
@@ -74,15 +73,15 @@ public class Main {
 	
 			//#### Perform Equivalence checks:
 			//input file <-> created unmodified Graph
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("data/aiger-set/blif/aig_0_min.blif"), new File("output/unmodifiedGraph.blif"));
+			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("data/aiger-set/blif/aig_7_min.blif"), new File("output/unmodifiedGraph.blif"));
 			//created unmodified Graph <-> MAJ Graph
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
+			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 			//MAJ Graph <-> majGraph-assoc
-			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
+			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-			ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true);
-			for(int i = 0 ; i < effort; i++ ) {	
+			ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true, true);
+	/*		for(int i = 0 ; i < effort; i++ ) {	
 				System.out.println("### Iteration "+i+" ###");
 				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"), true, false);	
 				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"), true, false);
@@ -95,7 +94,8 @@ public class Main {
 				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
 			}
-			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true);
+	*/
+			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true, true);
 	
 			
 			//### modified Fig.2.a example Graph
