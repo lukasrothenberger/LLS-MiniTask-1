@@ -893,6 +893,17 @@ public class BoolFunctions {
 			//get u
 			long id_u = (id_u_inv % 2 == 0) ? id_u_inv+1 : id_u_inv-1;
 			
+			System.out.println("node: "+node.id);
+			System.out.println("x: "+id_x);
+			System.out.println("y: "+id_y);
+			System.out.println("z: "+id_z);
+			System.out.println("v: " +id_v);
+			System.out.println("v': "+ id_v_inv);
+			System.out.println("u: "+id_u);
+			System.out.println("u': "+id_u_inv);
+			System.out.println();
+			
+			
 			try {
 				//construct left inner MAJ node;
 					//left copy subtree
@@ -918,6 +929,11 @@ public class BoolFunctions {
 				for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 					GW_copy.redirectEdge(e.source, e.dest, id_outer_maj);
 				}
+				//TEST
+				GW_copy.exportToDOTandPNG("pre-rem");
+				//GW_copy.Remove_UnReachableNodes();
+				GW_copy.exportToDOTandPNG("post-rem");
+				//-TEST
 				break;
 			}
 			catch(Exception e) {
@@ -928,6 +944,7 @@ public class BoolFunctions {
 		// END DO STUFF
 		
 		//check if applied changes are valid
+		GW_copy.exportToDOTandPNG("subst-int");
 		bf.exportToBLIF("Substitution-intermediate-1");
 		GW_copy.exportToBLIF("Substitution-intermediate-2");
 		try {
@@ -940,12 +957,16 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			return GW_copy.boolFunctions.Substitution(4);
+			if(Math.random() > 0.7)
+				return GW_copy.boolFunctions.Substitution(4);
+			else
+				return GW_copy;
 			//return GW_copy;
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
 			// made changes are not valid
+			//System.exit(0);
 			return Substitution(recursionCount+1);
 		}
 	}

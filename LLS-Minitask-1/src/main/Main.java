@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
+/*			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -34,7 +34,7 @@ public class Main {
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
 		
-/*			for(int i = 0; i < 2; i++) {
+			for(int i = 0; i < 2; i++) {
 				graph = graph.boolFunctions.Majority(0);
 				graph.exportToBLIF("post_maj_1");
 				graph.exportToDOTandPNG("majGraph-assoc");
@@ -59,7 +59,7 @@ public class Main {
 				graph.exportToBLIF("post_dist_2");
 				graph.exportToDOTandPNG("majGraph-assoc");
 			}
-*/			
+			
 			graph = graph.boolFunctions.Substitution(0);
 			
 			graph.exportToDOTandPNG("majGraph-assoc");
@@ -74,7 +74,7 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-/*			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
+			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
 			ABC.Statistics.getStatistics(new File("output/post_maj_1.blif"));	
 			ABC.Statistics.getStatistics(new File("output/post_dist_1.blif"));
 			ABC.Statistics.getStatistics(new File("output/post_assoc.blif"));
@@ -84,10 +84,10 @@ public class Main {
 			ABC.Statistics.getStatistics(new File("output/post_maj_2.blif"));
 			ABC.Statistics.getStatistics(new File("output/post_dist_2.blif"));
 			ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
-*/	
-			
+	
+*/			
 			//### modified Fig.2.a example Graph
-	/*	GraphWrapper fig2a_mod = new GraphWrapper();
+		GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
@@ -114,30 +114,27 @@ public class Main {
 		//	fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 		//	for(int i = 0; i < 3; i++) {
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 				//fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
-				fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
-				fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
+				for(int j = 0; j < 5; j++)
 				fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 			//}
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
-			for(Graph.Node n: fig2a_mod.internalGraph.vertexSet()) {
-				System.out.println("outside: contained node: "+n.id);
-			}
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	
-	*/
 			
 	/*		//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();

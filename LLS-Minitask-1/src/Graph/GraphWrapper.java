@@ -593,8 +593,8 @@ public class GraphWrapper {
 	
 	
     private List<Node> getSubtree(Node root, List<Long> visited) throws Exception{
-    	if(root.id == 0 || root.modifier != NodeModifier.INTERMEDIATE) {
-    		//constant 0 and IN/OUTPUT nodes can not have outgoing edges
+    	if(root.id < 2 || root.modifier != NodeModifier.INTERMEDIATE) {
+    		//constants and IN/OUTPUT nodes can not have outgoing edges
     		return new LinkedList<Node>();
     	}
 		if(visited.contains(root.id)) {
@@ -606,6 +606,7 @@ public class GraphWrapper {
     	VisitedNodes.add(root);
     	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
     		VisitedNodes.add(rootnode);
+    		System.out.println("rootnode: "+ rootnode);
     		VisitedNodes.addAll(getSubtree(rootnode, visited));
     	}
 		return VisitedNodes;
