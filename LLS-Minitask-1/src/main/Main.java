@@ -53,6 +53,10 @@ public class Main {
 		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.InverterPropagationLR(0);
 				graph.exportToBLIF("post_invProp"+"_"+i);
+				graph.exportToDOTandPNG("pre-trivRep");
+				graph = graph.boolFunctions.TrivialReplacements(0);
+				graph.exportToBLIF("post_trivRep"+"_"+i);
+				graph.exportToDOTandPNG("post-trivRep");
 		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Substitution( 0);
 				graph.exportToBLIF("post_subst"+"_"+i);
@@ -87,6 +91,7 @@ public class Main {
 				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_invProp"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_trivRep"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"), true, false);
 				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
@@ -95,13 +100,13 @@ public class Main {
 		
 			
 			//### modified Fig.2.a example Graph
-/*		GraphWrapper fig2a_mod = new GraphWrapper();
-			fig2a_mod.addInputNode(2); //w
+		GraphWrapper fig2a_mod = new GraphWrapper();
+/*			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
 			fig2a_mod.addInputNode(8); //z
 			fig2a_mod.addOutputNode(10); //h
-			fig2a_mod.addMajGate(20, 2, 0, 6);
+			fig2a_mod.addMajGate(20, 6, 0, 6);
 			fig2a_mod.addMajGate(14, 8, 4, 4);
 			fig2a_mod.addMajGate(18, 6, 0, 2);
 			fig2a_mod.addMajGate(16, 18, 8, 20);
@@ -118,13 +123,17 @@ public class Main {
 		//		fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
-				fig2a_mod = fig2a_mod.boolFunctions.InverterPropagationLR(0);
+			//	fig2a_mod = fig2a_mod.boolFunctions.InverterPropagationLR(0);
 				//fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 			//}
+			
+			fig2a_mod = fig2a_mod.boolFunctions.InverterPropagationLR(0);
+			fig2a_mod.exportToDOTandPNG("int");
+			fig2a_mod = fig2a_mod.boolFunctions.TrivialReplacements(0);
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			

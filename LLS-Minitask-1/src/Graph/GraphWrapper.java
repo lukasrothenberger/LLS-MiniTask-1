@@ -546,7 +546,7 @@ public class GraphWrapper {
 		}	
 		
 		for(Node nodeToCopy : cleanedSubtree) {
-			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE && nodeToCopy.id > 2) {
+			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE && nodeToCopy.id > 1) {
 				long cloneID = 0;
 				if(nodeToCopy.id % 2 == 0) {
 					//non-inverted node
@@ -591,7 +591,7 @@ public class GraphWrapper {
 	
 	
     private List<Node> getSubtree(Node root, HashMap<Long, Integer> visited) throws Exception{
-    	if(root.id < 2 || root.modifier != NodeModifier.INTERMEDIATE) {
+    	if(root.id < 1 || root.modifier != NodeModifier.INTERMEDIATE) {
     		//constants and IN/OUTPUT nodes can not have outgoing edges
     		return new LinkedList<Node>();
     	}

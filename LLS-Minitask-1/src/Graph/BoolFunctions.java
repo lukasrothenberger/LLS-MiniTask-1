@@ -1027,19 +1027,19 @@ public class BoolFunctions {
 			Collections.shuffle(keyList);	
 		
 			for(long nodeId : keyList) {
-				Node node = GW_copy.nodesMap.get(nodeId);
-				if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
-					continue;
-				}
-				Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-				if(incomingEdges.length > 1) {
-					continue;
-				}
-				//check if node is connected to inverter
-				if(GW_copy.nodesMap.get(incomingEdges[0].source).type != NodeType.INV) {
-					continue;
-				}
 				try {
+					Node node = GW_copy.nodesMap.get(nodeId);
+					if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
+						continue;
+					}
+					Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+					if(incomingEdges.length > 1) {
+						continue;
+					}
+					//check if node is connected to inverter
+					if(GW_copy.nodesMap.get(incomingEdges[0].source).type != NodeType.INV) {
+						continue;
+					}
 					Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 					for(int i = 0; i < outgoingEdges.length; i++) {
 						//Invert edges
@@ -1092,6 +1092,112 @@ public class BoolFunctions {
 			ex.printStackTrace();
 			// made changes are not valid
 			return InverterPropagationLR(recursionCount+1);
+		}
+	}
+	
+	
+	public GraphWrapper TrivialReplacements(int recursionCount) throws Exception {
+		if(recursionCount > 5) {
+			// do nothing
+			return bf;
+		}	
+		//create working copy of internal Graph
+		GraphWrapper GW_copy = new GraphWrapper();
+		for(Node n : bf.internalGraph.vertexSet()) {
+			if(n.modifier == NodeModifier.INPUT) {
+				GW_copy.addInputNode(n.id);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+			else if(n.modifier == NodeModifier.OUTPUT) {
+				GW_copy.addOutputNode(n.id);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+			else {
+				Node newNode = new Node(n.id, n.type, n.modifier);
+				GW_copy.internalGraph.addVertex(newNode);
+				GW_copy.nodesMap.put(n.id, newNode);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+		}
+		for(Edge e : bf.internalGraph.edgeSet()) {
+			for(int i = 0; i < e.weight; i++)
+				GW_copy.addEdge(e.source, e.dest);
+		}
+		
+		
+		//DO STUFF
+		List<Long> alreadySeen = new LinkedList<Long>();
+		boolean modificationFound = true;
+		while(modificationFound) {
+			modificationFound = false;
+			
+			List<Long> keyList = new LinkedList<Long>();
+			for(long nodeId : GW_copy.nodesMap.keySet()){
+				if(!alreadySeen.contains(nodeId))
+					keyList.add(nodeId);
+			}
+			Collections.shuffle(keyList);	
+		
+			for(long nodeId : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeId);
+				if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
+					continue;
+				}
+				// 1. replacement : check for multiple inverters, only use a single on
+				Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+				if(incomingEdges.length > 1) {
+					for(Edge in_edge : incomingEdges) {
+						Node sourceNode = GW_copy.getNode(in_edge.source);
+						if(sourceNode.type == NodeType.INV && sourceNode.id != node.id + 1) {
+							//replace sourcenode with the proper inverter
+							for(Edge e : sourceNode.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, node.id+1);
+							}
+							System.out.println("trivRep: applied Inverter combination");
+							modificationFound = true;
+							alreadySeen.add(node.id);
+							//break;
+						}
+					}
+					if(modificationFound) {
+						break;
+					}
+				}
+				
+			}
+		}
+		// END DO STUFF
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("TrivRep-intermediate-1");
+		GW_copy.exportToBLIF("TrivRep-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/TrivRep-intermediate-1.blif"), new File("output/TrivRep-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+			if(Math.random() > 0.6)
+				return GW_copy.boolFunctions.TrivialReplacements(0);
+			else
+				return GW_copy;
+			//return GW_copy;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			// made changes are not valid
+			return TrivialReplacements(recursionCount+1);
+			//throw ex;
 		}
 	}
 	
