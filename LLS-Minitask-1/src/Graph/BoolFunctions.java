@@ -923,16 +923,17 @@ public class BoolFunctions {
 				
 				//construct outer Maj Gate
 				long id_outer_maj = GW_copy.getNextFreeId();
-				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);			
+				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);	
+				System.out.println("id_outer_maj: "+ id_outer_maj);
 				
 				//replace node with the created MAJ node
 				for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 					GW_copy.redirectEdge(e.source, e.dest, id_outer_maj);
 				}
 				//TEST
-				GW_copy.exportToDOTandPNG("pre-rem");
-				//GW_copy.Remove_UnReachableNodes();
-				GW_copy.exportToDOTandPNG("post-rem");
+				//GW_copy.exportToDOTandPNG("pre-rem");
+				GW_copy.Remove_UnReachableNodes();
+				//GW_copy.exportToDOTandPNG("post-rem");
 				//-TEST
 				break;
 			}
@@ -966,7 +967,6 @@ public class BoolFunctions {
 		catch(Exception ex) {
 			ex.printStackTrace();
 			// made changes are not valid
-			//System.exit(0);
 			return Substitution(recursionCount+1);
 		}
 	}

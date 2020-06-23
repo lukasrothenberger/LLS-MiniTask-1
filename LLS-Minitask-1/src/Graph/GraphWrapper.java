@@ -541,14 +541,14 @@ public class GraphWrapper {
 		HashMap<Long, Long> nodeToCloneId = new HashMap<Long, Long>();
 		//clone all nodes in subtree
 		List<Node> cleanedSubtree = new LinkedList<Node>();
-		for(Node n : getSubtree(rootNode, new LinkedList<Long>())) {
+		for(Node n : getSubtree(rootNode, new HashMap<Long, Integer>())) {
 			if(cleanedSubtree.contains(n))
 				continue;
 			cleanedSubtree.add(n);
 		}	
 		
 		for(Node nodeToCopy : cleanedSubtree) {
-			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE || nodeToCopy.id < 2) {
+			if(nodeToCopy.modifier == NodeModifier.INTERMEDIATE && nodeToCopy.id > 2) {
 				long cloneID = 0;
 				if(nodeToCopy.id % 2 == 0) {
 					//non-inverted node
@@ -572,6 +572,7 @@ public class GraphWrapper {
 				}
 				nodeToCopy.cloneNode(this, cloneID);
 				//create a key-value mapping: oldId -> cloneIds
+				System.out.println("cloned: "+ nodeToCopy.id + " to "+ cloneID);
 				nodeToCloneId.put(nodeToCopy.id, cloneID);
 			}
 			else {
@@ -592,30 +593,58 @@ public class GraphWrapper {
 	}
 	
 	
-    private List<Node> getSubtree(Node root, List<Long> visited) throws Exception{
+    private List<Node> getSubtree(Node root, HashMap<Long, Integer> visited) throws Exception{
     	if(root.id < 2 || root.modifier != NodeModifier.INTERMEDIATE) {
     		//constants and IN/OUTPUT nodes can not have outgoing edges
     		return new LinkedList<Node>();
     	}
-		if(visited.contains(root.id)) {
-			//looping
-			throw new Exception("found loop.. for node: "+root);
+		if(visited.keySet().contains(root.id)) {
+			if(visited.get(root.id) > root.getIncomingEdges(internalGraph, nodesMap).length){
+				//looping
+				throw new Exception("found loop.. for node: "+root);
+			}
 		}
-		visited.add(root.id);
+		if(visited.keySet().contains(root.id)) {
+			visited.put(root.id, visited.get(root.id)+1 );
+		}
+		else {
+			visited.put(root.id, 1);
+		}
     	List<Node> VisitedNodes = new LinkedList<Node>();
     	VisitedNodes.add(root);
     	for(Node rootnode : root.getChildrenNodes(internalGraph, nodesMap)) {
     		VisitedNodes.add(rootnode);
-    		System.out.println("rootnode: "+ rootnode);
     		VisitedNodes.addAll(getSubtree(rootnode, visited));
     	}
 		return VisitedNodes;
     }
     
-	public void Remove_UnReachableNodes() throws Exception {
+    
+    public void Remove_UnReachableNodes() throws Exception {
+    	for(Node node: this.nodesMap.values()) {
+    		if(node.modifier != NodeModifier.INTERMEDIATE) {
+    			//don't remove In/Output nodes
+    			continue;
+    		}
+    		try {
+    			if(node.getIncomingEdges(internalGraph, nodesMap).length == 0) {
+    				//remove node if no incoming edges exist
+    				this.removeNode(node.id);
+    				Remove_UnReachableNodes();
+    				return;
+    			}
+    		}
+    		catch(Exception ex) {
+    			// node not in graph anymore
+    		}
+    	}
+    }
+    
+    
+	/*public void Remove_UnReachableNodes() throws Exception {
 		List<Node> VisitedNodes = new LinkedList<Node>();
 		for(Node outnodes : this.outputNodes) {
-			VisitedNodes.addAll(getSubtree(outnodes, new LinkedList<Long>()));
+			VisitedNodes.addAll(getSubtree(outnodes, new HashMap<Long, Integer>()));
 		}    
 		for(Node removeNode : this.nodesMap.values()) {
 			if(VisitedNodes.contains(removeNode))
@@ -630,7 +659,7 @@ public class GraphWrapper {
 			}
 		}
 	}
-	
+	*/
 
 		
 }

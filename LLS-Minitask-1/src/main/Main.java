@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-/*			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
+	/*		String input_file = "data/aiger-set/ascii/aig_0_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -74,18 +74,18 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-			ABC.Statistics.getStatistics(new File("output/post_maj_1.blif"));	
-			ABC.Statistics.getStatistics(new File("output/post_dist_1.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_assoc.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_compAssoc.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_relev.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_subst.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_maj_2.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_dist_2.blif"));
-			ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
+	//		ABC.Statistics.getStatistics(new File("output/post_maj_1.blif"));	
+	//		ABC.Statistics.getStatistics(new File("output/post_dist_1.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_assoc.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_compAssoc.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_relev.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_subst.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_maj_2.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/post_dist_2.blif"));
+	//		ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
 	
-*/			
+	*/		
 			//### modified Fig.2.a example Graph
 		GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
@@ -121,7 +121,6 @@ public class Main {
 		//		fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
-				for(int j = 0; j < 5; j++)
 				fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
