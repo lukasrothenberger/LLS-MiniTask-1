@@ -935,17 +935,13 @@ public class BoolFunctions {
 				//construct outer Maj Gate
 				long id_outer_maj = GW_copy.getNextFreeId();
 				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);	
-				System.out.println("id_outer_maj: "+ id_outer_maj);
 				
 				//replace node with the created MAJ node
 				for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 					GW_copy.redirectEdge(e.source, e.dest, id_outer_maj);
 				}
-				//TEST
-				//GW_copy.exportToDOTandPNG("pre-rem");
 				GW_copy.Remove_UnReachableNodes();
-				//GW_copy.exportToDOTandPNG("post-rem");
-				//-TEST
+				System.out.println("substitution: done something");
 				break;
 			}
 			catch(Exception e) {
@@ -955,7 +951,6 @@ public class BoolFunctions {
 		// END DO STUFF
 		
 		//check if applied changes are valid
-		GW_copy.exportToDOTandPNG("subst-int");
 		bf.exportToBLIF("Substitution-intermediate-1");
 		GW_copy.exportToBLIF("Substitution-intermediate-2");
 		try {
@@ -975,7 +970,7 @@ public class BoolFunctions {
 			//return GW_copy;
 		}
 		catch(Exception ex) {
-			ex.printStackTrace();
+		//	ex.printStackTrace();
 			// made changes are not valid
 			return Substitution(recursionCount+1);
 		}
@@ -983,10 +978,122 @@ public class BoolFunctions {
 		 
 	
 	
-	/*		 
+			 
 	
-	public void InvertProp(Graph<Node, Edge> internalGraph, HashMap<Long, Node> nodesMap) {	 
+	public GraphWrapper InverterPropagationLR(int recursionCount) throws Exception {
+		if(recursionCount > 5) {
+			// do nothing
+			return bf;
+		}	
+		//create working copy of internal Graph
+		GraphWrapper GW_copy = new GraphWrapper();
+		for(Node n : bf.internalGraph.vertexSet()) {
+			if(n.modifier == NodeModifier.INPUT) {
+				GW_copy.addInputNode(n.id);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+			else if(n.modifier == NodeModifier.OUTPUT) {
+				GW_copy.addOutputNode(n.id);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+			else {
+				Node newNode = new Node(n.id, n.type, n.modifier);
+				GW_copy.internalGraph.addVertex(newNode);
+				GW_copy.nodesMap.put(n.id, newNode);
+				GW_copy.getNode(n.id).input = n.input;
+				GW_copy.getNode(n.id).output = n.output;
+				GW_copy.getNode(n.id).type = n.type;
+			}
+		}
+		for(Edge e : bf.internalGraph.edgeSet()) {
+			for(int i = 0; i < e.weight; i++)
+				GW_copy.addEdge(e.source, e.dest);
+		}
+		
+		
+		//DO STUFF
+		boolean modificationFound = true;
+		while(modificationFound) {
+			modificationFound = false;
+			
+			List<Long> keyList = new LinkedList<Long>();
+			for(long nodeId : GW_copy.nodesMap.keySet()){
+				keyList.add(nodeId);
+			}
+			Collections.shuffle(keyList);	
+		
+			for(long nodeId : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeId);
+				if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
+					continue;
+				}
+				Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+				if(incomingEdges.length > 1) {
+					continue;
+				}
+				//check if node is connected to inverter
+				if(GW_copy.nodesMap.get(incomingEdges[0].source).type != NodeType.INV) {
+					continue;
+				}
+				try {
+					Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+					for(int i = 0; i < outgoingEdges.length; i++) {
+						//Invert edges
+						if(outgoingEdges[i].dest % 2 == 0) {
+							// add inverter
+							GW_copy.redirectEdge(outgoingEdges[i].source, outgoingEdges[i].dest, outgoingEdges[i].dest + 1);
+						}
+						else {
+							// remove inverter
+							GW_copy.redirectEdge(outgoingEdges[i].source, outgoingEdges[i].dest, outgoingEdges[i].dest - 1);
+						}
+					}
+					// redirect edge (exclude parent inverter)
+					Node parentInverter = GW_copy.nodesMap.get(incomingEdges[0].source);
+					for(Edge e : parentInverter.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+						GW_copy.redirectEdge(e.source, e.dest, node.id);
+					}
+					GW_copy.Remove_UnReachableNodes();
+					modificationFound = true;
+					System.out.println("invProp: done something");
+					break;
+				}
+				catch(Exception ex) {
+					return InverterPropagationLR(recursionCount+1);
+				}
+			}
+		}
+		// END DO STUFF
+		
+		//check if applied changes are valid
+		bf.exportToBLIF("InvertProp-intermediate-1");
+		GW_copy.exportToBLIF("InvertProp-intermediate-2");
+		try {
+			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/InvertProp-intermediate-1.blif"), new File("output/InvertProp-intermediate-2.blif"));
+			// made changes are valid
+			//bf = GW_copy;
+			bf.internalGraph = GW_copy.internalGraph;
+			bf.nodesMap = GW_copy.nodesMap;
+			bf.inputNodes = GW_copy.inputNodes;
+			bf.outputNodes = GW_copy.outputNodes;
+			bf.graphModifier = GW_copy.graphModifier;
+			bf.boolFunctions = GW_copy.boolFunctions;
+			if(Math.random() > 0.6)
+				return GW_copy.boolFunctions.InverterPropagationLR(0);
+			else
+				return GW_copy;
+			//return GW_copy;
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+			// made changes are not valid
+			return InverterPropagationLR(recursionCount+1);
+		}
 	}
-	*/
+	
 	}
 

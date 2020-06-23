@@ -15,11 +15,7 @@ public class EquivalenceCheck {
 	 * @param blifTwo File Object representing the second BLIF file.
 	 * @throws Exception 
 	 */
-	public static void performEquivalenceCheck(File blifOne, File blifTwo) throws Exception {
-		System.out.println("Executing equivalence check for:");
-		System.out.println("\t"+blifOne.getAbsolutePath());
-		System.out.println("\t"+blifTwo.getAbsolutePath()+"");
-		
+	public static void performEquivalenceCheck(File blifOne, File blifTwo) throws Exception {;
 		//build abc Script
 		File tmp_eq_check_script = new File("temp/tmp_compare_script");
 		if(tmp_eq_check_script.exists())
@@ -32,7 +28,7 @@ public class EquivalenceCheck {
 			fw.write("\""+blifTwo.getAbsolutePath()+"\" ");
 			fw.flush();
 			fw.close();
-			System.out.println("\t\tcreated tmp_compare_script for abc equivalence checking.");
+			//System.out.println("\t\tcreated tmp_compare_script for abc equivalence checking.");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -42,23 +38,25 @@ public class EquivalenceCheck {
 			String[] c = {abcExecutablePath, "-f", "temp/tmp_compare_script"};
 			boolean containsSuccessMessage = false;
 			try {
-				System.out.println("Output of equivalence check:");
+			//	System.out.println("Output of equivalence check:");
 				Process p = Runtime.getRuntime().exec(c);
 				BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line;
 				while ((line = input.readLine()) != null) {
 					if(line.contains("Networks are equivalent"))
 						containsSuccessMessage = true;
-				  System.out.println(line);
+				//  System.out.println(line);
 				}
 				input.close();
 			} catch (IOException e) {
 				continue;
 			}
 			if(! containsSuccessMessage) {
-				throw new Exception("Networks not equivalent!");
+				System.out.println("Networks not equivalent!");
+				System.out.println("\t"+blifOne.getAbsolutePath());
+				System.out.println("\t"+blifTwo.getAbsolutePath()+"");
+				throw new Exception("Networks not equivalent! : ");
 			}
-			System.out.println("\tDone.");
 			return;
 		}
 	   System.out.println("ERROR: abc equivalence check could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");

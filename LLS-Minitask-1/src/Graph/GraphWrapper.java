@@ -372,7 +372,7 @@ public class GraphWrapper {
 	 */
 	public void exportToDOTandPNG(String filename) {
 		try {
-		System.out.println("Exporting to DOT Format and PNG Image...");
+		//System.out.println("Exporting to DOT Format and PNG Image...");
 		File dotOutputFile = new File("output/"+filename+".dot");
 		if(dotOutputFile.exists())
 			dotOutputFile.delete();
@@ -385,7 +385,6 @@ public class GraphWrapper {
 			//String[] c = {"dot", "-?"};
 			Process p = Runtime.getRuntime().exec(c);
 			p.waitFor();
-			System.out.println("\tDone.");
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -399,7 +398,7 @@ public class GraphWrapper {
 	 * @param filename should not contain a file ending (example: "unmodifiedGraph")
 	 */
 	public void exportToBLIF(String filename) {
-		System.out.println("Exporting to BLIF Format..."); 
+		//System.out.println("Exporting to BLIF Format..."); 
 		File blifOutputFile = new File("output/"+filename+".blif");
 		if(blifOutputFile.exists())
 			blifOutputFile.delete();
@@ -409,7 +408,6 @@ public class GraphWrapper {
 			fw.write(this.toBLIFFormat());
 			fw.flush();
 			fw.close();
-			System.out.println("\tDone.");
 		}
 		catch (Exception e) {
 			e.printStackTrace();
