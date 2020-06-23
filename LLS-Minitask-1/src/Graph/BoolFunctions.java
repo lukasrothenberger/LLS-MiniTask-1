@@ -247,7 +247,6 @@ public class BoolFunctions {
 							
 						}
 						catch (Exception e) {
-							e.printStackTrace();
 							if(successfull == 0) {
 								GW_copy.addEdge(node.id, outerInput.dest);
 								GW_copy.addEdge(innerNode.id, innerInput.dest);
@@ -497,6 +496,7 @@ public class BoolFunctions {
 			//M(u,v,z)
 			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);
 			GW_copy.addEdge(node.id, NextFreeID);
+			GW_copy.Remove_UnReachableNodes();
 			System.out.println("Dist. inner done something");
 			break;
 			}
@@ -520,12 +520,12 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			GW_copy.Remove_UnReachableNodes();
-			GraphWrapper buffer = DistributivityRL(0);
-			if(buffer.nodesMap.values().size() >= GW_copy.nodesMap.values().size()) {
+			if(Math.random() > 0.8) {
+				return GW_copy.boolFunctions.DistributivityRL(4);
+			}
+			else {
 				return GW_copy;
 			}
-			return buffer;
 		}
 		catch(Exception ex) {
 			// made changes are not valid

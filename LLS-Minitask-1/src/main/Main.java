@@ -12,7 +12,7 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-	/*		String input_file = "data/aiger-set/ascii/aig_0_min.aag";
+			String input_file = "data/aiger-set/ascii/aig_0_min.aag";
 			// Platform independent file path achieved by using File.separator
 			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
@@ -33,34 +33,35 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
+			int effort = 2;
 		
-			for(int i = 0; i < 2; i++) {
+			for(int i = 0; i < effort; i++) {
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_1");
+				graph.exportToBLIF("post_maj_1"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_1");
+				graph.exportToBLIF("post_dist_1"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Associativity(0);
-				graph.exportToBLIF("post_assoc");
+				graph.exportToBLIF("post_assoc"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.ComplementaryAssociativity(0);
-				graph.exportToBLIF("post_compAssoc");
+				graph.exportToBLIF("post_compAssoc"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Relevance(0);
-				graph.exportToBLIF("post_relev");
+				graph.exportToBLIF("post_relev"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Substitution( 0);
-				graph.exportToBLIF("post_subst");
+				graph.exportToBLIF("post_subst"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_2");
+				graph.exportToBLIF("post_maj_2"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_2");
+				graph.exportToBLIF("post_dist_2"+"_"+i);
 				graph.exportToDOTandPNG("majGraph-assoc");
 			}
 			
-			graph = graph.boolFunctions.Substitution(0);
+//			graph = graph.boolFunctions.Substitution(0);
 			
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
@@ -74,20 +75,22 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-	//		ABC.Statistics.getStatistics(new File("output/post_maj_1.blif"));	
-	//		ABC.Statistics.getStatistics(new File("output/post_dist_1.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_assoc.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_compAssoc.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_relev.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_subst.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_maj_2.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/post_dist_2.blif"));
-	//		ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
-	
-	*/		
+			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));
+			for(int i = 0 ; i < effort; i++ ) {	
+				ABC.Statistics.getStatistics(new File("output/post_maj_1"+"_"+i+".blif"));	
+				ABC.Statistics.getStatistics(new File("output/post_dist_1"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_assoc"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_compAssoc"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_relev"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_subst"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_maj_2"+"_"+i+".blif"));
+				ABC.Statistics.getStatistics(new File("output/post_dist_2"+"_"+i+".blif"));
+			}
+			ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
+		
+			
 			//### modified Fig.2.a example Graph
-		GraphWrapper fig2a_mod = new GraphWrapper();
+	/*	GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
@@ -133,7 +136,7 @@ public class Main {
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
-	
+	*/
 			
 	/*		//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
