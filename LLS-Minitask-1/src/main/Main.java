@@ -12,9 +12,14 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-			String input_file = "data/aiger-set/ascii/aig_7_min.aag";
+			// ### SETTINGS ###
+			String input_file_number = "7";
+			int effort = 1;
+			int SubstitutionAfterUnsuccessfulIterations = 3;
+			// ################
+			
+			String input_file = "data/aiger-set/ascii/aig_"+input_file_number+"_min.aag";
 			// Platform independent file path achieved by using File.separator
-			//input_file = input_file.replaceAll("/", File.separator);
 			input_file = input_file.replaceAll("//", File.separator);
 		
 			GraphWrapper graph = Input_Parser.Invoke_Parser(input_file);
@@ -29,12 +34,6 @@ public class Main {
 			graph.convertAIGtoMAJnodes();
 			graph.exportToDOTandPNG("majGraph");
 			graph.exportToBLIF("majGraph");
-			
-	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
-	//		graph.exportToDOTandPNG("post_Relevance");
-			
-			int effort = 1;
-			int SubstitutionAfterUnsuccessfulIterations = 3;
 			
 			String lastStatisticsString = "";
 			int unchangedStatisticsCount = 0;
@@ -52,8 +51,7 @@ public class Main {
 				}
 				graph = graph.boolFunctions.Majority(0);
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.Remove_UnReachableNodes();
-				
+				graph.Remove_UnReachableNodes();			
 				//generate and handle statistics for local minimum escaping
 				graph.exportToBLIF("intermediate-statistics");
 				String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
@@ -73,28 +71,14 @@ public class Main {
 	
 			//#### Perform Equivalence checks:
 			//input file <-> created unmodified Graph
-			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("data/aiger-set/blif/aig_7_min.blif"), new File("output/unmodifiedGraph.blif"));
+			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("data/aiger-set/blif/aig_"+input_file_number+"_min.blif"), new File("output/unmodifiedGraph.blif"));
 			//created unmodified Graph <-> MAJ Graph
 			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("output/majGraph.blif"), new File("output/unmodifiedGraph.blif"));
 			//MAJ Graph <-> majGraph-assoc
 			ABC.EquivalenceCheck.performEquivalenceCheckWithConsolePrint(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
-			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
+			ABC.Statistics.printStatistics(new File("data/aiger-set/blif/aig_"+input_file_number+"_min.blif"), false, true, true);
 			ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true, true);
-	/*		for(int i = 0 ; i < effort; i++ ) {	
-				System.out.println("### Iteration "+i+" ###");
-				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"), true, false);	
-				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_assoc"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_invProp"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_trivRep"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"), true, false);
-				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
-			}
-	*/
 			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true, true);
 	
 			
