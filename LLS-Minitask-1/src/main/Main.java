@@ -33,34 +33,35 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
+			int effort = 60;
 		
-/*			for(int i = 0; i < 2; i++) {
+			for(int i = 0; i < effort; i++) {
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_1");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_maj_1"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_1");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_dist_1"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Associativity(0);
-				graph.exportToBLIF("post_assoc");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_assoc"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.ComplementaryAssociativity(0);
-				graph.exportToBLIF("post_compAssoc");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_compAssoc"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Relevance(0);
-				graph.exportToBLIF("post_relev");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_relev"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.Substitution( 0);
-				graph.exportToBLIF("post_subst");
+				graph.exportToBLIF("post_subst"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
-				graph.exportToBLIF("post_maj_2");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_maj_2"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.exportToBLIF("post_dist_2");
-				graph.exportToDOTandPNG("majGraph-assoc");
+				graph.exportToBLIF("post_dist_2"+"_"+i);
+		//		graph.exportToDOTandPNG("majGraph-assoc");
 			}
-*/			
-			graph = graph.boolFunctions.Substitution(0);
+			
+//			graph = graph.boolFunctions.Substitution(0);
 			
 			graph.exportToDOTandPNG("majGraph-assoc");
 			graph.exportToBLIF("majGraph-assoc");
@@ -74,17 +75,20 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/majGraph.blif"), new File("output/majGraph-assoc.blif"));
 			
 			//ABC.Statistics.getStatistics(new File("data/aiger-set/blif/aig_0_min.blif"));
-/*			ABC.Statistics.getStatistics(new File("output/majGraph.blif"));	
-			ABC.Statistics.getStatistics(new File("output/post_maj_1.blif"));	
-			ABC.Statistics.getStatistics(new File("output/post_dist_1.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_assoc.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_compAssoc.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_relev.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_subst.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_maj_2.blif"));
-			ABC.Statistics.getStatistics(new File("output/post_dist_2.blif"));
-			ABC.Statistics.getStatistics(new File("output/majGraph-assoc.blif"));
-*/	
+			ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true);
+			for(int i = 0 ; i < effort; i++ ) {	
+				System.out.println("### Iteration "+i+" ###");
+				ABC.Statistics.printStatistics(new File("output/post_maj_1"+"_"+i+".blif"), true, false);	
+				ABC.Statistics.printStatistics(new File("output/post_dist_1"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_assoc"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_compAssoc"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_relev"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_subst"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_maj_2"+"_"+i+".blif"), true, false);
+				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
+			}
+			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true);
+		
 			
 			//### modified Fig.2.a example Graph
 	/*	GraphWrapper fig2a_mod = new GraphWrapper();
@@ -114,29 +118,25 @@ public class Main {
 		//	fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 		//	for(int i = 0; i < 3; i++) {
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 				//fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
-				fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
-				fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
 				fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
-				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 			//}
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
-			for(Graph.Node n: fig2a_mod.internalGraph.vertexSet()) {
-				System.out.println("outside: contained node: "+n.id);
-			}
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
-	
 	*/
 			
 	/*		//### Fig.2.a example Graph

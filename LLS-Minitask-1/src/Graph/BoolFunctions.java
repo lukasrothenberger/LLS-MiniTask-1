@@ -24,7 +24,7 @@ public class BoolFunctions {
 	
 	
 	public GraphWrapper Majority(int recursionCount) throws Exception {
-		if(recursionCount > 5) {
+		if(recursionCount > 10) {
 			//do nothing
 			return bf;
 		}
@@ -119,7 +119,13 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			System.out.println("MAJORITY");
-			return GW_copy;
+			if(Math.random() > 0.6) {
+				return GW_copy.boolFunctions.Majority(0);
+			}
+			else {
+				return GW_copy;
+			}
+			//return GW_copy;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
@@ -247,7 +253,6 @@ public class BoolFunctions {
 							
 						}
 						catch (Exception e) {
-							e.printStackTrace();
 							if(successfull == 0) {
 								GW_copy.addEdge(node.id, outerInput.dest);
 								GW_copy.addEdge(innerNode.id, innerInput.dest);
@@ -283,7 +288,12 @@ public class BoolFunctions {
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
 					System.out.println("assoc: done something");
-					return GW_copy.boolFunctions.Associativity(4);
+					if(Math.random() > 0.6) {
+						return GW_copy.boolFunctions.Associativity(0);
+					}
+					else {
+						return GW_copy;
+					}
 					//return GW_copy;
 				}
 				catch(Exception ex) {
@@ -497,6 +507,7 @@ public class BoolFunctions {
 			//M(u,v,z)
 			GW_copy.addMajGate(NextFreeID, NonoverlappingInput.get(0).id, NonoverlappingInput.get(1).id, unUsedOuterChild.id);
 			GW_copy.addEdge(node.id, NextFreeID);
+			GW_copy.Remove_UnReachableNodes();
 			System.out.println("Dist. inner done something");
 			break;
 			}
@@ -520,12 +531,12 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			GW_copy.Remove_UnReachableNodes();
-			GraphWrapper buffer = DistributivityRL(0);
-			if(buffer.nodesMap.values().size() >= GW_copy.nodesMap.values().size()) {
+			if(Math.random() > 0.6) {
+				return GW_copy.boolFunctions.DistributivityRL(0);
+			}
+			else {
 				return GW_copy;
 			}
-			return buffer;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
@@ -650,8 +661,8 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.8) {
-				return GW_copy.boolFunctions.Relevance(4);
+			if(Math.random() > 0.6) {
+				return GW_copy.boolFunctions.Relevance(0);
 			}
 			else {
 				return GW_copy;
@@ -809,8 +820,8 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			if(Math.random() > 0.8) {
-				return GW_copy.boolFunctions.ComplementaryAssociativity(4);
+			if(Math.random() > 0.6) {
+				return GW_copy.boolFunctions.ComplementaryAssociativity(0);
 			}
 			else {
 				return GW_copy;
@@ -818,7 +829,7 @@ public class BoolFunctions {
 			//return GW_copy;
 		}
 		catch(Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			// made changes are not valid
 			return ComplementaryAssociativity(recursionCount+1);
 		}
@@ -893,6 +904,17 @@ public class BoolFunctions {
 			//get u
 			long id_u = (id_u_inv % 2 == 0) ? id_u_inv+1 : id_u_inv-1;
 			
+//			System.out.println("node: "+node.id);
+//			System.out.println("x: "+id_x);
+//			System.out.println("y: "+id_y);
+//			System.out.println("z: "+id_z);
+//			System.out.println("v: " +id_v);
+//			System.out.println("v': "+ id_v_inv);
+//			System.out.println("u: "+id_u);
+//			System.out.println("u': "+id_u_inv);
+//			System.out.println();
+			
+			
 			try {
 				//construct left inner MAJ node;
 					//left copy subtree
@@ -912,22 +934,28 @@ public class BoolFunctions {
 				
 				//construct outer Maj Gate
 				long id_outer_maj = GW_copy.getNextFreeId();
-				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);			
+				GW_copy.addMajGate(id_outer_maj, id_v, id_left_inner_maj, id_right_inner_maj);	
+				System.out.println("id_outer_maj: "+ id_outer_maj);
 				
 				//replace node with the created MAJ node
 				for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 					GW_copy.redirectEdge(e.source, e.dest, id_outer_maj);
 				}
+				//TEST
+				//GW_copy.exportToDOTandPNG("pre-rem");
+				GW_copy.Remove_UnReachableNodes();
+				//GW_copy.exportToDOTandPNG("post-rem");
+				//-TEST
 				break;
 			}
 			catch(Exception e) {
-				e.printStackTrace();
 				return Substitution(recursionCount+1);
 			}
 		}
 		// END DO STUFF
 		
 		//check if applied changes are valid
+		GW_copy.exportToDOTandPNG("subst-int");
 		bf.exportToBLIF("Substitution-intermediate-1");
 		GW_copy.exportToBLIF("Substitution-intermediate-2");
 		try {
@@ -940,7 +968,10 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			return GW_copy.boolFunctions.Substitution(4);
+			if(Math.random() > 0.9)
+				return GW_copy.boolFunctions.Substitution(4);
+			else
+				return GW_copy;
 			//return GW_copy;
 		}
 		catch(Exception ex) {
