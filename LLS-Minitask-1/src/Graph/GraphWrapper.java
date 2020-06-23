@@ -593,9 +593,13 @@ public class GraphWrapper {
 	
 	
     private List<Node> getSubtree(Node root, List<Long> visited) throws Exception{
+    	if(root.id == 0 || root.modifier != NodeModifier.INTERMEDIATE) {
+    		//constant 0 and IN/OUTPUT nodes can not have outgoing edges
+    		return new LinkedList<Node>();
+    	}
 		if(visited.contains(root.id)) {
 			//looping
-			throw new Exception("found loop..");
+			throw new Exception("found loop.. for node: "+root);
 		}
 		visited.add(root.id);
     	List<Node> VisitedNodes = new LinkedList<Node>();

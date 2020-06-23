@@ -283,7 +283,8 @@ public class BoolFunctions {
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
 					System.out.println("assoc: done something");
-					return GW_copy;
+					return GW_copy.boolFunctions.Associativity(4);
+					//return GW_copy;
 				}
 				catch(Exception ex) {
 					// made changes are not valid
@@ -649,7 +650,13 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			return GW_copy;
+			if(Math.random() > 0.8) {
+				return GW_copy.boolFunctions.Relevance(4);
+			}
+			else {
+				return GW_copy;
+			}
+			//return GW_copy;
 		}
 		catch(Exception ex) {
 			// made changes are not valid
@@ -802,7 +809,13 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			return GW_copy;
+			if(Math.random() > 0.8) {
+				return GW_copy.boolFunctions.ComplementaryAssociativity(4);
+			}
+			else {
+				return GW_copy;
+			}
+			//return GW_copy;
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
@@ -927,7 +940,8 @@ public class BoolFunctions {
 			bf.outputNodes = GW_copy.outputNodes;
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
-			return GW_copy;
+			return GW_copy.boolFunctions.Substitution(4);
+			//return GW_copy;
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();
