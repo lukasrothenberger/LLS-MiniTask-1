@@ -430,7 +430,7 @@ public class GraphWrapper {
 		}
 		this.inputNodes.remove(node);
 		this.outputNodes.remove(node);
-		this.nodesMap.remove(node);
+		this.nodesMap.remove(node.id);
 		internalGraph.removeVertex(node);
 	}
 	

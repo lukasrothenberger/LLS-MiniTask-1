@@ -33,9 +33,13 @@ public class Main {
 	//		graph.boolFunctions.Relevance(graph.internalGraph, graph.nodesMap, 0);
 	//		graph.exportToDOTandPNG("post_Relevance");
 			
-			int effort = 5;
+			int effort = 10;
 		
 			for(int i = 0; i < effort; i++) {
+				graph = graph.boolFunctions.InverterPropagationLR(0);
+				graph.exportToBLIF("post_invProp"+"_"+i);
+				graph = graph.boolFunctions.TrivialReplacements(0);
+				graph.exportToBLIF("post_trivRep"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
 				graph.exportToBLIF("post_maj_1"+"_"+i);
 		//		graph.exportToDOTandPNG("majGraph-assoc");
@@ -51,14 +55,9 @@ public class Main {
 				graph = graph.boolFunctions.Relevance(0);
 				graph.exportToBLIF("post_relev"+"_"+i);
 		//		graph.exportToDOTandPNG("majGraph-assoc");
-				graph = graph.boolFunctions.InverterPropagationLR(0);
-				graph.exportToBLIF("post_invProp"+"_"+i);
-				graph.exportToDOTandPNG("pre-trivRep");
-				graph = graph.boolFunctions.TrivialReplacements(0);
-				graph.exportToBLIF("post_trivRep"+"_"+i);
 				graph.exportToDOTandPNG("post-trivRep");
 		//		graph.exportToDOTandPNG("majGraph-assoc");
-				graph = graph.boolFunctions.Substitution( 0);
+				graph = graph.boolFunctions.Substitution(0);
 				graph.exportToBLIF("post_subst"+"_"+i);
 				graph = graph.boolFunctions.Majority(0);
 				graph.exportToBLIF("post_maj_2"+"_"+i);
@@ -97,16 +96,16 @@ public class Main {
 				ABC.Statistics.printStatistics(new File("output/post_dist_2"+"_"+i+".blif"), true, false);
 			}
 			ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true);
-		
+	
 			
 			//### modified Fig.2.a example Graph
-		GraphWrapper fig2a_mod = new GraphWrapper();
-/*			fig2a_mod.addInputNode(2); //w
+	/*	GraphWrapper fig2a_mod = new GraphWrapper();
+			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
 			fig2a_mod.addInputNode(8); //z
 			fig2a_mod.addOutputNode(10); //h
-			fig2a_mod.addMajGate(20, 6, 0, 6);
+			fig2a_mod.addMajGate(20, 6, 0, 8);
 			fig2a_mod.addMajGate(14, 8, 4, 4);
 			fig2a_mod.addMajGate(18, 6, 0, 2);
 			fig2a_mod.addMajGate(16, 18, 8, 20);
@@ -130,10 +129,6 @@ public class Main {
 		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
 				//fig2a_mod.Remove_UnReachableNodes();
 			//}
-			
-			fig2a_mod = fig2a_mod.boolFunctions.InverterPropagationLR(0);
-			fig2a_mod.exportToDOTandPNG("int");
-			fig2a_mod = fig2a_mod.boolFunctions.TrivialReplacements(0);
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
 			
