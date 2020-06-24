@@ -33,7 +33,7 @@ public class Main {
 					
 					graph = Input_Parser.Invoke_Parser(input_file);
 					
-					//### fig 2a 
+		/*			//### fig 2a 
 					graph = new GraphWrapper();
 					graph.addInputNode(2); //w
 					graph.addInputNode(4); //x
@@ -45,7 +45,7 @@ public class Main {
 					graph.addMajGate(10, 12, 4, 14);
 					
 					// ### end fig 2 a 
-					
+		*/			
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
 					
