@@ -4,6 +4,7 @@ import Parser.Input_Parser;
 import Parser.ReadFile;
 
 import java.io.File;
+import java.io.FileWriter;
 
 import org.jgrapht.util.DoublyLinkedList;
 
@@ -14,54 +15,137 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 			// ### SETTINGS ###
 			String input_file_number = "7";
-			int effort = 1;
+			int effort = 100;
 			int SubstitutionAfterUnsuccessfulIterations = 3;
+			boolean createStatisticsCSV = true;
+			int repeatStatisticsGenerationCount = 1;
 			// ################
 			
 			String input_file = "data/aiger-set/ascii/aig_"+input_file_number+"_min.aag";
 			// Platform independent file path achieved by using File.separator
 			input_file = input_file.replaceAll("//", File.separator);
-		
-			GraphWrapper graph = Input_Parser.Invoke_Parser(input_file);
+			GraphWrapper graph = null;
 			
-			//##### Export Graph to BLIF FORMAT #####
-			graph.exportToBLIF("unmodifiedGraph");
-			
-			//#### Export Graph to DOT Format and create PNG image. ####
-			graph.exportToDOTandPNG("unmodifiedGraph");
-			
-			//#### Test conversion to MAJ ####
-			graph.convertAIGtoMAJnodes();
-			graph.exportToDOTandPNG("majGraph");
-			graph.exportToBLIF("majGraph");
-			
-			String lastStatisticsString = "";
-			int unchangedStatisticsCount = 0;
-			for(int i = 0; i < effort; i++) {
-				System.out.println("##### Iteration: "+i+" #####");
-				graph = graph.boolFunctions.InverterPropagationLR(0);
-				graph = graph.boolFunctions.TrivialReplacements(0);
-				graph = graph.boolFunctions.Majority(0);
-				graph = graph.boolFunctions.DistributivityRL(0);
-				graph = graph.boolFunctions.Associativity(0);
-				graph = graph.boolFunctions.ComplementaryAssociativity(0);
-				graph = graph.boolFunctions.Relevance(0);
-				if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
-					graph = graph.boolFunctions.Substitution(0);
+			if(! createStatisticsCSV) {
+				repeatStatisticsGenerationCount = 1;
+			}
+			for(int statisticsIteration = 0; statisticsIteration < repeatStatisticsGenerationCount; statisticsIteration++) {
+				graph = Input_Parser.Invoke_Parser(input_file);
+				
+				//##### Export Graph to BLIF FORMAT #####
+				graph.exportToBLIF("unmodifiedGraph");
+				
+				//#### Export Graph to DOT Format and create PNG image. ####
+				graph.exportToDOTandPNG("unmodifiedGraph");
+				
+				//#### Convert AIG to MIG ####
+				graph.convertAIGtoMAJnodes();
+				graph.exportToDOTandPNG("majGraph");
+				graph.exportToBLIF("majGraph");
+				
+
+				//#### Implementation of the Algorithm ####
+				String lastStatisticsString = "";
+				int unchangedStatisticsCount = 0;
+				File statisticsCSVFile = new File("output/statistics-"+statisticsIteration+".csv");
+				FileWriter statisticsWriter = null;
+				if(createStatisticsCSV) {
+					if(statisticsCSVFile.exists()) {
+						statisticsCSVFile.delete();
+					}
+					statisticsCSVFile.createNewFile();
+					statisticsWriter = new FileWriter(statisticsCSVFile);
+					String columnNames = "Iteration,Step,Inverter,Other,Total\n";
+					statisticsWriter.write(columnNames);
+					int[] startStatistics = ABC.Statistics.getIntegerStatistics(new File("output/majGraph.blif"));
+					statisticsWriter.write("0,None,"+startStatistics[0]+","+startStatistics[1]+","+startStatistics[2]+"\n");
 				}
-				graph = graph.boolFunctions.Majority(0);
-				graph = graph.boolFunctions.DistributivityRL(0);
-				graph.Remove_UnReachableNodes();			
-				//generate and handle statistics for local minimum escaping
-				graph.exportToBLIF("intermediate-statistics");
-				String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
-				if(statisticsResult.equals(lastStatisticsString)) {
-					unchangedStatisticsCount++;
+				//#### Actual Algorithm ####
+				for(int i = 1; i < effort+1; i++) {
+					System.out.println("##### Iteration: "+i+" #####");
+					graph = graph.boolFunctions.InverterPropagationLR(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(""+i+",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.TrivialReplacements(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",TrivRep,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.Majority(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Maj-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.DistributivityRL(0);
+					
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Dist-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.Associativity(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Assoc,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.ComplementaryAssociativity(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",CompAss,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.Relevance(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Relev,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
+						graph = graph.boolFunctions.Substitution(0);
+					}
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Subst,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.Majority(0);
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Maj-2,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}
+					graph = graph.boolFunctions.DistributivityRL(0);
+					graph.Remove_UnReachableNodes();
+					if(createStatisticsCSV) {
+						graph.exportToBLIF("stats");
+						int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
+						statisticsWriter.write(",Dist-2,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+					}			
+					//generate and handle statistics for local minimum escaping
+					graph.exportToBLIF("intermediate-statistics");
+					String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
+					if(statisticsResult.equals(lastStatisticsString)) {
+						unchangedStatisticsCount++;
+					}
+					else {
+						unchangedStatisticsCount = 0;
+					}
+					lastStatisticsString = statisticsResult;
+					if(createStatisticsCSV) {
+						statisticsWriter.flush();
+					}
 				}
-				else {
-					unchangedStatisticsCount = 0;
+				//#### End of Actual Algorithm
+				if(createStatisticsCSV) {
+					statisticsWriter.flush();
+					statisticsWriter.close();
 				}
-				lastStatisticsString = statisticsResult;
 			}
 			
 			ABC.Statistics.getIntegerStatistics(new File("output/intermediate-statistics.blif"));
