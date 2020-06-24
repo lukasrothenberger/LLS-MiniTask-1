@@ -99,8 +99,6 @@ public class BoolFunctions {
 						continue;
 					}
 					else {
-						GW_copy.exportToDOTandPNG("maj-int");
-						System.out.println("MAJ node: "+node.id+"  replaceBy: "+replaceByValue);
 						if(node.modifier != NodeModifier.OUTPUT) {
 							//majority operation is possible
 							//delete current node
@@ -110,13 +108,11 @@ public class BoolFunctions {
 							}
 							modificationFound = true;
 							System.out.println("Majority: done something 1");
-							GW_copy.exportToDOTandPNG("maj-int-post-1");
 							break;
 						}
 						else {
 							//replace Type of output node with Value
 							//delete input edges
-							System.out.println("MAJ-OUT-NODE");
 							for(Edge e : node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
 								GW_copy.internalGraph.removeEdge(e); 
 							}
@@ -127,7 +123,6 @@ public class BoolFunctions {
 							GW_copy.Remove_UnReachableNodes();
 							modificationFound = true;
 							System.out.println("Majority: done something 2");
-							GW_copy.exportToDOTandPNG("maj-int-post-2");
 							break;
 						}
 					}
@@ -1201,31 +1196,8 @@ public class BoolFunctions {
 		
 			for(long nodeId : keyList) {
 				Node node = GW_copy.nodesMap.get(nodeId);
-				if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
-					continue;
-				}
-				// 1. replacement : check for multiple inverters, only use a single on
-				Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
-				if(incomingEdges.length > 1) {
-					for(Edge in_edge : incomingEdges) {
-						Node sourceNode = GW_copy.getNode(in_edge.source);
-						if(sourceNode.type == NodeType.INV && sourceNode.id != node.id + 1) {
-							//replace sourcenode with the proper inverter
-							for(Edge e : sourceNode.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
-								GW_copy.redirectEdge(e.source, e.dest, node.id+1);
-							}
-							System.out.println("trivRep: applied Inverter combination");
-							modificationFound = true;
-							alreadySeen.add(node.id);
-							//break;
-						}
-					}
-					if(modificationFound) {
-						break;
-					}
-				}
 				
-				// 2. replacement: replace MAJ(x,x',y) by y
+				// 1. replacement: replace MAJ(x,x',y) by y
 				if(node.type == NodeType.MAJ) {
 					//ignore weighted outgoing edges here
 					if(node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap).length != 3)
@@ -1295,8 +1267,51 @@ public class BoolFunctions {
 						alreadySeen.add(node.id);
 						break;
 					}
-		
 				}
+				
+				//2. replacement: Inv(Inv(x)) by x
+				if(node.type == NodeType.INV) {
+					Node[] children = node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap);
+					if(children[0].type == NodeType.INV) {
+						Node targetNode = children[0].getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap)[0];
+						//replace node by targetNode
+						for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+							GW_copy.redirectEdge(e.source, e.dest, targetNode.id);
+						}
+						modificationFound = true;
+					}
+					if(modificationFound) {
+						System.out.println("trivRep: replaced Inv(Inv(x)) by x");
+						modificationFound = true;
+						alreadySeen.add(node.id);
+						break;
+					}
+				}
+				
+				if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
+					continue;
+				}
+				// 1. replacement : check for multiple inverters, only use a single on
+				Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
+				if(incomingEdges.length > 1) {
+					for(Edge in_edge : incomingEdges) {
+						Node sourceNode = GW_copy.getNode(in_edge.source);
+						if(sourceNode.type == NodeType.INV && sourceNode.id != node.id + 1) {
+							//replace sourcenode with the proper inverter
+							for(Edge e : sourceNode.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, node.id+1);
+							}
+							System.out.println("trivRep: applied Inverter combination");
+							modificationFound = true;
+							alreadySeen.add(node.id);
+							//break;
+						}
+					}
+					if(modificationFound) {
+						break;
+					}
+				}
+				
 							
 			}
 		}
