@@ -14,7 +14,7 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 			// ### SETTINGS ###
-			int[] input_files_list = {0};
+			int[] input_files_list = {};
 			int effort = 10;
 			int SubstitutionAfterUnsuccessfulIterations = 5;
 			boolean createStatisticsCSV = true;
@@ -229,7 +229,7 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	*/
 			
-	/*		//### Fig.2.a example Graph
+			//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
 			fig2a.addInputNode(2); //w
 			fig2a.addInputNode(4); //x
@@ -247,16 +247,16 @@ public class Main {
 			//fig2a.redirectEdge(14, 4, 10);
 			
 			//fig2a.boolFunctions.Majority(fig2a.internalGraph, fig2a.nodesMap);
-			//fig2a.boolFunctions.Associativity(fig2a.internalGraph, fig2a.nodesMap);
+			fig2a = fig2a.boolFunctions.Associativity(0);
 			//fig2a.boolFunctions.Relevance(fig2a.internalGraph, fig2a.nodesMap);
-			fig2a.boolFunctions.DistributivityRL(fig2a.internalGraph, fig2a.nodesMap);
+			//fig2a.boolFunctions.DistributivityRL(fig2a.internalGraph, fig2a.nodesMap);
 			
 			
 			fig2a.exportToDOTandPNG("fig2a-assoc");
 			fig2a.exportToBLIF("fig2a-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a.blif"), new File("output/fig2a-assoc.blif"));
 		
-		*/	
+			
 		}
 	
 }
