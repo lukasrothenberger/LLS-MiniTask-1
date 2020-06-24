@@ -14,11 +14,12 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 			// ### SETTINGS ###
-			int[] input_files_list = {};
-			int effort = 10;
-			int SubstitutionAfterUnsuccessfulIterations = 5;
+			int[] input_files_list = {0};
+			int effort = 300;
+			int SubstitutionAfterUnsuccessfulIterations = 20;
 			boolean createStatisticsCSV = true;
 			int repeatStatisticsGenerationCount = 1;
+			boolean exportEndOfIteration = true;
 			// ################
 			
 			if(! createStatisticsCSV) {
@@ -33,7 +34,7 @@ public class Main {
 					
 					graph = Input_Parser.Invoke_Parser(input_file);
 					
-		/*			//### fig 2a 
+					//### fig 2a 
 					graph = new GraphWrapper();
 					graph.addInputNode(2); //w
 					graph.addInputNode(4); //x
@@ -45,7 +46,16 @@ public class Main {
 					graph.addMajGate(10, 12, 4, 14);
 					
 					// ### end fig 2 a 
-		*/			
+			
+					//#### Substitution example
+					graph.exportToDOTandPNG("pre-subst");
+					graph.exportToBLIF("pre-subst");
+					ABC.Statistics.printStatistics(new File("output/pre-subst.blif"), false, false, true);
+					graph = graph.boolFunctions.Substitution(0);
+					graph.exportToDOTandPNG("post-subst");
+					//### end Substitution example
+					
+		
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
 					
@@ -59,7 +69,7 @@ public class Main {
 					
 	
 					//#### Implementation of the Algorithm ####
-					String lastStatisticsString = "";
+					int[] lastStatistics =  {Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE};
 					int unchangedStatisticsCount = 0;
 					File statisticsCSVFile = new File("output/statistics-file-"+input_file_number+"-iteration-"+statisticsIteration+".csv");
 					FileWriter statisticsWriter = null;
@@ -129,6 +139,7 @@ public class Main {
 						if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
 							System.out.println("\t8");
 							graph = graph.boolFunctions.Substitution(0);
+							unchangedStatisticsCount = 0;
 						}
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
@@ -152,16 +163,27 @@ public class Main {
 						}			
 						//generate and handle statistics for local minimum escaping
 						graph.exportToBLIF("intermediate-statistics");
-						String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
-						if(statisticsResult.equals(lastStatisticsString)) {
+						//String statisticsResult = ABC.Statistics.printStatistics(new File("output/intermediate-statistics.blif"), false, false, false);
+						int[] statisticsResult = ABC.Statistics.getIntegerStatistics(new File("output/intermediate-statistics.blif"));
+						boolean optimizationFound = false;
+						for(int x = 0; x < 3; x++) {
+							if(lastStatistics[x] > statisticsResult[x]) {
+								optimizationFound = true;
+								lastStatistics[x] = statisticsResult[x];
+							}
+						}
+						
+						if(! optimizationFound) {
 							unchangedStatisticsCount++;
 						}
 						else {
 							unchangedStatisticsCount = 0;
 						}
-						lastStatisticsString = statisticsResult;
 						if(createStatisticsCSV) {
 							statisticsWriter.flush();
+						}
+						if(exportEndOfIteration) {
+							graph.exportToDOTandPNG("end_of_iteration");
 						}
 					}
 					//#### End of Actual Algorithm
@@ -229,7 +251,7 @@ public class Main {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
 	*/
 			
-			//### Fig.2.a example Graph
+	/*		//### Fig.2.a example Graph
 			GraphWrapper fig2a = new GraphWrapper();
 			fig2a.addInputNode(2); //w
 			fig2a.addInputNode(4); //x
@@ -255,7 +277,7 @@ public class Main {
 			fig2a.exportToDOTandPNG("fig2a-assoc");
 			fig2a.exportToBLIF("fig2a-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a.blif"), new File("output/fig2a-assoc.blif"));
-		
+		*/
 			
 		}
 	
