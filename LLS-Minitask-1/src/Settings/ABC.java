@@ -12,6 +12,7 @@ public class ABC {
 		List<String> paths = new LinkedList<String>();
 		paths.add("/home/lukas/Programme/abc/build/abc");
 		paths.add("C:/Program Files/ABC/abc10216");
+		paths.add("S:/Programme/ABC-Tool/abc10216.exe");
 		return paths;
 	};
 
