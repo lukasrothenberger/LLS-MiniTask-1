@@ -57,7 +57,7 @@ public class BoolFunctions {
 				GW_copy.addEdge(e.source, e.dest);
 		}
 		
-		// actual start of Associativity-code
+		// actual start of Majority-code
 		boolean modificationFound = true;
 		while(modificationFound) {
 			modificationFound = false;
@@ -73,8 +73,8 @@ public class BoolFunctions {
 					Node node = GW_copy.nodesMap.get(nodeID);
 					if(node.type != NodeType.MAJ)
 						continue;
-					if(node.modifier == NodeModifier.OUTPUT)
-						continue;
+				//	if(node.modifier == NodeModifier.OUTPUT)
+				//		continue;
 					Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 					Edge[] incomingEdges = node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 					// much easier implementation possible (check pairwise equivalence
@@ -99,15 +99,37 @@ public class BoolFunctions {
 						continue;
 					}
 					else {
-						//majority operation is possible
-						//delete current node
-						GW_copy.removeNode(node.id);
-						for(Edge e : incomingEdges) {
-							GW_copy.addEdge(e.source, replaceByValue);
+						GW_copy.exportToDOTandPNG("maj-int");
+						System.out.println("MAJ node: "+node.id+"  replaceBy: "+replaceByValue);
+						if(node.modifier != NodeModifier.OUTPUT) {
+							//majority operation is possible
+							//delete current node
+							GW_copy.removeNode(node.id);
+							for(Edge e : incomingEdges) {
+								GW_copy.addEdge(e.source, replaceByValue);
+							}
+							modificationFound = true;
+							System.out.println("Majority: done something 1");
+							GW_copy.exportToDOTandPNG("maj-int-post-1");
+							break;
 						}
-						modificationFound = true;
-						System.out.println("Majority: done something");
-						break;
+						else {
+							//replace Type of output node with Value
+							//delete input edges
+							System.out.println("MAJ-OUT-NODE");
+							for(Edge e : node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.internalGraph.removeEdge(e); 
+							}
+							//change node Type to Value
+							node.type = NodeType.VAL;
+							//connect to new input node
+							GW_copy.addEdge(node.id, replaceByValue);
+							GW_copy.Remove_UnReachableNodes();
+							modificationFound = true;
+							System.out.println("Majority: done something 2");
+							GW_copy.exportToDOTandPNG("maj-int-post-2");
+							break;
+						}
 					}
 				}
 				catch(Exception ex) {
@@ -130,7 +152,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.Majority(0);
+				return GW_copy.boolFunctions.Majority(4);
 			}
 			else {
 				return GW_copy;
@@ -139,6 +161,8 @@ public class BoolFunctions {
 		}
 		catch(Exception ex) {
 			// made changes are not valid
+			ex.printStackTrace();
+			System.exit(0);
 			return Majority(recursionCount+1);
 		}
 	}
@@ -1201,6 +1225,79 @@ public class BoolFunctions {
 					}
 				}
 				
+				// 2. replacement: replace MAJ(x,x',y) by y
+				if(node.type == NodeType.MAJ) {
+					//ignore weighted outgoing edges here
+					if(node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap).length != 3)
+						continue;
+					
+					Node[] children = node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap);
+					if(children[0].id % 2 == 0) {
+						//regular 0
+						//check 0<->1
+						if(children[0].id == children[1].id-1) {
+							//replace node by 2
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[2].id);
+							}
+							modificationFound = true;
+						}
+						if(children[0].id == children[2].id-1) {
+							//replace node by 1
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[1].id);
+							}
+							modificationFound = true;
+						}
+					}
+					else {
+						//inverted 0
+						if(children[0].id == children[1].id+1) {
+							//replace node by 2
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[2].id);
+							}
+							modificationFound = true;
+						}
+						if(children[0].id == children[2].id+1) {
+							//replace node by 1
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[1].id);
+							}
+							modificationFound = true;
+						}
+					}
+					if(children[1].id % 2 == 0) {
+						//regular 1
+						//check 1<->2
+						if(children[1].id == children[2].id-1) {
+							//replace node by 0
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[0].id);
+							}
+							modificationFound = true;
+						}
+					}
+					else {
+						//inverted 1
+						//check 1<->2
+						if(children[1].id == children[2].id+1) {
+							//replace node by 0
+							for(Edge e : node.getIncomingEdges(GW_copy.internalGraph, GW_copy.nodesMap)) {
+								GW_copy.redirectEdge(e.source, e.dest, children[0].id);
+							}
+							modificationFound = true;
+						}
+					}
+					if(modificationFound) {
+						System.out.println("trivRep: replaced MAJ(x,x',y) by y");
+						modificationFound = true;
+						alreadySeen.add(node.id);
+						break;
+					}
+		
+				}
+							
 			}
 		}
 		// END DO STUFF
@@ -1208,6 +1305,7 @@ public class BoolFunctions {
 		//check if applied changes are valid
 		bf.exportToBLIF("TrivRep-intermediate-1");
 		GW_copy.exportToBLIF("TrivRep-intermediate-2");
+		GW_copy.exportToDOTandPNG("TrivRep-intermediate-2");
 		try {
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/TrivRep-intermediate-1.blif"), new File("output/TrivRep-intermediate-2.blif"));
 			// made changes are valid

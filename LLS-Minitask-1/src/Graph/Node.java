@@ -89,6 +89,16 @@ public class Node {
 				}
 			}
 			case OUTPUT:
+				switch(this.type) {
+					case VAL:{
+						if(this.getChildrenNodes(internalGraph, nodesMap).length == 1) {
+							return ".names "+this.getChildrenNodes(internalGraph, nodesMap)[0].toBLIFIdentifier()+" "+this.toBLIFIdentifier()+"\n1 1\n";
+						}
+						else {
+							return this.toBLIFIdentifier();
+						}
+					}
+				}
 			case INTERMEDIATE:{
 				switch(this.type){
 					case VAL:{

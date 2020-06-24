@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -296,7 +298,20 @@ public class GraphWrapper {
 		blifString += ".model output\n";
 		//append inputs
 		blifString += ".inputs ";
-		for(Node node : inputNodes) {
+		Node[] sortedInputNodes = new Node[inputNodes.size()];
+		int tmp_count = 0; 
+		for(Node n : inputNodes) {
+			sortedInputNodes[tmp_count] = n;
+			tmp_count++;
+		} 
+		Arrays.sort(sortedInputNodes, new Comparator<Node>() {
+			@Override
+			public int compare(Node n1, Node n2) {
+				return Long.compare(n1.id, n2.id);
+			}
+		});
+		
+		for(Node node : sortedInputNodes) {
 			blifString += node.toBLIFIdentifier()+" ";
 		}
 		blifString += "\n";
@@ -304,7 +319,19 @@ public class GraphWrapper {
 		blifString += ".outputs ";
 		int count = 0;
 		String buffer = "";
-		for(Node node : outputNodes) {
+		Node[] sortedOutputNodes = new Node[outputNodes.size()];
+		tmp_count = 0; 
+		for(Node n : outputNodes) {
+			sortedOutputNodes[tmp_count] = n;
+			tmp_count++;
+		} 
+		Arrays.sort(sortedOutputNodes, new Comparator<Node>() {
+			@Override
+			public int compare(Node n1, Node n2) {
+				return Long.compare(n1.id, n2.id);
+			}
+		});
+		for(Node node : sortedOutputNodes) {
 			blifString += "o"+count+" ";//node.toBLIFIdentifier()+" ";
 			buffer += ".names "+node.toBLIFIdentifier()+" o"+count+"\n";
 			buffer += "1 1\n";
@@ -319,7 +346,7 @@ public class GraphWrapper {
 		for(Node node : internalGraph.vertexSet()) {
 			if(node.modifier != NodeModifier.INTERMEDIATE || node.id == 0) {
 				// skip input / output nodes of type VAL and constant zero
-				if(node.type == NodeType.VAL)
+				if(node.type == NodeType.VAL && node.modifier != NodeModifier.OUTPUT)
 					continue;
 			}
 			blifString += node.toBLIF(internalGraph, nodesMap);

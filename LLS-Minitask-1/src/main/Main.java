@@ -14,11 +14,11 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 			// ### SETTINGS ###
-			int[] input_files_list = {0,1,4,7,9};
-			int effort = 200;
-			int SubstitutionAfterUnsuccessfulIterations = 3;
+			int[] input_files_list = {0};
+			int effort = 10;
+			int SubstitutionAfterUnsuccessfulIterations = 5;
 			boolean createStatisticsCSV = true;
-			int repeatStatisticsGenerationCount = 10;
+			int repeatStatisticsGenerationCount = 1;
 			// ################
 			
 			if(! createStatisticsCSV) {
@@ -32,6 +32,19 @@ public class Main {
 					GraphWrapper graph = null;
 					
 					graph = Input_Parser.Invoke_Parser(input_file);
+					
+					//### fig 2a 
+					graph = new GraphWrapper();
+					graph.addInputNode(2); //w
+					graph.addInputNode(4); //x
+					graph.addInputNode(6); //y
+					graph.addInputNode(8); //z
+					graph.addOutputNode(10); //h
+					graph.addMajGate(14, 8, 4, 6);
+					graph.addMajGate(12, 2, 4, 9);
+					graph.addMajGate(10, 12, 4, 14);
+					
+					// ### end fig 2 a 
 					
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
@@ -64,43 +77,49 @@ public class Main {
 					//#### Actual Algorithm ####
 					for(int i = 1; i < effort+1; i++) {
 						System.out.println("##### Iteration: "+i+" #####");
+						System.out.println("\t1");
 						graph = graph.boolFunctions.InverterPropagationLR(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(""+i+",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t2");
 						graph = graph.boolFunctions.TrivialReplacements(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",TrivRep,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t3");
 						graph = graph.boolFunctions.Majority(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Maj-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t4");
 						graph = graph.boolFunctions.DistributivityRL(0);
-						
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Dist-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t5");
 						graph = graph.boolFunctions.Associativity(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Assoc,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t6");
 						graph = graph.boolFunctions.ComplementaryAssociativity(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",CompAss,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t7");
 						graph = graph.boolFunctions.Relevance(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
@@ -108,6 +127,7 @@ public class Main {
 							statisticsWriter.write(",Relev,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
+							System.out.println("\t8");
 							graph = graph.boolFunctions.Substitution(0);
 						}
 						if(createStatisticsCSV) {
@@ -115,12 +135,14 @@ public class Main {
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Subst,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t9");
 						graph = graph.boolFunctions.Majority(0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Maj-2,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
+						System.out.println("\t10");
 						graph = graph.boolFunctions.DistributivityRL(0);
 						graph.Remove_UnReachableNodes();
 						if(createStatisticsCSV) {

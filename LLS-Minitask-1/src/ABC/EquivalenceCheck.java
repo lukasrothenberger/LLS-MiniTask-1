@@ -45,7 +45,7 @@ public class EquivalenceCheck {
 				while ((line = input.readLine()) != null) {
 					if(line.contains("Networks are equivalent"))
 						containsSuccessMessage = true;
-				//  System.out.println(line);
+				  System.out.println(line);
 				}
 				input.close();
 			} catch (IOException e) {
