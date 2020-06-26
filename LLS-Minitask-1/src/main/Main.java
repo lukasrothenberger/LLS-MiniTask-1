@@ -5,6 +5,9 @@ import Parser.ReadFile;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.jgrapht.util.DoublyLinkedList;
 
@@ -15,8 +18,8 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 			// ### SETTINGS ###
 			int[] input_files_list = {0};
-			int effort = 300;
-			int SubstitutionAfterUnsuccessfulIterations = 20;
+			int effort = 100;
+			int SubstitutionAfterUnsuccessfulIterations = 10;
 			boolean createStatisticsCSV = true;
 			int repeatStatisticsGenerationCount = 1;
 			boolean exportEndOfIteration = true;
@@ -34,7 +37,7 @@ public class Main {
 					
 					graph = Input_Parser.Invoke_Parser(input_file);
 					
-					//### fig 2a 
+		/*			//### fig 2a 
 					graph = new GraphWrapper();
 					graph.addInputNode(2); //w
 					graph.addInputNode(4); //x
@@ -45,16 +48,16 @@ public class Main {
 					graph.addMajGate(12, 2, 4, 9);
 					graph.addMajGate(10, 12, 4, 14);
 					
-					// ### end fig 2 a 
+		*/			// ### end fig 2 a 
 			
-					//#### Substitution example
+				/*	//#### Substitution example
 					graph.exportToDOTandPNG("pre-subst");
 					graph.exportToBLIF("pre-subst");
 					ABC.Statistics.printStatistics(new File("output/pre-subst.blif"), false, false, true);
 					graph = graph.boolFunctions.Substitution(0);
 					graph.exportToDOTandPNG("post-subst");
 					//### end Substitution example
-					
+				*/
 		
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
@@ -87,50 +90,60 @@ public class Main {
 					//#### Actual Algorithm ####
 					for(int i = 1; i < effort+1; i++) {
 						System.out.println("##### Iteration: "+i+" #####");
+						
+						// select random target node
+						List<Long> keyList = new LinkedList<Long>();
+						for(long nodeId : graph.nodesMap.keySet()){
+							keyList.add(nodeId);
+						}
+						Collections.shuffle(keyList);
+						long nodeID = keyList.get(0);
+						
+						
 						System.out.println("\t1");
-						graph = graph.boolFunctions.InverterPropagationLR(0);
+						graph = graph.boolFunctions.InverterPropagationLR(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(""+i+",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t2");
-						graph = graph.boolFunctions.TrivialReplacements(0);
+						graph = graph.boolFunctions.TrivialReplacements(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",TrivRep,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t3");
-						graph = graph.boolFunctions.Majority(0);
+						graph = graph.boolFunctions.Majority(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Maj-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t4");
-						graph = graph.boolFunctions.DistributivityRL(0);
+						graph = graph.boolFunctions.DistributivityRL(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Dist-1,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t5");
-						graph = graph.boolFunctions.Associativity(0);
+						graph = graph.boolFunctions.Associativity(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Assoc,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t6");
-						graph = graph.boolFunctions.ComplementaryAssociativity(0);
+						graph = graph.boolFunctions.ComplementaryAssociativity(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",CompAss,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t7");
-						graph = graph.boolFunctions.Relevance(0);
+						graph = graph.boolFunctions.Relevance(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
@@ -138,7 +151,7 @@ public class Main {
 						}
 						if(unchangedStatisticsCount >= SubstitutionAfterUnsuccessfulIterations) {
 							System.out.println("\t8");
-							graph = graph.boolFunctions.Substitution(0);
+							graph = graph.boolFunctions.Substitution(nodeID, 0);
 							unchangedStatisticsCount = 0;
 						}
 						if(createStatisticsCSV) {
@@ -147,14 +160,14 @@ public class Main {
 							statisticsWriter.write(",Subst,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t9");
-						graph = graph.boolFunctions.Majority(0);
+						graph = graph.boolFunctions.Majority(nodeID, 0);
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
 							statisticsWriter.write(",Maj-2,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t10");
-						graph = graph.boolFunctions.DistributivityRL(0);
+						graph = graph.boolFunctions.DistributivityRL(nodeID, 0);
 						graph.Remove_UnReachableNodes();
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");

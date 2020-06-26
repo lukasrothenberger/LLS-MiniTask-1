@@ -23,7 +23,7 @@ public class BoolFunctions {
 	}
 	
 	
-	public GraphWrapper Majority(int recursionCount) throws Exception {
+	public GraphWrapper Majority(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 10) {
 			//do nothing
 			return bf;
@@ -68,7 +68,7 @@ public class BoolFunctions {
 			}
 			Collections.shuffle(keyList);
 			
-			for(long nodeID : keyList) {
+		//	for(long nodeID : keyList) {
 				try {
 					Node node = GW_copy.nodesMap.get(nodeID);
 					if(node.type != NodeType.MAJ)
@@ -130,7 +130,7 @@ public class BoolFunctions {
 				catch(Exception ex) {
 					continue;
 				}
-			}
+	//		}
 		}
 		
 		//check if applied changes are valid
@@ -147,7 +147,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.Majority(4);
+				return GW_copy.boolFunctions.Majority(nodeID, 4);
 			}
 			else {
 				return GW_copy;
@@ -158,12 +158,12 @@ public class BoolFunctions {
 			// made changes are not valid
 			ex.printStackTrace();
 			System.exit(0);
-			return Majority(recursionCount+1);
+			return Majority(nodeID, recursionCount+1);
 		}
 	}
 	
 	
-	public GraphWrapper Associativity(int recursionCount) throws Exception{
+	public GraphWrapper Associativity(long nodeID, int recursionCount) throws Exception{
 		if(recursionCount > 5) {
 			return bf;
 		}
@@ -214,8 +214,10 @@ public class BoolFunctions {
 			}
 			Collections.shuffle(keyList);
 		
-			for(long nodeID : keyList) {
+		//	for(long nodeID : keyList) {
 				Node node = GW_copy.nodesMap.get(nodeID);
+				if(node == null)
+					continue;
 				if(node.associativityPossible(GW_copy.internalGraph, GW_copy.nodesMap)) {
 					Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 					int i = (int) Math.random()*outgoingEdges.length;
@@ -305,7 +307,7 @@ public class BoolFunctions {
 							break;
 						}
 				}
-			}
+		//	}
 		}
 		
 		//check if applied changes are valid
@@ -323,7 +325,7 @@ public class BoolFunctions {
 					bf.graphModifier = GW_copy.graphModifier;
 					bf.boolFunctions = GW_copy.boolFunctions;
 					if(Math.random() > 0.6) {
-						return GW_copy.boolFunctions.Associativity(0);
+						return GW_copy.boolFunctions.Associativity(nodeID, 0);
 					}
 					else {
 						return GW_copy;
@@ -332,7 +334,7 @@ public class BoolFunctions {
 				}
 				catch(Exception ex) {
 					// made changes are not valid
-					return Associativity(recursionCount+1);
+					return Associativity(nodeID, recursionCount+1);
 				}
 	}
 	
@@ -421,7 +423,7 @@ public class BoolFunctions {
 		}
 	}*/
 	
-	public GraphWrapper DistributivityRL(int recursionCount) throws Exception {
+	public GraphWrapper DistributivityRL(long nodeID, int recursionCount) throws Exception {
 		//randomize iteration
 		if(recursionCount > 5) {
 			return bf;
@@ -467,8 +469,10 @@ public class BoolFunctions {
 			Collections.shuffle(keyList);
 			
 			/// Distributivity logic
-			for(long nodeID : keyList) {
+		//	for(long nodeID : keyList) {
 				Node node = GW_copy.nodesMap.get(nodeID);	
+				if(node == null)
+					continue;
 				if(node.type != NodeType.MAJ)
 					continue;
 				int[] counts = node.getCounts(GW_copy.internalGraph, GW_copy.nodesMap);
@@ -547,9 +551,9 @@ public class BoolFunctions {
 				}
 				catch(Exception e) {
 					e.printStackTrace();
-					return DistributivityRL(recursionCount+1);
+					return DistributivityRL(nodeID, recursionCount+1);
 				}
-			}
+		//	}
 		}
 			
 			//check if applied changes are valid
@@ -567,7 +571,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.DistributivityRL(0);
+				return GW_copy.boolFunctions.DistributivityRL(nodeID, 0);
 			}
 			else {
 				return GW_copy;
@@ -575,7 +579,7 @@ public class BoolFunctions {
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			return DistributivityRL(recursionCount+1);
+			return DistributivityRL(nodeID, recursionCount+1);
 		}
 	}
 	
@@ -587,7 +591,7 @@ public class BoolFunctions {
 	 * @return 
 	 * @throws Exception
 	 */
-	public GraphWrapper Relevance(int recursionCount) throws Exception {
+	public GraphWrapper Relevance(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			return bf;
 		}
@@ -631,15 +635,17 @@ public class BoolFunctions {
 		Collections.shuffle(keyList);
 		
 		boolean loopBreaker = false;
-		for(long nodeId : keyList) {
+	//	for(long nodeId : keyList) {
 			if(loopBreaker)
-				break;
-			Node node = GW_copy.nodesMap.get(nodeId);
+				return bf;
+			Node node = GW_copy.nodesMap.get(nodeID);
+			if(node == null)
+				return bf;
 			if(node.type != NodeType.MAJ)
-				continue;
+				return bf;
 			Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 			if(outgoingEdges.length < 3)
-				continue;
+				return bf;
 			
 			int Offset;
 			while(true) {
@@ -657,7 +663,7 @@ public class BoolFunctions {
 			long replacement = outgoingEdges[Index_2].dest;
 			
 			if(replacement == 0 || replacement == 1)
-				continue;
+				return bf;
 			
 			// invert replacement
 			if(replacement == 0) {
@@ -681,7 +687,7 @@ public class BoolFunctions {
 					break;
 				}
 			}
-		}
+	//	}
 		
 		//check if applied changes are valid
 		try {
@@ -697,7 +703,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.Relevance(0);
+				return GW_copy.boolFunctions.Relevance(nodeID, 0);
 			}
 			else {
 				return GW_copy;
@@ -706,13 +712,13 @@ public class BoolFunctions {
 		}
 		catch(Exception ex) {
 			// made changes are not valid
-			return Relevance(recursionCount+1);
+			return Relevance(nodeID, recursionCount+1);
 		}
 		
 	}
 
 	
-	public GraphWrapper ComplementaryAssociativity(int recursionCount) throws Exception {
+	public GraphWrapper ComplementaryAssociativity(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			// do nothing
 			return bf;
@@ -759,8 +765,10 @@ public class BoolFunctions {
 				keyList.add(nodeId);
 			}
 			Collections.shuffle(keyList);
-			for(long nodeId : keyList) {
-				Node node = GW_copy.nodesMap.get(nodeId);
+	//		for(long nodeId : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeID);
+				if(node == null)
+					continue;
 				Edge[] outgoingEdges = node.getOutgoingEdges(GW_copy.internalGraph, GW_copy.nodesMap);
 				if(node.type != NodeType.MAJ)
 					continue;
@@ -812,7 +820,7 @@ public class BoolFunctions {
 							}
 							catch(Exception ex) {
 								//restart
-								return ComplementaryAssociativity(recursionCount+1);
+								return ComplementaryAssociativity(nodeID, recursionCount+1);
 							}
 							//System.out.println("CompAssoc: done something");			
 						}
@@ -837,7 +845,7 @@ public class BoolFunctions {
 							}
 							catch(Exception ex) {
 								//restart
-								return ComplementaryAssociativity(recursionCount+1);
+								return ComplementaryAssociativity(nodeID, recursionCount+1);
 							}
 						}
 						else {
@@ -851,7 +859,7 @@ public class BoolFunctions {
 				}	
 				if(modificationFound)
 					break;
-			}
+		//	}
 		}
 		// END DO STUFF
 		
@@ -871,7 +879,7 @@ public class BoolFunctions {
 			
 			System.out.println("\t-> changes not discarded!");
 			if(Math.random() > 0.6) {
-				return GW_copy.boolFunctions.ComplementaryAssociativity(0);
+				return GW_copy.boolFunctions.ComplementaryAssociativity(nodeID, 0);
 			}
 			else {
 				return GW_copy;
@@ -881,12 +889,12 @@ public class BoolFunctions {
 		catch(Exception ex) {
 			//ex.printStackTrace();
 			// made changes are not valid
-			return ComplementaryAssociativity(recursionCount+1);
+			return ComplementaryAssociativity(nodeID, recursionCount+1);
 		}
 	}
 	
 	
-	public GraphWrapper Substitution(int recursionCount) throws Exception {
+	public GraphWrapper Substitution(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			// do nothing
 			return bf;
@@ -927,15 +935,17 @@ public class BoolFunctions {
 		}
 		Collections.shuffle(keyList);	
 		// DO STUFF
-		for(long nodeId : keyList) {
-			Node node = GW_copy.nodesMap.get(nodeId);
+	//	for(long nodeId : keyList) {
+			Node node = GW_copy.nodesMap.get(nodeID);
+			if(node == null)
+				return bf;
 			if(node.type != NodeType.MAJ)
-				continue;
+				return bf;
 			if(node.modifier != NodeModifier.INTERMEDIATE) // In/Out nodes not copyable
-				continue;
+				return bf;
 			Node[] node_children = node.getChildrenNodes(GW_copy.internalGraph, GW_copy.nodesMap);
 			if(node_children.length != 3)
-				continue;
+				return bf;
 			int index_x = (int)(Math.random()*3);
 			//get x
 			long id_x = node_children[index_x].id;
@@ -992,12 +1002,11 @@ public class BoolFunctions {
 				}
 				GW_copy.Remove_UnReachableNodes();
 				System.out.println("substitution: done something");
-				break;
 			}
 			catch(Exception e) {
-				return Substitution(recursionCount+1);
+				return Substitution(nodeID, recursionCount+1);
 			}
-		}
+	//	}
 		// END DO STUFF
 		
 		//check if applied changes are valid
@@ -1014,7 +1023,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.9)
-				return GW_copy.boolFunctions.Substitution(4);
+				return GW_copy.boolFunctions.Substitution(nodeID, 4);
 			else
 				return GW_copy;
 			//return GW_copy;
@@ -1022,7 +1031,7 @@ public class BoolFunctions {
 		catch(Exception ex) {
 		//	ex.printStackTrace();
 			// made changes are not valid
-			return Substitution(recursionCount+1);
+			return Substitution(nodeID, recursionCount+1);
 		}
 	}
 		 
@@ -1030,7 +1039,7 @@ public class BoolFunctions {
 	
 			 
 	
-	public GraphWrapper InverterPropagationLR(int recursionCount) throws Exception {
+	public GraphWrapper InverterPropagationLR(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			// do nothing
 			return bf;
@@ -1076,9 +1085,9 @@ public class BoolFunctions {
 			}
 			Collections.shuffle(keyList);	
 		
-			for(long nodeId : keyList) {
+			//for(long nodeId : keyList) {
 				try {
-					Node node = GW_copy.nodesMap.get(nodeId);
+					Node node = GW_copy.nodesMap.get(nodeID);
 					if(node.type != NodeType.MAJ || node.modifier != NodeModifier.INTERMEDIATE) {
 						continue;
 					}
@@ -1113,9 +1122,9 @@ public class BoolFunctions {
 					break;
 				}
 				catch(Exception ex) {
-					return InverterPropagationLR(recursionCount+1);
+					return InverterPropagationLR(nodeID, recursionCount+1);
 				}
-			}
+	//		}
 		}
 		// END DO STUFF
 		
@@ -1133,7 +1142,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6)
-				return GW_copy.boolFunctions.InverterPropagationLR(0);
+				return GW_copy.boolFunctions.InverterPropagationLR(nodeID, 0);
 			else
 				return GW_copy;
 			//return GW_copy;
@@ -1141,12 +1150,12 @@ public class BoolFunctions {
 		catch(Exception ex) {
 			ex.printStackTrace();
 			// made changes are not valid
-			return InverterPropagationLR(recursionCount+1);
+			return InverterPropagationLR(nodeID, recursionCount+1);
 		}
 	}
 	
 	
-	public GraphWrapper TrivialReplacements(int recursionCount) throws Exception {
+	public GraphWrapper TrivialReplacements(long nodeID, int recursionCount) throws Exception {
 		if(recursionCount > 5) {
 			// do nothing
 			return bf;
@@ -1194,8 +1203,8 @@ public class BoolFunctions {
 			}
 			Collections.shuffle(keyList);	
 		
-			for(long nodeId : keyList) {
-				Node node = GW_copy.nodesMap.get(nodeId);
+		//	for(long nodeId : keyList) {
+				Node node = GW_copy.nodesMap.get(nodeID);
 				
 				// 1. replacement: replace MAJ(x,x',y) by y
 				if(node.type == NodeType.MAJ) {
@@ -1313,7 +1322,7 @@ public class BoolFunctions {
 				}
 				
 							
-			}
+		//	}
 		}
 		// END DO STUFF
 		
@@ -1332,7 +1341,7 @@ public class BoolFunctions {
 			bf.graphModifier = GW_copy.graphModifier;
 			bf.boolFunctions = GW_copy.boolFunctions;
 			if(Math.random() > 0.6)
-				return GW_copy.boolFunctions.TrivialReplacements(0);
+				return GW_copy.boolFunctions.TrivialReplacements(nodeID, 0);
 			else
 				return GW_copy;
 			//return GW_copy;
@@ -1340,7 +1349,7 @@ public class BoolFunctions {
 		catch(Exception ex) {
 			ex.printStackTrace();
 			// made changes are not valid
-			return TrivialReplacements(recursionCount+1);
+			return TrivialReplacements(nodeID, recursionCount+1);
 			//throw ex;
 		}
 	}
