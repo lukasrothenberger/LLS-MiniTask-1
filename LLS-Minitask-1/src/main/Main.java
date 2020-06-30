@@ -13,10 +13,23 @@ import Graph.GraphWrapper;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
+<<<<<<< Updated upstream
 			// ### SETTINGS ###
 			int[] input_files_list = {0};
 			int effort = 300;
 			int SubstitutionAfterUnsuccessfulIterations = 20;
+=======
+	/*		// ### SETTINGS ###
+<<<<<<< Updated upstream
+			int[] input_files_list = {};
+			int effort = 10;
+			int SubstitutionAfterUnsuccessfulIterations = 5;
+=======
+	/*		int[] input_files_list = {0,1,4,7,9};
+			int effort = 200;
+			int SubstitutionAfterUnsuccessfulIterations = 3;
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 			boolean createStatisticsCSV = true;
 			int repeatStatisticsGenerationCount = 1;
 			boolean exportEndOfIteration = true;
@@ -46,6 +59,7 @@ public class Main {
 					graph.addMajGate(10, 12, 4, 14);
 					
 					// ### end fig 2 a 
+<<<<<<< Updated upstream
 			
 					//#### Substitution example
 					graph.exportToDOTandPNG("pre-subst");
@@ -56,6 +70,9 @@ public class Main {
 					//### end Substitution example
 					
 		
+=======
+					
+>>>>>>> Stashed changes
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
 					
@@ -209,11 +226,11 @@ public class Main {
 					ABC.Statistics.printStatistics(new File("output/majGraph.blif"), false, true, true);
 					ABC.Statistics.printStatistics(new File("output/majGraph-assoc.blif"), false, true, true);
 				}
-			}
+			*/
 	
 			
-			//### modified Fig.2.a example Graph
-	/*	GraphWrapper fig2a_mod = new GraphWrapper();
+		//### modified Fig.2.a example Graph
+		GraphWrapper fig2a_mod = new GraphWrapper();
 			fig2a_mod.addInputNode(2); //w
 			fig2a_mod.addInputNode(4); //x
 			fig2a_mod.addInputNode(6); //y
@@ -229,19 +246,19 @@ public class Main {
 			fig2a_mod.exportToBLIF("fig2a_mod");
 			
 		//	for(int i = 0; i < 3; i++) {
-		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
-				//fig2a_mod.Remove_UnReachableNodes();
-				//fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
-		//		fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
+				//fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+			fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+			//	fig2a_mod.Remove_UnReachableNodes();
+			//	fig2a_mod.exportToDOTandPNG("fig2a_visible_changes");
+			fig2a_mod = fig2a_mod.boolFunctions.Associativity(0);
+			fig2a_mod = fig2a_mod.boolFunctions.ComplementaryAssociativity(0);
+			fig2a_mod = fig2a_mod.boolFunctions.Relevance(0);
 			//	fig2a_mod = fig2a_mod.boolFunctions.InverterPropagationLR(0);
-				//fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
-		//		fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
-				//fig2a_mod.Remove_UnReachableNodes();
+				fig2a_mod = fig2a_mod.boolFunctions.Substitution(0);
+			fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+			fig2a_mod = fig2a_mod.boolFunctions.DistributivityRL(0);
+				fig2a_mod = fig2a_mod.boolFunctions.Majority(0);
+				fig2a_mod.Remove_UnReachableNodes();
 			//}
 			
 	//		fig2a_mod.boolFunctions.Substitution(fig2a_mod.internalGraph, fig2a_mod.nodesMap, 0);
@@ -249,9 +266,17 @@ public class Main {
 			fig2a_mod.exportToDOTandPNG("fig2a_mod-assoc");
 			fig2a_mod.exportToBLIF("fig2a_mod-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a_mod.blif"), new File("output/fig2a_mod-assoc.blif"));
-	*/
 			
+<<<<<<< Updated upstream
 	/*		//### Fig.2.a example Graph
+=======
+			//### Fig.2.a example Graph
+
+	
+		/*	
+		//### Fig.2.a example Graph
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 			GraphWrapper fig2a = new GraphWrapper();
 			fig2a.addInputNode(2); //w
 			fig2a.addInputNode(4); //x
@@ -272,13 +297,21 @@ public class Main {
 			fig2a = fig2a.boolFunctions.Associativity(0);
 			//fig2a.boolFunctions.Relevance(fig2a.internalGraph, fig2a.nodesMap);
 			//fig2a.boolFunctions.DistributivityRL(fig2a.internalGraph, fig2a.nodesMap);
+<<<<<<< Updated upstream
+=======
+			//fig2a.boolFunctions.DistributivityRL(4);
+>>>>>>> Stashed changes
 			
 			
 			fig2a.exportToDOTandPNG("fig2a-assoc");
 			fig2a.exportToBLIF("fig2a-assoc");
 			ABC.EquivalenceCheck.performEquivalenceCheck(new File("output/fig2a.blif"), new File("output/fig2a-assoc.blif"));
 		*/
+<<<<<<< Updated upstream
 			
+=======
+		
+>>>>>>> Stashed changes
 		}
 	
 }
