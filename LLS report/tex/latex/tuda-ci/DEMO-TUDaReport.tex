@@ -264,32 +264,31 @@
 
 	\newpage
 	\section{Implementation Details}
-	The following section will deal with special features of our implementation.
+	This section will focus on special features of our implementation of the approach proposed by Amarú et al.
 	In this context, particular attention will be paid to the design decisions made and problems encountered during development.
 	\subsection{Design decisions}
-	\subsubsection{Internal Graph Structure}
-	JGraphT used, converted to JGraph for visualization.
-	\subsubsection{Optimization Operations - Target Selection}
-	Randomized selection of target node per operation.\\
-	Randomized amount of selected targets per operation
-	\subsubsection{Optimization Operations - Validity Checking}
-	check validity of each performed operation.\\
-	Reason: allowed for simplifications in the implementation.
-	\subsubsection{Optimization Algorithm - General Structure}
-	Stuck to proposed algorithm for the most part, except for slight derivations mentioned in following sections.
-	\subsubsection{Optimization Algorithm - Graph Maintenance}
-	Added Inverter Propagation and trivial replacement steps to clean up the internal graph.\\
-	TODO: Needs further explanation.
-	\subsubsection{Optimization Algorithm - Substitution Condition}
-	Added Condition to Substitution.\\
-	Reason: Executing Substitution in each iteration of the Optimization Algorithm resulted in too fast growth of the node count of the graph.
-	Condition: If the amount of nodes in the graph has not decreased in the last X iterations, execute the Substitution Operation. Otherwise, skip this Operation.
+	This section describes such practical decisions that are either of a fundamental nature or have a significant, observable impact on the results.
+		\subsubsection{Environment and Internal Graph Structure}
+			For reasons of familiarity we decided to use Java as the basic programming language.
+			We have decided to use the JGraphT\footnote{https://jgrapht.org/} library to build the internal graph structure on which the optimization will be executed later on.
+			The main reasons for this decision were on the one hand the relatively simple use of the library and on the other hand the possibility to create graphics with the JGraph\footnote{https://github.com/jgraph} library without considerable additional effort.
+		\subsubsection{Optimization Operations}
+			Since the underlying paper described the order, but not the exact way in which the described operations are to be executed, we have decided to consider a random number of random nodes in the graph as possible targets for each executed operation.
+			In order to allow for slight simplifications in the implementation of the Optimization Operations, an additional validation step has been included into each operation.
+		\subsubsection{Optimization Algorithm}
+			The overall structure of the implemented optimization algorithm resembles the proposed one except for minor deviations described in detail below.
+			% Graph Maintenance
+			Since it is necessary to perform trivial transformations explicitly under the graph structure used by us in contrast to a purely theoretical foundation, these were added to the algorithm.
+			Trivial transformations are for example inverter propagation or logical conclusions like removing two successive inverters.
+			%Substitution Condition
+			As a further deviation from the proposed algorithm, a condition was added to the execution of the substitution operation.
+			This condition is met if no reduction in the number of nodes was detected for a specified number of iterations. In other words, the substitution is executed if the system has a high probability of being at a local minimum.
 
 	\subsection{Encountered Problems}
 
 		\subsubsection{Broken Equivalence after Optimization Operation Execution}
-			example: Associativity Operator\\
-			reason: overlooked prerequisite
+		example: Associativity Operator\\
+		reason: overlooked prerequisite
 
 		\subsubsection{Non-Persistent Graph Modifications}
 			modifications to the internal Graph structure and thus the result graph have partly not been persisting.\\
@@ -307,12 +306,16 @@
 			Solution: remove validation steps from Optimization Operations to speed up execution.
 
 
-
-
 	\newpage
 	\section{Evaluation}
+		\subsection{Best Case Performance}
+		\subsection{Average Case Performance}
 
 	\newpage
-	\section{Conclusion}
+	\section{Conclusion TODO properly}
+	in order to conclude....
+	Our implementation does not meet the expectations set out on the basis of the underlying paper.
+	Nevertheless it has the potential to find an optimal result for the optimization, given a sufficiently high effort and a good portion of luck.
+	Based on this, however, it can be hoped that a significantly better result could be achieved with comparatively low effort such as replacing the heuristics for selecting the Optimization Target Nodes.
 
 \end{document}
