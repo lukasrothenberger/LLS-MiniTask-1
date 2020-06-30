@@ -264,15 +264,35 @@
 
 	\newpage
 	\section{Implementation Details}
+	The following section will deal with special features of our implementation.
+	In this context, particular attention will be paid to the design decisions made and problems encountered during development.
+		\subsection{Design decisions}
+			\subsubsection{Internal Graph Structure}
+				JGraphT used, converted to JGraph for visualization.
+			\subsubsection{Optimization Operations - Target Selection}
+				Randomized selection of target node per operation.\\
+				Randomized amount of selected targets per operation
+			\subsubsection{Optimization Operations - Validity Checking}
+				check validity of each performed operation.\\
+				Reason: allowed for simplifications in the implementation.
+			\subsubsection{Optimization Algorithm - General Structure}
+				Stuck to proposed algorithm for the most part, except for slight derivations mentioned in following sections.
+			\subsubsection{Optimization Algorithm - Graph Maintenance}
+				Added Inverter Propagation and trivial replacement steps to clean up the internal graph.\\
+				TODO: Needs further explanation.
+			\subsubsection{Optimization Algorithm - Substitution Condition}
+				Added Condition to Substitution.\\
+				Reason: Executing Substitution in each iteration of the Optimization Algorithm resulted in too fast growth of the node count of the graph.
+				Condition: If the amount of nodes in the graph has not decreased in the last X iterations, execute the Substitution operation. Otherwise, skip this operation.
 
-	\subsection{Design decisions}
 
 
-	\subsection{Encountered Problems}
 
-	\subsubsection{Problem 1}
+		\subsection{Encountered Problems}
 
-	\subsubsection{Solution 1}
+			\subsubsection{Problem 1}
+
+			\subsubsection{Solution 1}
 
 
 	\newpage
