@@ -114,14 +114,14 @@
 
 
 \newpage
-\section*{Introduction}
+\section*{Introduction and Motivation}
 \justify{
 
 Nowadays, Electronic Design Automation tools are challenged by design goals of what is
 achievable in advanced technologies. In this scenario, recent logic synthesis works considered
 (slower) Boolean methods rather than (faster) algebraic methods to obtain superior circuit
 realizations, in terms of speed, power and area. Some data structures and algorithms have been
-proposed for these tasks. Most of them consider, as basis operations, inversion (INV),
+proposed for these tasks. Most of them consider, as basic operations, inversion (INV),
 conjunction (AND), disjunction (OR) and if-then-else (MUX). Other Boolean operations are derived
  by composition.
 \newline
@@ -138,34 +138,34 @@ and applied the proposed optimization steps.
 \newline
 \newline
 An MIG is a directed acyclic graph and MIGs include any AND/OR/Inverter Graphs (AOIGs),
-therefore also containing AIGs. To provide native manipulation of MIGs, we introduce a novel
-Boolean algebra, based exclusively on majority and inverter operations with a set of five primitive
-transformations forms a complete axiomatic system.Indeed, it is desirable to spend more time in logic
-synthesis computation to get a better final design. However, with traditional tools, it comes with
-limitations, for example running complex Boolean methods, does not improve a circuit quality or
-even requires too long runtime. But using a sequence of such primitive axioms, it is possible to
-explore the entire MIG representation space. This remarkable property opens great opportunities
-in logic optimization and synthesis. The potential of MIGs by proposing a delay-oriented optimization
-technique.
+therefore also containing AIGs. To provide native manipulation of MIGs, a novel Boolean algebra is introduced by Amarú et al.,
+based exclusively on majority and inverter operations with a set of five primitive
+transformations which form a complete axiomatic system. Indeed, it is desirable to spend more time in logic
+synthesis computation to get a better final design. However, traditional tools meet their limitations when,
+for example, complex Boolean methods are to be optimized, as no improvements of a circuit quality can be found or
+runtimes simply become too long. Using a sequence of such primitive axioms however it is, in theory, possible to
+explore the entire MIG representation space and thus find an optimal solution, opening great opportunities
+in logic optimization and synthesis.
 \newline
 \newline
-Experimental results, over the MCNC benchmark suite, show that MIG optimization decreases the
+Experimental results of Amarú et al. over the MCNC benchmark suite have shown that MIG optimization decreases the
 number of logic levels by 18\%, on average, with respect to AIG optimization run by ABC academic
 tool. Applied in a standard optimization-mapping circuit synthesis flow, MIG optimization enables
-a reduction in the estimated {delay, area, power} metrics of {22\%, 14\%, 11\%},  on average before ph
-ysical design, as compared to academic/commercial synthesis flows. The study of majority-inverter
-logic synthesis is also motivated by the design of circuits in emerging technologies.
+a reduction in the estimated {delay, area, power} metrics of {22\%, 14\%, 11\%},  on average before physical
+design, as compared to academic/commercial synthesis flows.
+\newline
+\newline
+In the course of this work, the theoretical background and fundamentals of the underlying problem are presented first.
+Following this, special features of our implementation are presented and an evaluation of the results is carried out.
 }
 
 \newpage
-\section*{Background and Motivation}
+\section*{Theoretical Background}
 \justify{
 
-This section gives a background on logic optimization and MIGs.
+This section provides the theoretical background on logic optimization and MIGs.
 \newline
-\newline
-A.	Logic Representation and Optimization
-\newline
+\subsection*{Logic Representation and Optimization}
 
 Early data structures and related optimization algorithms are based on two-level representation
 of Boolean functions in Sum Of Product form. Another representation is the Binary Decision Diagram:
@@ -183,16 +183,15 @@ Boolean methods, which are slower but achieve better results. Algebraic methods 
 (circuit flexibilities) to get a better solution. Boolean division and substitution techniques trade off runtime
  for better minimization quality.
 \newline
+\subsection*{Notations and Definitions}
+
+
 \newline
-B.	Notations and Definitions
-\newline
-\newline
-1)	Boolean Algebra: \newline
+\subsubsection*{Boolean Algebra}
 In the Boolean domain, the symbol B indicates the set of binary values {0, 1}.
 \newline
-\newline
-2)	Logic Network: \newline
 
+\subsubsection*{Logic Network}
 A logic network is a Directed Acyclic Graph (DAG) with nodes corresponding to logic functions
 and directed edges interconnecting the nodes. The direction of the edges follows the natural
 computation from inputs to outputs. The incoming edges of a node link either to other nodes,
@@ -204,15 +203,15 @@ same logic function. The depth of a node is the length of the longest path from 
 variable to the node. The depth of a logic network is the largest depth of a node.
 The size of a logic networkis its number of nodes.
 \newline
-\newline
-3)	Majority Function: \newline
+
+\subsubsection*{Majority Function}
 The n-input (n odd) majority function M returns the logic value assumed by more than half
 of the inputs.
 \newline
 }
 
 \newpage
-\section*{Majority Inverter Graph}
+\subsection*{Majority Inverter Graph}
 \justify{
 
 A Majority-Inverter Graph (MIG) is a data structure for Boolean function representation and
@@ -238,16 +237,13 @@ Psi comprises of :\newline
 }
 
 \newpage
-\section*{Boolean Logic Optimization in MIG}
+\subsection*{MIG based Boolean Logic Optimization}
 \justify{
 
 The first step in the optimization of the MIG is the to convert all the AND gates to MAJ gate. To do this we replace and gates by MAJ gates and add an additional input with a constant Boolean 0 or 1. This creates homogenous node and hence easy to generate the Majority graph from it which is again Homogenous.
 \newline
-\newline
 
-Optimizing the Size of an MIG:
-\newline
-
+\subsubsection*{Optimizing the Size of an MIG}
 To optimize the size of an MIG, we aim at reducing its number of nodes. Node reduction can be done, at first instance, by applying the majority rule. In the Boolean algebra domain, that is the ground to operate on MIGs, this corresponds to the evaluation of the majority axiom (M) from Left to Right (L → R), as M(x, x, z) = x. A different node elimination opportunity arises from the distributivity axiom (D), evaluated from Right to Left (R → L), as M(x, y, M(u, v, z)) = M(M(x, y, u),M(x, y, v), z). By applying repeatedly M(L→R) and D(R→L) over an entire MIG, we can actually eliminate nodes and thus reduce its size. \newline
 
 There may be MIGs where no direct node elimination is evident. This is because\newline
@@ -282,6 +278,10 @@ The input MIG is equivalent to the formula M(x, M(x, z', w),M(x, y, z)), which h
 
 \newpage
 \section*{Design decisions and Implemenatation}
+\justify{}
+
+\newpage
+\section*{Encountered Problems and Solutions}
 \justify{}
 
 \newpage
