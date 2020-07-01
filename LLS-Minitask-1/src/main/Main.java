@@ -16,7 +16,7 @@ public class Main {
 			// ### SETTINGS ###
 			int[] input_files_list = {0};
 			int effort = 300;
-			int SubstitutionAfterUnsuccessfulIterations = 20;
+			int SubstitutionAfterUnsuccessfulIterations = 100;
 			boolean createStatisticsCSV = true;
 			int repeatStatisticsGenerationCount = 1;
 			boolean exportEndOfIteration = true;
@@ -35,7 +35,7 @@ public class Main {
 					graph = Input_Parser.Invoke_Parser(input_file);
 					
 					//### fig 2a 
-					graph = new GraphWrapper();
+			/*		graph = new GraphWrapper();
 					graph.addInputNode(2); //w
 					graph.addInputNode(4); //x
 					graph.addInputNode(6); //y
@@ -55,7 +55,7 @@ public class Main {
 					graph.exportToDOTandPNG("post-subst");
 					//### end Substitution example
 					
-		
+		*/
 					//##### Export Graph to BLIF FORMAT #####
 					graph.exportToBLIF("unmodifiedGraph");
 					
@@ -92,7 +92,10 @@ public class Main {
 						if(createStatisticsCSV) {
 							graph.exportToBLIF("stats");
 							int[] stats = ABC.Statistics.getIntegerStatistics(new File("output/stats.blif"));
-							statisticsWriter.write(""+i+",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+							if(i % 10 == 0)
+								statisticsWriter.write(""+i+",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
+							else
+								statisticsWriter.write(",InvProp,"+stats[0]+","+stats[1]+","+stats[2]+"\n");
 						}
 						System.out.println("\t2");
 						graph = graph.boolFunctions.TrivialReplacements(0);

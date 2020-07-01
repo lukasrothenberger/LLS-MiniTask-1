@@ -308,8 +308,8 @@
 %			Result: Maximum feasible effort is reduced drastically, reducing the probability of finding the optimal result resp. optimizations in general.
 %			Solution: remove validation steps from Optimization Operations to speed up execution.
 
-	\newpage
-	\section{Evaluation of Experimental Results TODO Uebersetzen}
+
+	\section{Evaluation of Experimental Results}
 		In this section the results of our implementation of the presented optimization algorithm will be evaluated and discussed.
 		In order to investigate the potential of the implementation, first a best-case example and subsequently a series of average-case examples will be discussed.
 		Based on the obtained results, we will look in more detail at problems that remain untreated.
@@ -350,18 +350,51 @@
 				\end{minipage}\\[1em]
 			\end{figure}
 
-		\subsection{Average Case Performance}
-			\begin{figure}[!ht]
-				\includegraphics[width=\textwidth]{images/eval_4.png}
-				\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph.}
-				\label{fig_4}
-			\end{figure}
-		\subsection{Open Problems}
+		\subsection{Average Case Performance TODO sehr hoher schwellwert}
+			Um die Qualität der Durchschnittlich produzierten Ergebnisse zu bewerten werden die Ergebnisse der optimierung im folgenden für zwei unterschiedliche Schwellwerte für die erkennung eines lokalen Minimums betrachtet werden.
+			Zunächst wird ein sehr niedriger Schwellwert für die Bedingung zur Ausführung des Substitutionsoperators verwendet werden.
+			Anschließend werden die Ergebnisse für einen höheren, eher in der praxis verwendbaren Schwellwert untersucht werden.
+			Abbildung \ref{fig_4} zeigt den verlauf der im graphen enthaltenen Knoten über 200 Iterationen des optimierungsalgorithmus für fünf beispielhafte ausführungen bei einer ausführung des Substitutionsoperators in jeder Iteration.
+			Auffallend sind dabei im wesentlichen zwei Punkte: Der Verlauf der Graphen unterscheidet sich teils wesentlich in den Wachstumsraten, das beobachtbare Konvergenzverhalten jedoch ist in allen beobachtbaren fällen identisch (alle graphen Divergieren).
+			Diese Beobachtungen legen nahe, dass eine Konvergenz gegen das optimum nicht garantiert werden kann und eine solche wahl der Parameter somit in der Praxis unbrauchbar ist.
+			Die wesentliche Verfügbare Stellschraube unserer Implementierung um dieses Problem anzugehen stellt der bereits erwähnte Schwellwert dar.
+			Abbildung \ref{fig_5} zeigt einen Beispielhaften Verlauf der im Graphen enthaltenen Knoten über 200 Iterationen des optimierungsalgorithmus bei einem verwendeten Schwellwert von 20 Iterationen.
+			Auch in diesem Fall steigt die Anzahl der im Graphen enthaltenen Knoten konstant, somit ist auch in diesem Fall weder eine zuverlässige konvergenz gegen das optimale Ergebnis, noch eine echte optimierung des Graphen erkennbar.
+			Das selbe grundlegende Verhalten zeigt sich auch bei einem Schwellwert von 100 Iterationen, dargestellt in Abbildung \ref{fig_6}.
 
-	\section{Conclusion TODO properly}
-	in order to conclude....
-	Our implementation does not meet the expectations set out on the basis of the underlying paper.
+			Die beschriebenen beobachtbaren Ergebnisse sind darauf zurückzuführen, dass die Auswahl der Zielknoten für die optimierungsoperationen per operation zufällig geschieht.
+			Es ist einfach sich klarzumachen, dass eine ungünstige Wahl von Zielknoten unter Umständen keine bzw. keine gewinnbringende Optimierung zulässt.
+			Als folge dessen ist die Qualität der erzeugten Ergebnisse direkt vom Zufall abhängig und eine Garantie der Konvergenz innerhalb des festgelegten Iterationslimits und damit eine sinnvolle Verwendung in der Praxis somit nicht möglich.
+			Ein möglicher Ansatz zur Lösung dieses Problems könnte die Verwendung einer intelligenteren Heuristik zur Auswahl der zu betrachtenden Knoten darstellen.
+
+
+			\begin{figure}[!ht]
+				\begin{minipage}{\textwidth}
+					\centering
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_4.png}
+						\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph.}
+						\label{fig_4}
+					\end{minipage} \quad
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_5.png}
+						\caption{TODO}
+						\label{fig_5}
+					\end{minipage}\\
+				\end{minipage}\\[1em]\\
+				\begin{minipage}{\textwidth}
+					\centering
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_6.png}
+						\caption{TODO}
+						\label{fig_6}
+					\end{minipage}\\
+				\end{minipage}\\[1em]
+			\end{figure}
+
+	\section{Conclusion}
+	In order to conclude the results of our project and the Quality of the results of our implementation one can say that the approach proposed by Amarú et al. is promising, the implementation itself however does not meet the expectations due to unfavorable design decision.
 	Nevertheless it has the potential to find an optimal result for the optimization, given a sufficiently high effort and a good portion of luck.
-	Based on this, however, it can be hoped that a significantly better result could be achieved with comparatively low effort such as replacing the heuristics for selecting the Optimization Target Nodes.
+	Based on this observation it can be hoped that a significantly better result could be achieved with comparatively low effort by improving the heuristics for selecting the Optimization Target Nodes, since the biggest weaknesses of the implementation are due to the randomization used.
 
 \end{document}
