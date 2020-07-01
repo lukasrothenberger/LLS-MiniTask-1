@@ -155,7 +155,7 @@
 	In the course of this work, the theoretical background and fundamentals of the underlying problem are presented first.
 	Afterwards special features of our implementation are presented and an evaluation of the experimental results is carried out.
 
-	\newpage
+
 	\section{Theoretical Background}
 
 	This section provides the theoretical background on logic optimization and MIGs.
@@ -202,7 +202,6 @@
 	of the inputs.
 	\newline
 
-	\newpage
 	\subsection{Majority Inverter Graph}
 
 	A Majority-Inverter Graph (MIG) is a data structure for Boolean function representation and
@@ -226,7 +225,6 @@
 	?	Substitution S: M(x, y, z) = M(v, M(v', Mv/u(x, y, z), u), M(v', Mv/u'(x, y, z), u'))\newline
 
 
-	\newpage
 	\subsection{MIG based Boolean Logic Optimization}
 
 	The first step in the optimization of the MIG is the to convert all the AND gates to MAJ gate. To do this we replace and gates by MAJ gates and add an additional input with a constant Boolean 0 or 1. This creates homogenous node and hence easy to generate the Majority graph from it which is again Homogenous.
@@ -262,7 +260,7 @@
 	\centering Figure 1: Examples of MIG optimization of size
 	The input MIG is equivalent to the formula M(x, M(x, z', w),M(x, y, z)), which has no evident simplification by majority and distributivity axioms. Consequently, the reshape process is invoked to locally increase the number of common inputs. Associativity A swaps w and M(x, y, z) in the original formula obtaining M(x, M(x, z', M(x, y, z)),w), where variables x and z are close to the each other. Later, relevance R applies to the inner formula M(x, z', M(x, y, z)), exchanging variable z with x and obtaining M(x, M(x, z', M(x, y, x)),w). At this point, the final elimination process runs, simplifying the reshaped representation as M(x ,M(x, z', M(x, y, x)),w) = M(x, M(x, z', x),w) = M(x, x, w) = x by using M(L?R). The obtained result is optimal.
 
-	\newpage
+
 	\section{Implementation Details}
 	This section will focus on special features of our implementation of the approach proposed by Amarú et al.
 	In this context, particular attention will be paid to the design decisions made and problems encountered during development.
@@ -350,22 +348,23 @@
 				\end{minipage}\\[1em]
 			\end{figure}
 
-		\subsection{Average Case Performance TODO sehr hoher schwellwert}
-			Um die Qualität der Durchschnittlich produzierten Ergebnisse zu bewerten werden die Ergebnisse der optimierung im folgenden für zwei unterschiedliche Schwellwerte für die erkennung eines lokalen Minimums betrachtet werden.
-			Zunächst wird ein sehr niedriger Schwellwert für die Bedingung zur Ausführung des Substitutionsoperators verwendet werden.
-			Anschließend werden die Ergebnisse für einen höheren, eher in der praxis verwendbaren Schwellwert untersucht werden.
-			Abbildung \ref{fig_4} zeigt den verlauf der im graphen enthaltenen Knoten über 200 Iterationen des optimierungsalgorithmus für fünf beispielhafte ausführungen bei einer ausführung des Substitutionsoperators in jeder Iteration.
-			Auffallend sind dabei im wesentlichen zwei Punkte: Der Verlauf der Graphen unterscheidet sich teils wesentlich in den Wachstumsraten, das beobachtbare Konvergenzverhalten jedoch ist in allen beobachtbaren fällen identisch (alle graphen Divergieren).
-			Diese Beobachtungen legen nahe, dass eine Konvergenz gegen das optimum nicht garantiert werden kann und eine solche wahl der Parameter somit in der Praxis unbrauchbar ist.
-			Die wesentliche Verfügbare Stellschraube unserer Implementierung um dieses Problem anzugehen stellt der bereits erwähnte Schwellwert dar.
-			Abbildung \ref{fig_5} zeigt einen Beispielhaften Verlauf der im Graphen enthaltenen Knoten über 200 Iterationen des optimierungsalgorithmus bei einem verwendeten Schwellwert von 20 Iterationen.
-			Auch in diesem Fall steigt die Anzahl der im Graphen enthaltenen Knoten konstant, somit ist auch in diesem Fall weder eine zuverlässige konvergenz gegen das optimale Ergebnis, noch eine echte optimierung des Graphen erkennbar.
-			Das selbe grundlegende Verhalten zeigt sich auch bei einem Schwellwert von 100 Iterationen, dargestellt in Abbildung \ref{fig_6}.
+		\subsection{Average Case Performance}
+			In order to evaluate the quality of the average produced results, the results of the optimization will be considered below for three different thresholds for the detection of a local minimum.
+			First, a very low threshold value will be used for the condition for executing the substitution operator.
+			Then the results will be examined for a higher threshold value that is more suitable for practical use.
+			Figure \ref{fig_4} shows the course of the nodes contained in the graph over 200 iterations of the optimization algorithm for five exemplary executions with the substitution operator executed in each iteration.
+			There are two main points to note: The course of the graphs partly differs substantially in the growth rates, but the observable convergence behaviour is identical in all observable cases (all graphs diverge).
+			These observations suggest that a convergence against the optimum cannot be guaranteed and that such a choice of parameters is therefore useless in practice.
+			The main available parameter of our implementation to address this problem is the above mentioned threshold.
+			Figure \ref{fig_5} shows an example of the course of the nodes contained in the graph over 200 iterations of the optimization algorithm with a threshold value of 20 iterations.
+			Also in this case, the number of nodes contained in the graph increases constantly, so that neither a reliable convergence against the optimal result nor a real optimization of the graph is recognizable in this case.
+			The same basic behavior can be observed with a very high threshold value of 100 iterations, shown in figure \ref{fig_6}.
 
-			Die beschriebenen beobachtbaren Ergebnisse sind darauf zurückzuführen, dass die Auswahl der Zielknoten für die optimierungsoperationen per operation zufällig geschieht.
-			Es ist einfach sich klarzumachen, dass eine ungünstige Wahl von Zielknoten unter Umständen keine bzw. keine gewinnbringende Optimierung zulässt.
-			Als folge dessen ist die Qualität der erzeugten Ergebnisse direkt vom Zufall abhängig und eine Garantie der Konvergenz innerhalb des festgelegten Iterationslimits und damit eine sinnvolle Verwendung in der Praxis somit nicht möglich.
-			Ein möglicher Ansatz zur Lösung dieses Problems könnte die Verwendung einer intelligenteren Heuristik zur Auswahl der zu betrachtenden Knoten darstellen.
+			The observable results described are due to the fact that the selection of the target nodes for the optimization operations is random.
+			It is easy to realize that an unfavorable choice of target nodes may not allow for profitable optimization.
+			As a consequence, the quality of the generated results is directly dependent on chance and a guarantee of convergence within the defined iteration limit and thus a meaningful use in practice is not possible.
+			A possible approach to solve this problem could be the use of a more intelligent heuristic to select the nodes to be considered, which, however, will not be examined in detail in this paper.
+
 
 
 			\begin{figure}[!ht]
@@ -373,12 +372,12 @@
 					\centering
 					\begin{minipage}{.45\textwidth}
 						\includegraphics[width=\textwidth]{images/eval_4.png}
-						\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph.}
+						\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph with a threshold value of 1.}
 						\label{fig_4}
 					\end{minipage} \quad
 					\begin{minipage}{.45\textwidth}
 						\includegraphics[width=\textwidth]{images/eval_5.png}
-						\caption{TODO}
+						\caption{Optimization results for a threshold value of 20. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
 						\label{fig_5}
 					\end{minipage}\\
 				\end{minipage}\\[1em]\\
@@ -386,7 +385,7 @@
 					\centering
 					\begin{minipage}{.45\textwidth}
 						\includegraphics[width=\textwidth]{images/eval_6.png}
-						\caption{TODO}
+						\caption{Optimization results for a threshold value of 100. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
 						\label{fig_6}
 					\end{minipage}\\
 				\end{minipage}\\[1em]
