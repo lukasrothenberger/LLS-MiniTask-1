@@ -205,24 +205,27 @@
 	\subsection{Majority Inverter Graph}
 
 	A Majority-Inverter Graph (MIG) is a data structure for Boolean function representation and
-	optimization. An MIG is a logic network consisting of 3-input majority nodes and regular/complemented edges. Each majority node can be reduced to a conjunction (AND) or a disjunction (OR) operator by fixing the third input to 0 or to 1, respectively. However, even better MIG representations appear by exploiting MIG nodes functionality (majority) rather than reducing it to AND/OR. To natively optimize and reach advantageous MIGs, a MIG Boolean algebra is introduced and axiomatized by five primitive transformation rules given by Omega .\newline
+	optimization. An MIG is a logic network consisting of 3-input majority nodes and regular/complemented edges. Each majority node can be reduced to a conjunction (AND) or a disjunction (OR) operator by fixing the third input to 0 or to 1, respectively. However, even better MIG representations appear by exploiting MIG nodes functionality (majority) rather than reducing it to AND/OR. To natively optimize and reach advantageous MIGs, a MIG Boolean algebra is introduced and axiomatized by five primitive transformation rules given by $\Omega$ .\newline
 
-	Omega comprises of:\newline
-	?	Commutativity C : M(x, y, z) = M(y, x, z) = M(z, y, x)\newline
-	?	Majority M :  if(x = y): M(x, y, z) = x = y, If(x = y): M(x, y, z) = z\newline
-	?	Associativity A : M (x, u, M(y, u, z)) = M(z, u, M(y, u, x))\newline
-	?	Distributivity D : M(x, y, M(u, v, z)) = M(M(x, y, u),M(x, y, v), z)\newline
-	?	Inverter Propagation I : M(x, y, z) = M(x, y, z)\newline
-	\newline
+	$\Omega$ comprises of:
+	\begin{itemize}
+		\item Commutativity C $:= M(x, y, z) = M(y, x, z) = M(z, y, x)$
+		\item Majority M $:=  if(x = y): M(x, y, z) = x = y, If(x = y'): M(x, y, z) = z$
+		\item Associativity A $:= M (x, u, M(y, u, z)) = M(z, u, M(y, u, x))$
+		\item Distributivity D $:= M(x, y, M(u, v, z)) = M(M(x, y, u),M(x, y, v), z)$
+		\item Inverter Propagation I $:= M'(x, y, z) = M(x', y', z')$
+	\end{itemize}
 
 	From a theoretical perspective, it is possible to traverse the entire MIG representation space just by using a sequence of transformations. We call the MIG optimization techniques algebraic because they locally use MIG algebra transformations. The paper proposed alternative techniques, focusing on global properties of MIGs such as voting resilience and don?t care conditions. Due to their global and general nature, the proposed MIG optimization methods are ?Boolean?. Desirable properties for a logic system are soundness and completeness. Soundness ensures that if a formula is derivable from the system, then it is valid. Completeness guarantees that each valid formula is derivable from the system. However, the length of the exact transformation sequence might be impractical for modern computers.\newline
 	\newline
-	To alleviate this problem, we derive from omega three powerful transformations, referred to as PSI, that facilitate the MIG manipulation task. The first, relevance (psi.R), replaces and simplifies re-convergent variables. The second, complementary associativity (psi.C), deals with variables appearing in both polarities. The third and last, substitution (psi.S), extends variable replacement also in the non-re-convergent case. We represent a general variable replacement operation, say replace x with y in all its appearance in z, with the symbol z(x/y').
+	To alleviate this problem, we derive from $\Omega$ three powerful transformations, referred to as $\Psi$, that facilitate the MIG manipulation task. The first, relevance ($\Psi$.R), replaces and simplifies re-convergent variables. The second, complementary associativity ($\Psi$.C), deals with variables appearing in both polarities. The third and last, substitution ($\Psi$.S), extends variable replacement also in the non-re-convergent case. We represent a general variable replacement operation, say replace x with y' in all its appearance in z, with the symbol z(x/y').
 
-	Psi comprises of :\newline
-	?	Relevance R: M(x, y, z) = M(x, y, z x/y')\newline
-	?	Complementary Associativity C: M(x, u, M(y, u', z)) = M(x, u, M(y, x, z))\newline
-	?	Substitution S: M(x, y, z) = M(v, M(v', Mv/u(x, y, z), u), M(v', Mv/u'(x, y, z), u'))\newline
+	$\Psi$ comprises of :
+	\begin{itemize}
+		\item Relevance R $:= M(x, y, z) = M(x, y, z_{x/y'})$
+		\item Complementary Associativity C $:= M(x, u, M(y, u', z)) = M(x, u, M(y, x, z))$
+		\item Substitution S $:= M(x, y, z) = M(v, M(v', M_{v/u}(x, y, z), u), M(v', M_{v/u'}(x, y, z), u'))$
+	\end{itemize}
 
 
 	\subsection{MIG based Boolean Logic Optimization}
@@ -231,7 +234,7 @@
 	\newline
 
 	\subsubsection{Optimizing the Size of an MIG}
-	To optimize the size of an MIG, we aim at reducing its number of nodes. Node reduction can be done, at first instance, by applying the majority rule. In the Boolean algebra domain, that is the ground to operate on MIGs, this corresponds to the evaluation of the majority axiom (M) from Left to Right (L ? R), as M(x, x, z) = x. A different node elimination opportunity arises from the distributivity axiom (D), evaluated from Right to Left (R ? L), as M(x, y, M(u, v, z)) = M(M(x, y, u),M(x, y, v), z). By applying repeatedly M(L?R) and D(R?L) over an entire MIG, we can actually eliminate nodes and thus reduce its size. \newline
+	To optimize the size of an MIG, we aim at reducing its number of nodes. Node reduction can be done, at first instance, by applying the majority rule. In the Boolean algebra domain, that is the ground to operate on MIGs, this corresponds to the evaluation of the majority axiom ($\Omega$.M) from Left to Right (L $\rightarrow$ R), as M(x, x, z) = x. A different node elimination opportunity arises from the distributivity axiom ($\Omega$.D), evaluated from Right to Left (R $\rightarrow$ L), as M(x, y, M(u, v, z)) = M(M(x, y, u),M(x, y, v), z). By applying repeatedly $\Omega.M_{L\rightarrow R}$ and $\Omega.D_{R\rightarrow L}$ over an entire MIG, we can actually eliminate nodes and thus reduce its size. \newline
 
 	There may be MIGs where no direct node elimination is evident. This is because\newline
 	(i)	the optimal size is reached \newline
@@ -239,26 +242,26 @@
 
 	In the latter case, we want to reshape the MIG to enforce new reduction opportunities. \newline
 
-	The reshaping process is to locally increase the number of common inputs/variables to MIG nodes. For this purpose, the associativity axioms (PSI.A, PSI.C) allow us to move variables between adjacent levels and the relevance axiom (PSI.R) to exchange re-convergent variables. When a more radical transformation is beneficial, the substitution axiom (PSI.S) replaces pairs of independent variables, temporarily inflating the MIG. Once the reshaping process created new reduction opportunities, majority M(L?R) and distributivity D(R?L) run again over the MIG simplifying it. Reshape and elimination processes can be iterated over a user-defined number of cycles, called effort.
+	The reshaping process is to locally increase the number of common inputs/variables to MIG nodes. For this purpose, the associativity axioms ($\Omega$.A, $\Omega$.C) allow us to move variables between adjacent levels and the relevance axiom ($\Psi$.R) to exchange re-convergent variables. When a more radical transformation is beneficial, the substitution axiom ($\Psi$.S) replaces pairs of independent variables, temporarily inflating the MIG. Once the reshaping process created new reduction opportunities, majority $\Omega.M_{L\rightarrow R}$ and distributivity $\Omega.D_{R\rightarrow L}$ run again over the MIG simplifying it. Reshape and elimination processes can be iterated over a user-defined number of cycles, called effort.
 	Algorithm used is shown below:\newline
 	\begin{verbatim}
 	------------------------------------------------------------------------------
-	INPUT: MIG ? 							OUTPUT: Optimized MIG ?
+	INPUT: MIG \alpha							OUTPUT: Optimized MIG α
 	------------------------------------------------------------------------------
 	for (cycles=0; cycles<effort; cycles++) do
-	?.ML?R(?); ?.DR?L(?);
-	?.A(?); ?.C(?);
-	?.R(?); ?.S(?);
-	?.ML?R(?); ?.DR?L(?);
+	Ω.ML→R(α); Ω.DR→L(α);
+	Ω.A(α); Ψ.C(α);
+	Ψ.R(α); Ψ.S(α);
+	Ω.ML→R(α); Ω.DR→L(α);
 	end for
 	------------------------------------------------------------------------------
 	\end{verbatim}
 
-	\begin{center}
-		\includegraphics [width=2in]{example_size.png}
-	\end{center}
-	\centering Figure 1: Examples of MIG optimization of size
-	The input MIG is equivalent to the formula M(x, M(x, z', w),M(x, y, z)), which has no evident simplification by majority and distributivity axioms. Consequently, the reshape process is invoked to locally increase the number of common inputs. Associativity A swaps w and M(x, y, z) in the original formula obtaining M(x, M(x, z', M(x, y, z)),w), where variables x and z are close to the each other. Later, relevance R applies to the inner formula M(x, z', M(x, y, z)), exchanging variable z with x and obtaining M(x, M(x, z', M(x, y, x)),w). At this point, the final elimination process runs, simplifying the reshaped representation as M(x ,M(x, z', M(x, y, x)),w) = M(x, M(x, z', x),w) = M(x, x, w) = x by using M(L?R). The obtained result is optimal.
+	\begin{figure}
+			\includegraphics [width=2in]{example_size.png}
+			\caption{Examples of MIG optimization of size}
+	\end{figure}
+	The input MIG is equivalent to the formula M(x, M(x, z', w),M(x, y, z)), which has no evident simplification by majority and distributivity axioms. Consequently, the reshape process is invoked to locally increase the number of common inputs. Associativity $\Omega$.A swaps w and M(x, y, z) in the original formula obtaining M(x, M(x, z', M(x, y, z)),w), where variables x and z are close to the each other. Later, relevance $\Psi$.R applies to the inner formula M(x, z', M(x, y, z)), exchanging variable z with x and obtaining M(x, M(x, z', M(x, y, x)),w). At this point, the final elimination process runs, simplifying the reshaped representation as M(x ,M(x, z', M(x, y, x)),w) = M(x, M(x, z', x),w) = M(x, x, w) = x by using $\Omega.M_{L\rightarrow R}$. The obtained result is optimal.
 
 
 	\section{Implementation Details}
