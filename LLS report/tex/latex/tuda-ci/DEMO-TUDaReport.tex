@@ -51,6 +51,7 @@
 \bibliography{Literaturverzeichnis}
 \usepackage[english, main=ngerman]{babel}
 \usepackage[autostyle]{csquotes}% Anführungszeichen vereinfacht
+\usepackage{algorithm2e}
 %\usepackage{tabularx}
 
 %\addTitleBoxLogo*{\includegraphics[width=\linewidth,trim=-1.05cm -0.5cm -4.45cm -0.5cm]{tuda_logo.pdf}}
@@ -243,19 +244,33 @@
 	In the latter case, we want to reshape the MIG to enforce new reduction opportunities. \newline
 
 	The reshaping process is to locally increase the number of common inputs/variables to MIG nodes. For this purpose, the associativity axioms ($\Omega$.A, $\Omega$.C) allow us to move variables between adjacent levels and the relevance axiom ($\Psi$.R) to exchange re-convergent variables. When a more radical transformation is beneficial, the substitution axiom ($\Psi$.S) replaces pairs of independent variables, temporarily inflating the MIG. Once the reshaping process created new reduction opportunities, majority $\Omega.M_{L\rightarrow R}$ and distributivity $\Omega.D_{R\rightarrow L}$ run again over the MIG simplifying it. Reshape and elimination processes can be iterated over a user-defined number of cycles, called effort.
-	Algorithm used is shown below:\newline
-	\begin{verbatim}
-	------------------------------------------------------------------------------
-	INPUT: MIG \alpha							OUTPUT: Optimized MIG α
-	------------------------------------------------------------------------------
-	for (cycles=0; cycles<effort; cycles++) do
-	Ω.ML→R(α); Ω.DR→L(α);
-	Ω.A(α); Ψ.C(α);
-	Ψ.R(α); Ψ.S(α);
-	Ω.ML→R(α); Ω.DR→L(α);
-	end for
-	------------------------------------------------------------------------------
-	\end{verbatim}
+	Algorithm \ref{algo_0} depicts the algorithm in use.\newline
+%	\begin{verbatim}
+%	------------------------------------------------------------------------------
+%	INPUT: MIG \alpha							OUTPUT: Optimized MIG α
+%	------------------------------------------------------------------------------
+%	for (cycles=0; cycles<effort; cycles++) do
+%	Ω.ML→R(α); Ω.DR→L(α);
+%	Ω.A(α); Ψ.C(α);
+%	Ψ.R(α); Ψ.S(α);
+%	Ω.ML→R(α); Ω.DR→L(α);
+%	end for
+%	------------------------------------------------------------------------------
+%	\end{verbatim}
+
+	\begin{algorithm}[H]
+		\SetAlgoLined
+		\textbf{Input:} MIG $\alpha$\;
+		\textbf{Output:} Optimized MIG $\alpha$\;
+		\For{ (cycles = 0; cycles $<$ effort; cycles++)}{
+			$\Omega.M_{L\rightarrow R}(\alpha)$; $\Omega.D_{R\rightarrow L}(\alpha)$\;
+			$\Omega.A(\alpha)$; $\Psi.C(\alpha)$\;
+			$\Psi.R(\alpha)$; $\Psi.S(\alpha)$\;
+			$\Omega.M_{L\rightarrow R}(\alpha)$; $\Omega.D_{R\rightarrow L}(\alpha)$\;
+		}
+		\caption{Size Optimization Algorithm.}
+		\label{algo_0}
+	\end{algorithm}
 
 	\begin{figure}
 			\includegraphics [width=2in]{example_size.png}
