@@ -285,33 +285,79 @@
 			This condition is met if no reduction in the number of nodes was detected for a specified number of iterations. In other words, the substitution is executed if the system has a high probability of being at a local minimum.
 
 	\subsection{Encountered Problems}
-
+		In the course of the project, several noteworthy problems occurred, which are summarized and briefly described in this section.
 		\subsubsection{Broken Equivalence after Optimization Operation Execution}
-		example: Associativity Operator\\
-		reason: overlooked prerequisite
+			Following the writings of Amarú et al., all the operations presented are equivalent transformations.
+			In our implementation, however, some, especially the associativity operation, have changed the behavior of the represented function.
+			The reason for this was simply the existence of conditions for the execution of operations which were not reflected in our code.
 
 		\subsubsection{Non-Persistent Graph Modifications}
-			modifications to the internal Graph structure and thus the result graph have partly not been persisting.\\
-			Reason: incorrect use of Java Reference systems (passed reference to graph structure as a parameter and replaced contents of the respective object vs. returning a reference to the modified working copy of the graph structure and replacing the outer reference)
+			A serious problem arose in connection with modifications to the internal graph structure, as these were not retained and therefore a meaningful optimization was not possible.
+			The reason for this error was an incorrect or inappropriate use of Java references.
+			Instead of updating the internal graph structure using a reference to the Modified Working Copy, an attempt was made to reassign references to the values contained in the graph structure, which in the best case resulted in discarding the changes made.
 
-		\subsubsection{Open: Non-Optimal Optimization Behavior}
-			Direct result of previously mentioned Randomization.
-			Reason: Randomization leads to possible ignoring of Optimal next steps.
-			Result: No guaranteed convergence against optimal result.
-			Possible Solution: Introduce more intelligent heuristic to select targets for Optimization Operations than random.
-
-		\subsubsection{Open: Execution Speed}
-			Execution relatively slow due to already mentioned validation steps.
-			Result: Maximum feasible effort is reduced drastically, reducing the probability of finding the optimal result resp. optimizations in general.
-			Solution: remove validation steps from Optimization Operations to speed up execution.
-
+%		\subsubsection{Open Problems}
+%			% Non-Optimal Optimization Behavior}
+%			Direct result of previously mentioned Randomization.
+%			Reason: Randomization leads to possible ignoring of Optimal next steps.
+%			Result: No guaranteed convergence against optimal result.
+%			Possible Solution: Introduce more intelligent heuristic to select targets for Optimization Operations than random.
+%
+%			%Execution Speed}
+%			Execution relatively slow due to already mentioned validation steps.
+%			Result: Maximum feasible effort is reduced drastically, reducing the probability of finding the optimal result resp. optimizations in general.
+%			Solution: remove validation steps from Optimization Operations to speed up execution.
 
 	\newpage
-	\section{Evaluation}
+	\section{Evaluation of Experimental Results TODO Uebersetzen}
+		In this section the results of our implementation of the presented optimization algorithm will be evaluated and discussed.
+		In order to investigate the potential of the implementation, first a best-case example and subsequently a series of average-case examples will be discussed.
+		Based on the obtained results, we will look in more detail at problems that remain untreated.
+
+		For all the results presented, it is essential that they are always representative of a whole group of possible outcomes due to the randomisation of operations mentioned above.
+		For this reason, no comprehensive list of possible or observed results is provided.
+		Instead, we will concentrate on the causes and effects of the observed effects and consider them qualitatively.
 		\subsection{Best Case Performance}
-		\subsection{Average Case Performance}
+			The following example is intended to show that our implementation is capable of finding an optimal solution, if one exists.
+			Figure \ref{fig_0} shows an illustration of the graph used, with the particularity that it can be condensed into a single constant.
+			To increase the complexity of the example, the substitution operator is applied to the example graph. A possible result of this is shown in Figure \ref{fig_1}.
+			The resulting graph is now optimized using the implemented algorithm.
+			If this is successful, the minimal graph shown in Figure \ref{fig_2} is obtained and a node count history similar to the one shown in Figure \ref{fig_3} can be observed.
+			Special attention should be paid to changes in the number of ``Other'' nodes. This graph shows a local minimum between iterations 3 and 23, so in iteration 23 the substitution operation is performed and the number of contained nodes increases significantly, followed by a rapid decrease in the number of contained nodes due to the elimination operations described above.
+			However, if the optimization is not successful, e.g. due to an unfavorable selection of target nodes, the result is often a behavior similar to that described in the following section.
+			\begin{figure}[!ht]
+				\begin{minipage}{\textwidth}
+					\centering
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_0.png}
+						\caption{Example Graph with known constant optimum.}
+						\label{fig_0}
+					\end{minipage} \quad
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_1.png}			\caption{Example Graph after application of the Substitution Operation.}
+						\label{fig_1}
+					\end{minipage}\\
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_2.png}
+						\caption{Minimal Graph equivalent to Example Graph after a successful optimization.}
+						\label{fig_2}
+					\end{minipage} \quad
+					\begin{minipage}{.45\textwidth}
+						\includegraphics[width=\textwidth]{images/eval_3.png}
+						\caption{Node count history for the optimization of the Example Graph plotted against the executed iterations. Total represents the summed up amount of nodes in the graph. Inverter represent the amount of Inverters in the graph. Others represents the amount of Majority nodes in the graph.}
+						\label{fig_3}
+					\end{minipage}\\
+				\end{minipage}\\[1em]
+			\end{figure}
 
-	\newpage
+		\subsection{Average Case Performance}
+			\begin{figure}[!ht]
+				\includegraphics[width=\textwidth]{images/eval_4.png}
+				\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph.}
+				\label{fig_4}
+			\end{figure}
+		\subsection{Open Problems}
+
 	\section{Conclusion TODO properly}
 	in order to conclude....
 	Our implementation does not meet the expectations set out on the basis of the underlying paper.
