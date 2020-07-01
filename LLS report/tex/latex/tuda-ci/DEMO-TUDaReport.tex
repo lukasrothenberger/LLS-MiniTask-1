@@ -1,3 +1,5 @@
+
+  
 %% This is file `DEMO-TUDaReport.tex' version 2.09 (2020/03/13),
 %% it is part of
 %% TUDa-CI -- Corporate Design for TU Darmstadt
@@ -35,7 +37,7 @@
 	type=intern,
 	marginpar=false,
 	ruledheaders=section,
-	class=Seminararbeit,
+	class=report,
 	%thesis={type=Seminararbeit}, %Möglichkeiten: Seminararbeit, bachelor, master
 	BCOR=5mm,
       parskip=half-,
@@ -160,7 +162,7 @@
 	\section{Theoretical Background}
 
 	This section provides the theoretical background on logic optimization and MIGs.
-	\newline
+	
 	\subsection*{Logic Representation and Optimization}
 
 	Early data structures and related optimization algorithms are based on two-level representation
@@ -170,7 +172,6 @@
 	continuous increase in logic designs complexity, a step further is enabled by, where multi-level logic
 	networks are made homogenous, i.e., consisting of only AND nodes interconnected by regular/compl
 	ement (INV) edges.
-	\newline
 	\newline
 	Logic optimization methods are usually divided into two groups: Algebraic methods, which are fast, and
 	Boolean methods, which are slower but achieve better results. Algebraic methods treat a logic functions as a
@@ -184,7 +185,6 @@
 	\subsubsection{Boolean Algebra}
 	In the Boolean domain, the symbol B indicates the set of binary values {0, 1}.
 	\newline
-
 	\subsubsection{Logic Network}
 	A logic network is a Directed Acyclic Graph (DAG) with nodes corresponding to logic functions
 	and directed edges interconnecting the nodes. The direction of the edges follows the natural
@@ -202,7 +202,6 @@
 	The n-input (n odd) majority function M returns the logic value assumed by more than half
 	of the inputs.
 	\newline
-
 	\subsection{Majority Inverter Graph}
 
 	A Majority-Inverter Graph (MIG) is a data structure for Boolean function representation and
@@ -258,6 +257,7 @@
 %	------------------------------------------------------------------------------
 %	\end{verbatim}
 
+\begin{center}
 	\begin{algorithm}[H]
 		\SetAlgoLined
 		\textbf{Input:} MIG $\alpha$\;
@@ -271,15 +271,18 @@
 		\caption{Size Optimization Algorithm.}
 		\label{algo_0}
 	\end{algorithm}
+	\end{center}
 
-	\begin{figure}
+	\begin{center}
 			\includegraphics [width=2in]{example_size.png}
-			\caption{Examples of MIG optimization of size}
-	\end{figure}
+			\end{center}
+			\centering{Figure 0: Examples of MIG optimization of size}
+	
 	The input MIG is equivalent to the formula M(x, M(x, z', w),M(x, y, z)), which has no evident simplification by majority and distributivity axioms. Consequently, the reshape process is invoked to locally increase the number of common inputs. Associativity $\Omega$.A swaps w and M(x, y, z) in the original formula obtaining M(x, M(x, z', M(x, y, z)),w), where variables x and z are close to the each other. Later, relevance $\Psi$.R applies to the inner formula M(x, z', M(x, y, z)), exchanging variable z with x and obtaining M(x, M(x, z', M(x, y, x)),w). At this point, the final elimination process runs, simplifying the reshaped representation as M(x ,M(x, z', M(x, y, x)),w) = M(x, M(x, z', x),w) = M(x, x, w) = x by using $\Omega.M_{L\rightarrow R}$. The obtained result is optimal.
 
 
 	\section{Implementation Details}
+	\justify{
 	This section will focus on special features of our implementation of the approach proposed by Amarú et al.
 	In this context, particular attention will be paid to the design decisions made and problems encountered during development.
 	\subsection{Design decisions}
@@ -341,32 +344,64 @@
 			If this is successful, the minimal graph shown in Figure \ref{fig_2} is obtained and a node count history similar to the one shown in Figure \ref{fig_3} can be observed.
 			Special attention should be paid to changes in the number of ``Other'' nodes. This graph shows a local minimum between iterations 3 and 23, so in iteration 23 the substitution operation is performed and the number of contained nodes increases significantly, followed by a rapid decrease in the number of contained nodes due to the elimination operations described above.
 			However, if the optimization is not successful, e.g. due to an unfavorable selection of target nodes, the result is often a behavior similar to that described in the following section.
-			\begin{figure}[!ht]
-				\begin{minipage}{\textwidth}
+
+%			\begin{figure}[!ht]
+
+%				\begin{minipage}{\textwidth}
+
+%					\centering
+
+%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_0.png}
+%						\caption{Example Graph with known constant optimum.}
+%						\label{fig_0}
+%					\end{minipage} \quad
+%					\begin{minipage}{.45\textwidth}
+%%						\includegraphics[width=\textwidth]{images/eval_1.png}			\caption{Example Graph after application of the Substitution Operation.}
+%						\label{fig_1}
+%%					\end{minipage}\\
+%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_2.png}
+%						\caption{Minimal Graph equivalent to Example Graph after a successful optimization.}
+%						\label{fig_2}
+%					\end{minipage} \quad
+%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_3.png}
+%						\caption{Node count history for the optimization of the Example Graph plotted against the executed iterations. Total represents the summed up amount of nodes in the graph. Inverter represent the amount of Inverters in the graph. Others represents the amount of Majority nodes in the graph.}
+%						\label{fig_3}
+%					\end{minipage}\\
+%				\end{minipage}\\[1em]
+%			\end{figure}
+			
+			
+
 					\centering
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_0.png}
-						\caption{Example Graph with known constant optimum.}
-						\label{fig_0}
-					\end{minipage} \quad
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_1.png}			\caption{Example Graph after application of the Substitution Operation.}
-						\label{fig_1}
-					\end{minipage}\\
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_2.png}
-						\caption{Minimal Graph equivalent to Example Graph after a successful optimization.}
-						\label{fig_2}
-					\end{minipage} \quad
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_3.png}
-						\caption{Node count history for the optimization of the Example Graph plotted against the executed iterations. Total represents the summed up amount of nodes in the graph. Inverter represent the amount of Inverters in the graph. Others represents the amount of Majority nodes in the graph.}
-						\label{fig_3}
-					\end{minipage}\\
-				\end{minipage}\\[1em]
-			\end{figure}
+					\begin{center}
+						\includegraphics[width=3in]{images/eval_0.png}
+						\end{center}
+						\centering{Figure 1:Example Graph with known constant optimum.}
+						
+					
+					\begin{center}
+						\includegraphics[width=3in]{images/eval_1.png}	
+						\end{center}		
+						\centering{Figure 2 : Example Graph after application of the Substitution Operation.}
+						
+					
+					\begin{center}
+						\includegraphics[width=3in]{images/eval_2.png}
+						\end{center}
+						\centering{Figure 3: Minimal Graph equivalent to Example Graph after a successful optimization.}
+	
+					
+					\begin{center}
+						\includegraphics[width=3in]{images/eval_3.png}
+						\end{center}
+						\centering{Figure 4:Node count history for the optimization of the Example Graph plotted against the executed iterations. Total represents the summed up amount of nodes in the graph. Inverter represent the amount of Inverters in the graph. Others represents the amount of Majority nodes in the graph.}
+					
 
 		\subsection{Average Case Performance}
+		\justify{
 			In order to evaluate the quality of the average produced results, the results of the optimization will be considered below for three different thresholds for the detection of a local minimum.
 			First, a very low threshold value will be used for the condition for executing the substitution operator.
 			Then the results will be examined for a higher threshold value that is more suitable for practical use.
@@ -382,36 +417,57 @@
 			It is easy to realize that an unfavorable choice of target nodes may not allow for profitable optimization.
 			As a consequence, the quality of the generated results is directly dependent on chance and a guarantee of convergence within the defined iteration limit and thus a meaningful use in practice is not possible.
 			A possible approach to solve this problem could be the use of a more intelligent heuristic to select the nodes to be considered, which, however, will not be examined in detail in this paper.
+}
 
 
+%			\begin{figure}[!ht]
+%				\begin{minipage}{\textwidth}
+%					\centering
+%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_4.png}
+%						\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph with a threshold value of 1.}
+%						\label{fig_4}
+%					\end{minipage} \quad
+%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_5.png}
+%						\caption{Optimization results for a threshold value of 20. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
+%						\label{fig_5}
+%					\end{minipage}\\
+%				\end{minipage}\\[1em]\\
+%				\begin{minipage}{\textwidth}
+%					\centering
+%%					\begin{minipage}{.45\textwidth}
+%						\includegraphics[width=\textwidth]{images/eval_6.png}
+%						\caption{Optimization results for a threshold value of 100. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
+%						\label{fig_6}
+%					\end{minipage}\\
+%				\end{minipage}\\[1em]
+%			\end{figure}
+			
+	%----------------------------------------------------------------------------------------	
+					
+						\begin{center}
+						\includegraphics[width=3in]{images/eval_4.png}
+						\end{center}
+						\centering{Figure 5: Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph with a threshold value of 1.}
 
-			\begin{figure}[!ht]
-				\begin{minipage}{\textwidth}
-					\centering
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_4.png}
-						\caption{Series of 5 optimization results, representative for the vast majority of observable cases. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. Total-0 to five represent the results of five different yet similar outcomes of the optimization started on the the exact same input graph with a threshold value of 1.}
-						\label{fig_4}
-					\end{minipage} \quad
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_5.png}
-						\caption{Optimization results for a threshold value of 20. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
-						\label{fig_5}
-					\end{minipage}\\
-				\end{minipage}\\[1em]\\
-				\begin{minipage}{\textwidth}
-					\centering
-					\begin{minipage}{.45\textwidth}
-						\includegraphics[width=\textwidth]{images/eval_6.png}
-						\caption{Optimization results for a threshold value of 100. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
-						\label{fig_6}
-					\end{minipage}\\
-				\end{minipage}\\[1em]
-			\end{figure}
+
+						\begin{center}
+						\includegraphics[width=3in]{images/eval_5.png}
+						\end{center}
+						\centering{Figure 6:Optimization results for a threshold value of 20. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
+
+
+						\begin{center}
+						\includegraphics[width=3in]{images/eval_6.png}
+						\end{center}
+						\centering{Figure 7:Optimization results for a threshold value of 100. \# Nodes represents the amount of total nodes contained in the graph. \# Iterations represents the amount of completed Iterations until the respective point. The different graphs show the number of the respective node types contained with ``Other'' representing the amount of Majority nodes.}
+
+
 
 	\section{Conclusion}
 	In order to conclude the results of our project and the Quality of the results of our implementation one can say that the approach proposed by Amarú et al. is promising, the implementation itself however does not meet the expectations due to unfavorable design decision.
 	Nevertheless it has the potential to find an optimal result for the optimization, given a sufficiently high effort and a good portion of luck.
 	Based on this observation it can be hoped that a significantly better result could be achieved with comparatively low effort by improving the heuristics for selecting the Optimization Target Nodes, since the biggest weaknesses of the implementation are due to the randomization used.
-
+}
 \end{document}
