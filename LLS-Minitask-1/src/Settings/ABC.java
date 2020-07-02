@@ -1,3 +1,7 @@
+/*
+ * Authors: Lukas Rothenberger, Pallavi Gutta Ravi
+ */
+
 package Settings;
 
 import java.util.LinkedList;

@@ -1,3 +1,7 @@
+/*
+ * Authors: Lukas Rothenberger, Pallavi Gutta Ravi
+ */
+
 package Graph;
 
 import java.util.HashMap;

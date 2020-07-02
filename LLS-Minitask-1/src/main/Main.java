@@ -1,3 +1,7 @@
+/*
+ * Authors: Lukas Rothenberger, Pallavi Gutta Ravi
+ */
+
 package main;
 
 import Parser.Input_Parser;

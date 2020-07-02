@@ -1,3 +1,7 @@
+/*
+ * Authors: Lukas Rothenberger, Pallavi Gutta Ravi
+ */
+
 package ABC;
 
 import java.io.BufferedReader;
