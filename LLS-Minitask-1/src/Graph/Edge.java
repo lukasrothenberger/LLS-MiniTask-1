@@ -11,7 +11,7 @@ public class Edge extends DefaultEdge {
 	public long source;
 	public long dest;
 	public int weight;
-	
+
 	/**
 	 * Constructor for an Edge from source to dest.
 	 * Extends jgrapht.DefaultEdge.
@@ -25,14 +25,14 @@ public class Edge extends DefaultEdge {
 		this.dest = dest;
 		this.weight = 1;
 	}
-	
+
 	/**
 	 * Create and Return a textual representation of an edge for printing.
 	 */
 	public String toString() {
 		return "Edge: "+source+" --> "+dest+"  weight: "+this.weight;
 	}
-	
+
 	/**
 	 * used in getDOTAttributes only
 	 */
@@ -50,7 +50,7 @@ public class Edge extends DefaultEdge {
 		public String getValue() {
 			return this.value;
 		}
-		
+
 	}
 
 	/**

@@ -3,7 +3,6 @@ package Graph;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,18 +11,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-//import org.jinternalGrapht.*;
-//import org.jinternalGrapht.internalGraph.DefaultEdge;
-//import org.jinternalGrapht.internalGraph.SimpleGraph;
-
 import org.jgrapht.Graph;
-import org.jgrapht.graph.AbstractBaseGraph;
-import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DirectedAcyclicGraph;
-import org.jgrapht.graph.DirectedPseudograph;
-import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.nio.dot.DOTExporter;
-import org.jgrapht.util.DoublyLinkedList;
 
 
 public class GraphWrapper {
@@ -399,7 +389,6 @@ public class GraphWrapper {
 	 */
 	public void exportToDOTandPNG(String filename) {
 		try {
-		//System.out.println("Exporting to DOT Format and PNG Image...");
 		File dotOutputFile = new File("output/"+filename+".dot");
 		if(dotOutputFile.exists())
 			dotOutputFile.delete();
@@ -409,13 +398,12 @@ public class GraphWrapper {
 			fw.flush();
 			fw.close();
 			String[] c = {"dot", "-Tpng", "output/"+filename+".dot", "-o", "output/"+filename+".png"};
-			//String[] c = {"dot", "-?"};
 			Process p = Runtime.getRuntime().exec(c);
 			p.waitFor();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Export to DOT and PNG FAILED.\n\tgraphviz installed?");
+			System.out.println("Export to DOT and PNG FAILED.\n\tgraphviz installed?\n\tdot command available? -> add to PATH");
 		}
 	}
 	
@@ -425,7 +413,6 @@ public class GraphWrapper {
 	 * @param filename should not contain a file ending (example: "unmodifiedGraph")
 	 */
 	public void exportToBLIF(String filename) {
-		//System.out.println("Exporting to BLIF Format..."); 
 		File blifOutputFile = new File("output/"+filename+".blif");
 		if(blifOutputFile.exists())
 			blifOutputFile.delete();
@@ -461,63 +448,7 @@ public class GraphWrapper {
 		internalGraph.removeVertex(node);
 	}
 	
-	
-	/*
-	private void __fillNodeQueue(Node rootNode, List<Long> queue) {
-		if(! (queue.contains(rootNode.id)))
-			queue.add(rootNode.id);
-		for(Node node: rootNode.getChildrenNodes(internalGraph, nodesMap)) {
-			__fillNodeQueue(node, queue);
-		}
-	}
-
-
-	public boolean replaceInSubtree(long root, long victim, long replacement) throws Exception {
-//		System.out.println("root: "+ root);
-//		System.out.println("victim: "+ victim);
-//		System.out.println("replacement: "+ replacement);
-	//	if(victim < 2) {
-	//		return false;
-	//	}
 		
-//		this.exportToBLIF("1");
-//		this.exportToDOTandPNG("1");
-		List<Long> Queue = new LinkedList<Long>();
-		__fillNodeQueue(nodesMap.get(root), Queue);
-//		System.out.println("done: "+Queue.size());
-		
-//		System.out.println("Queue: ");
-		for(Long q : Queue) {
-//			System.out.println("\t"+q);
-		}
-		
-		boolean modificationFound = false;
-		for(Long queueNode : Queue) {
-			Node node = nodesMap.get(queueNode);
-			List<Long> victimList = new LinkedList<Long>();
-			for(Edge e : node.getOutgoingEdges(internalGraph, nodesMap)) {
-				if(e.dest == victim) {
-					if(! (victimList.contains(node.id)))
-						victimList.add(node.id);
-				}
-			}
-			for(Long nodeId : victimList) {
-//				System.out.println("nodeId: "+ nodeId + " victim: "+ victim + " replacement: "+ replacement);
-				try {
-					this.redirectEdge(nodeId, victim, replacement);
-					modificationFound = true;
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					//e1.printStackTrace();
-				}
-			}
-		}
-		
-		
-		return modificationFound;
-	}
-	*/
-	
 	/**
 	 * Replace occurrences of victim in the subtree starting from root with replacement.
 	 * Return boolean value. True, if a value has been replaced. False, else.
@@ -663,28 +594,6 @@ public class GraphWrapper {
     		}
     	}
     }
-    
-    
-	/*public void Remove_UnReachableNodes() throws Exception {
-		List<Node> VisitedNodes = new LinkedList<Node>();
-		for(Node outnodes : this.outputNodes) {
-			VisitedNodes.addAll(getSubtree(outnodes, new HashMap<Long, Integer>()));
-		}    
-		for(Node removeNode : this.nodesMap.values()) {
-			if(VisitedNodes.contains(removeNode))
-				continue;
-			if(removeNode.modifier == NodeModifier.INPUT || removeNode.modifier == NodeModifier.OUTPUT)
-				continue;
-			try {
-				this.removeNode(removeNode.id);
-			}
-			catch(Exception ex) {
-				// already removed
-			}
-		}
-	}
-	*/
-
 		
 }
 	

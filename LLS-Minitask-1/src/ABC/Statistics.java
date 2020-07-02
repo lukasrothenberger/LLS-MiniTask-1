@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import com.sun.net.httpserver.Authenticator.Result;
 
 public class Statistics {
-	
+
 	/**
 	 * Retrieve statistics from ABC for given BLIF file.
 	 * Prints the results to the console and returns them as a String.
@@ -17,11 +17,10 @@ public class Statistics {
 	 */
 	public static String printStatistics(File blifOne, boolean printTotalOnly, boolean printFileName, boolean printToConsole) {
 		String returnString = "";
-		
+
 		if(printFileName) {
 			System.out.println("\t"+blifOne.getAbsolutePath());
 		}
-		
 		//build abc Script
 		File tmp_statistics_script = new File("temp/tmp_statistics_script");
 		if(tmp_statistics_script.exists())
@@ -38,7 +37,7 @@ public class Statistics {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		for(String abcExecutablePath : Settings.ABC.getABCExecutables()) {
 			String[] c = {abcExecutablePath, "-f", "temp/tmp_statistics_script"};
 			try {
@@ -67,10 +66,10 @@ public class Statistics {
 			}
 			return returnString;
 		}
-	   System.out.println("ERROR: abc statistics generation could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
-	return "ERROR";
+		System.out.println("ERROR: abc statistics generation could not be executed. Check if path to abc executable is contained in Settings.ABC.getABCExecutables()");
+		return "ERROR";
 	}
-	
+
 	/**
 	 * returns an array of the following form: [InverterCount, OtherCount, TotalCount].
 	 * @param blifOne
@@ -94,8 +93,7 @@ public class Statistics {
 				innerCount++;
 			}
 			outerCount++;
-		}
-		
+		}	
 		return returnList;
 	}
 }
